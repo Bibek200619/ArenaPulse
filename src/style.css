@@ -1,0 +1,2 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+:root{--black:#0b0b0d;--cream:#f6f1e8;--purple:#6017dd;--blue:#273db8;--mint:#08ddc3;--red:#f2351c;--yellow:#d9f009;--sky:#91b6fa}*{box-sizing:border-box}body{margin:0;background:var(--cream);font-family:'Space Grotesk',sans-serif;color:var(--black)}a{color:inherit;text-decoration:none}
