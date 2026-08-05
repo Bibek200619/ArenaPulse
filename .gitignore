@@ -1,6 +1,15 @@
 node_modules/
 dist/
+.next/
+out/
 .DS_Store
 *.log
-.env
+.env*
+!.env.example
 graphify-out/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+supabase/.temp/
+supabase/.branches/
