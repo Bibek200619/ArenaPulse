@@ -1,0 +1,1 @@
+-- Identity milestone has no fake accounts. Sports seeds are introduced in Phase 2.

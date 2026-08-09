@@ -1,4 +1,3 @@
-import { startGoogleSignIn } from '@/features/auth/actions';
 import { AuthForm } from '@/features/auth/auth-form';
 import { isAuthConfigured } from '@/lib/supabase/config';
 
@@ -16,12 +15,7 @@ export default async function Page({
           That link is invalid or expired. Please request a new one.
         </p>
       ) : null}
-      <AuthForm mode="register" configured={isAuthConfigured()} />
-      {isAuthConfigured() && process.env.GOOGLE_OAUTH_ENABLED === 'true' ? (
-        <form action={startGoogleSignIn} className="auth-panel oauth-form">
-          <button className="button secondary">Continue with Google</button>
-        </form>
-      ) : null}
+      <AuthForm mode="recover" configured={isAuthConfigured()} />
     </>
   );
 }

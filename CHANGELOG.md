@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+### Added — Identity milestone
+
+- Supabase SSR registration/confirmation, login/logout, password recovery and fixed callbacks.
+- Unique profiles, private visibility, sport interests, atomic onboarding and editable preferences.
+- Local stack with isolated ports, generated migration/types, adversarial RLS tests and actual email/browser journeys.
+- Google OAuth entry behind an off-by-default configuration flag.
+
+### Fixed — Identity milestone
+
+- Explicit replay-safe grants preserve column restrictions and private preferences.
+- Accessible field labels and non-sensitive form input retention on errors.
+
+### Security — Identity milestone
+
+- Verified server identity, uncached account routes, ownership RLS, bounded server validation, fixed callback destinations and secret-free local tooling.
+
+## 0.1.0 — Foundation
+
 ### Added
 
 - ArenaPulse roadmap with sequential acceptance criteria and truthful milestone tracking.
