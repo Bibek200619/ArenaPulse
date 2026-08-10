@@ -20,10 +20,10 @@ test('home is responsive, accessible, honest and navigable', async ({
     .analyze();
   expect(audit.violations).toEqual([]);
   await page.getByRole('link', { name: 'Explore matches' }).click();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'Your matchday starts here.',
-  );
-  await page.getByRole('link', { name: 'Back to home' }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Matches');
+  await page
+    .getByRole('link', { name: 'ArenaPulse home', exact: true })
+    .click();
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
     'Sport is better',
   );
