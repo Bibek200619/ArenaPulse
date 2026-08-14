@@ -107,6 +107,7 @@ export type MatchQuery = {
   competitionId?: string;
   state?: MatchState;
   date?: string;
+  startsAfter?: string;
   offset: number;
   limit: number;
 };
