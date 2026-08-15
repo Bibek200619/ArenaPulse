@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Added — Sports persistence
+
+- Normalized catalog/match tables, sport-consistent relationships and provenance.
+- Owner-private team/player/competition follows with explicit grants and RLS.
+- Deterministic SQL seed generation, drift check and real database permission/constraint tests.
+
+### Security — Sports persistence
+
+- All catalog client writes denied; follow ownership/timestamps cannot be reassigned.
+
 ### Added — Match experience
 
 - Shareable sport/competition/date/state filters, stable pagination, empty/invalid states and match detail navigation.
