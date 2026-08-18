@@ -1081,3 +1081,138 @@ a.fixture-row:hover {
     font-size: 12px;
   }
 }
+
+.entity-list {
+  list-style: none;
+  padding: 0;
+  margin: 32px 0;
+}
+.entity-list li {
+  border-bottom: 1px solid var(--line);
+}
+.entity-list a {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 0;
+}
+.entity-list a > div {
+  flex: 1;
+}
+.entity-list h2 {
+  font-size: 23px;
+}
+.entity-list p {
+  font-size: 13px;
+  margin-top: 8px;
+}
+.entity-list a:hover h2,
+.entity-links a:hover {
+  color: var(--accent);
+}
+.entity-badge {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--accent);
+  background: var(--surface);
+  font-size: 16px;
+  font-weight: bold;
+}
+.entity-badge.large {
+  width: 80px;
+  height: 80px;
+  font-size: 22px;
+}
+.entity-heading {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin: 32px 0;
+}
+.entity-heading h1 {
+  font-size: clamp(30px, 5vw, 54px);
+  margin-top: 12px;
+}
+.entity-detail > .data-notice {
+  margin-top: 28px;
+}
+.entity-links {
+  list-style: none;
+  padding: 0;
+}
+.entity-links a {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.entity-season {
+  margin-top: 25px;
+}
+.follow-form .form-error {
+  margin-top: 10px;
+  max-width: 320px;
+}
+@media (max-width: 760px) {
+  .entity-list h2 {
+    font-size: 20px;
+  }
+  .entity-list a {
+    gap: 16px;
+  }
+  .entity-heading {
+    align-items: start;
+    gap: 16px;
+  }
+  .entity-badge.large {
+    width: 60px;
+    height: 60px;
+    font-size: 16px;
+  }
+}
+
+.preference-list {
+  list-style: none;
+  padding: 0;
+}
+.preference-list > li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.preference-list > li > a {
+  flex: 1;
+}
+.preference-list > li > a:hover {
+  color: var(--accent);
+}
+.preference-list .follow-form {
+  flex-shrink: 0;
+}
+@media (max-width: 760px) {
+  .preference-list > li {
+    align-items: start;
+    gap: 12px;
+  }
+  .preference-list {
+    font-size: 13px;
+  }
+}
+
+.preference-sport {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 5px;
+}
