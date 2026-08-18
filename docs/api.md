@@ -16,3 +16,5 @@ All sports values are fictional demo data until a licensed provider is configure
 ## Match details
 
 GET `/api/matches/{id}` returns `{data: Match, provenance}` with public max-age=15. IDs must be UUIDs (400 when malformed, 404 when absent). Match includes participants, events, statistics and available lineups. `/api/matches` also supports `startsAfter` (ISO UTC datetime) for inclusive upcoming cutoffs; combine with state=scheduled. Scores remain sport-specific strings or null.
+
+Entity reads: `/api/matches` accepts optional UUID `teamId` and `playerId`; team filters use actual participants, player filters use individual participants or available lineup/event references. Follow changes use validated server actions (`kind`, `id`, `operation`) with verified identity and database RLS, never a browser-supplied owner ID.
