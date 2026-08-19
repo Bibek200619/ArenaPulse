@@ -29,6 +29,7 @@ test('filter a sport, open match details and return to results', async ({
     page.getByRole('heading', { name: 'Lineups', exact: true }),
   ).toBeVisible();
   await expect(page.getByText(/illustrative subsets/)).toBeVisible();
+  await expect(page).toHaveTitle('Match centre | ArenaPulse');
   expect(
     (
       await new AxeBuilder({ page })

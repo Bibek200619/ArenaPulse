@@ -141,6 +141,7 @@ export async function saveProfile(
           : 'Unable to save your profile. Please try again.',
     };
   revalidatePath('/profile');
+  if (form.get('onboarding') === 'true') redirect('/onboarding/sports');
   redirect('/profile');
 }
 

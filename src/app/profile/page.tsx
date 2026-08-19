@@ -40,6 +40,11 @@ export default async function ProfilePage() {
           Explore matches →
         </Link>
       </div>
+      <div className="actions">
+        <Link className="text-link" href="/settings/sports">
+          Choose favorite teams, competitions and players →
+        </Link>
+      </div>
       <form action={logout}>
         <button className="button secondary">Sign out</button>
       </form>
