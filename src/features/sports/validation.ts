@@ -15,6 +15,8 @@ export const matchQuerySchema = z
     state: z.enum(states).optional(),
     date: z.iso.date().optional(),
     startsAfter: z.iso.datetime().optional(),
+    teamId: z.uuid().optional(),
+    playerId: z.uuid().optional(),
     offset: z.coerce.number().int().min(0).max(10_000).default(0),
     limit: z.coerce.number().int().min(1).max(50).default(20),
   })

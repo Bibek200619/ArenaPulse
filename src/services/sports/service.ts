@@ -53,6 +53,18 @@ export class SportsService {
       () => this.provider.getFixtures(query),
     );
   }
+  async getTeam(id: string) {
+    if (!entityIdSchema.safeParse(id).success)
+      throw new AppError('NOT_FOUND', 'Team not found.');
+    return this.read(`team:${id}`, 300_000, () => this.provider.getTeam(id));
+  }
+  async getPlayer(id: string) {
+    if (!entityIdSchema.safeParse(id).success)
+      throw new AppError('NOT_FOUND', 'Player not found.');
+    return this.read(`player:${id}`, 300_000, () =>
+      this.provider.getPlayer(id),
+    );
+  }
   getStandings(competitionId: string) {
     return this.read(`standings:${competitionId}`, 60_000, () =>
       this.provider.getStandings(competitionId),
