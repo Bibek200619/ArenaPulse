@@ -19,4 +19,8 @@ Public pages must boot without credentials. Paired Supabase configuration is val
 
 See plan.md for entity groups, security boundaries, versioning, failure behavior and per-phase acceptance.
 
-Phase 4 catalog persistence: PostgreSQL stores normalized sports/matches and owner-private follows. Deterministic seed SQL is generated from the typed provider catalog; CI prevents drift. Public sports display still uses the provider interface. Follow writes will target PostgreSQL through verified server actions; no browser catalog writes are granted.
+Phase 4 catalog persistence: PostgreSQL stores normalized sports/matches and owner-private follows. Deterministic seed SQL is generated from the typed provider catalog; CI prevents drift. Public sports display still uses the provider interface. Follow writes target PostgreSQL through verified server actions; no browser catalog writes are granted.
+
+## Decision 002 — social privacy and write budgets
+
+Phase 5 social activity inherits profile visibility dynamically through RLS. Following is a feed preference, not permission to read a private profile. Parent visibility is required to create an interaction; authors can always remove their own interactions. Atomic private counters enforce per-account write budgets independently of deleted content. The only aggregate privilege boundary exposes authenticated sports follower totals without disclosing individual private favorites. See docs/database.md for the narrowly scoped SECURITY DEFINER helpers and grants.
