@@ -352,4 +352,23 @@ const TEAM_STATS = {
   mostPossession:[{team:"Spain", val:"64% avg"},{team:"Argentina", val:"58% avg"},{team:"Germany", val:"57% avg"}],
 };
 
-export { TEAMS, GROUPS, FLAGS, NAME_TO_ID, GOLDEN_BOOT, ASSISTS, TEAM_STATS };
+const VENUES = [
+  { city: "Vancouver", stadium: "BC Place", capacity: "54,500", country: "Canada", flag: "🇨🇦" },
+  { city: "Toronto", stadium: "BMO Field", capacity: "45,000", country: "Canada", flag: "🇨🇦" },
+  { city: "Mexico City", stadium: "Estadio Azteca", capacity: "83,000", country: "Mexico", flag: "🇲🇽" },
+  { city: "Guadalajara", stadium: "Estadio Akron", capacity: "48,000", country: "Mexico", flag: "🇲🇽" },
+  { city: "Monterrey", stadium: "Estadio BBVA", capacity: "53,500", country: "Mexico", flag: "🇲🇽" },
+  { city: "Atlanta", stadium: "Mercedes-Benz Stadium", capacity: "75,000", country: "USA", flag: "🇺🇸" },
+  { city: "Boston", stadium: "Gillette Stadium", capacity: "65,000", country: "USA", flag: "🇺🇸" },
+  { city: "Dallas", stadium: "AT&T Stadium", capacity: "94,000", country: "USA", flag: "🇺🇸" },
+  { city: "Houston", stadium: "NRG Stadium", capacity: "72,000", country: "USA", flag: "🇺🇸" },
+  { city: "Kansas City", stadium: "Arrowhead Stadium", capacity: "73,000", country: "USA", flag: "🇺🇸" },
+  { city: "Los Angeles", stadium: "SoFi Stadium", capacity: "70,000", country: "USA", flag: "🇺🇸" },
+  { city: "Miami", stadium: "Hard Rock Stadium", capacity: "65,000", country: "USA", flag: "🇺🇸" },
+  { city: "New York/New Jersey", stadium: "MetLife Stadium", capacity: "82,500", country: "USA", flag: "🇺🇸" },
+  { city: "Philadelphia", stadium: "Lincoln Financial Field", capacity: "69,000", country: "USA", flag: "🇺🇸" },
+  { city: "San Francisco Bay Area", stadium: "Levi's Stadium", capacity: "71,000", country: "USA", flag: "🇺🇸" },
+  { city: "Seattle", stadium: "Lumen Field", capacity: "69,000", country: "USA", flag: "🇺🇸" }
+];
+
+export { TEAMS, GROUPS, FLAGS, NAME_TO_ID, GOLDEN_BOOT, ASSISTS, TEAM_STATS, VENUES };
