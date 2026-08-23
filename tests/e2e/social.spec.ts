@@ -39,7 +39,7 @@ test('visitor can explore the crowd with honest account availability', async ({
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
     'This one is out of play.',
   );
-  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+  await expect(page.locator('head meta[name="robots"]')).toHaveAttribute(
     'content',
     'noindex',
   );

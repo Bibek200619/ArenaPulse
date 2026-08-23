@@ -33,7 +33,7 @@ async function unavailable(page: Page, url: string, hiddenText: string) {
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
     'This one is out of play.',
   );
-  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+  await expect(page.locator('head meta[name="robots"]')).toHaveAttribute(
     'content',
     'noindex',
   );
