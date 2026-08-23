@@ -45,6 +45,14 @@ export default async function ProfilePage() {
           Choose favorite teams, competitions and players →
         </Link>
       </div>
+      <div className="actions">
+        <Link className="text-link" href="/feed">
+          Join the activity feed →
+        </Link>
+        <Link className="text-link" href={`/users/${profile.username}`}>
+          View your social profile →
+        </Link>
+      </div>
       <form action={logout}>
         <button className="button secondary">Sign out</button>
       </form>
