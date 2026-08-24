@@ -34,4 +34,4 @@ Public readers see public-profile authors only. A private profile's activity rem
 
 Two deliberate SECURITY DEFINER boundaries live in the unexposed private schema with fixed empty search paths: the budget trigger writes an inaccessible counter; the sports follower-count helper reads protected follow tables but returns only a bigint aggregate after checking authentication. Its public wrapper is SECURITY INVOKER, executable only by authenticated users. No follower identity list is exposed. Aggregate counts include private picks, as documented in the product privacy contract. Returned social interaction counts, in contrast, count only rows visible to the current reader under RLS.
 
-See [social.md](social.md) for the next application milestone. There is no social UI or notification delivery in this schema PR.
+See [social.md](social.md) for the next application milestone. The subsequent social application milestone connects the feed, profiles and interaction controls. Notification delivery remains deferred.
