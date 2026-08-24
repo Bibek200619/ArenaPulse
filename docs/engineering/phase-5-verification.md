@@ -65,3 +65,5 @@ Expected: safe-error test verifies the structured log envelope.
 Actual: a spy was created but the intended assertion was missing, producing an unused-variable warning.
 Root cause: an earlier edit added the spy without the matching assertion.
 Fix: assert the exact safe structured log object; this also prevents raw exception/credential logging regressions. Rerun unit tests, lint and the final gates.
+
+The malformed-ID public route can hoist both noindex tags into head, so even head-scoping is insufficient. Replace singleton metadata assertions with one shared semantic check: at least one robots tag must exist in head and every such tag must be noindex. This covers both streaming paths without assuming framework tag cardinality or accepting contradictory indexing directives.

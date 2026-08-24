@@ -1,3 +1,4 @@
+import { expectNoIndex } from '../helpers/browser';
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 test('visitor can explore the crowd with honest account availability', async ({
@@ -41,9 +42,6 @@ test('visitor can explore the crowd with honest account availability', async ({
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
     'This one is out of play.',
   );
-  await expect(page.locator('head meta[name="robots"]')).toHaveAttribute(
-    'content',
-    'noindex',
-  );
+  await expectNoIndex(page);
   expect(errors).toEqual([]);
 });
