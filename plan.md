@@ -89,7 +89,7 @@ Preserve development integration branch and existing origin. First commit only p
 | 2     | Generic sports/provider/seed/cache with integration and outage coverage                                       | COMPLETE    |
 | 3     | Match filters/list/detail/timeline/available stats; navigation E2E                                            | COMPLETE    |
 | 4     | Team/player/competition pages, standings and secured follows                                                  | COMPLETE    |
-| 5     | Profiles/follows/posts/comments/reactions/feed with ownership tests                                           | IN_PROGRESS |
+| 5     | Profiles/follows/posts/comments/reactions/feed with ownership tests                                           | COMPLETE    |
 | 6     | Public/private communities, roles/membership/moderation and adversarial RLS tests                             | NOT_STARTED |
 | 7     | Two-user realtime match discussion/replies/reactions/moderation                                               | NOT_STARTED |
 | 8     | Rules/gameweeks/squad builder; persist valid roster, budget, captain and deadline enforcement                 | NOT_STARTED |
@@ -191,11 +191,11 @@ Next Phase: Phase 5 social profiles, user following, posts/comments/reactions an
 ## Phase 5 — social foundation
 
 Phase: 5
-Status: IN_PROGRESS
-Completed: social schema, profile-derived RLS, visible same-post replies, owner deletion, atomic write budgets, authenticated sports follower aggregates and generated types. Application screens/actions remain next.
-Tests: schema milestone PASS — 41 real database tests after clean replay, 51 unit/component, 9 API integration, 4 real auth/follow E2E; types/lint/build/format and seed drift pass; security advisor clear.
-Known Issues: private profiles remain invisible to outsiders; following does not bypass privacy.
+Status: COMPLETE
+Completed: social schema/RLS/write budgets, latest/following feeds, fan discovery/profiles, verified posts/comments/replies/likes/user follows, owner deletion, authenticated sports follower totals, safe errors/draft retention, notification integration design and desktop/mobile visual review. Schema PR #20 merged with green CI.
+Tests: PASS — 58 unit/component, 9 API integration, 42 actual database tests, 16 public E2E and 6 real auth/social E2E; type-check/lint/build/format pass; security advisor clear and production dependency audit zero vulnerabilities. Streamed-page/locator/formatting failures documented and corrected.
+Known Issues: no hosted deployment; global feed is chronological, not realtime. Post editing has database support but no editor UI. Private profiles remain invisible to outsiders; following does not bypass privacy.
 Deferred: community context/roles in Phase 6, match discussion/realtime in Phase 7, notification delivery in Phase 10.
-Next Phase: verify social schema and two-user journeys before communities.
+Next Phase: Phase 6 community creation/discovery, public/private membership and moderation (#21).
 
 Social permission decision: posts/comments/reactions require authenticated profiles. Public discovery shows only public-profile authors; private-profile activity remains owner-only. Changing profile privacy hides prior activity from outsiders. User follows do not grant private-profile access. Authors retain access to delete their own interactions even if a parent post becomes private; this does not expose the parent content. Replies require a visible parent in the same post. Social writes are bounded by atomic per-user database budgets that survive content deletion and serialize concurrent writes. Sports follower totals expose only an aggregate to authenticated users; private pick identities remain protected.

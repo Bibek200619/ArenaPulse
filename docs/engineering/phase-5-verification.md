@@ -30,11 +30,11 @@ Fix: target the semantic summary element for the disclosure, retaining the expli
 
 ## Application verification
 
-- [ ] rerun two-user browser flow
-- [ ] related public browser flows
+- [x] rerun two-user browser flow
+- [x] related public browser flows
 - [x] following-feed join against actual Supabase: 42 DB tests passed
-- [ ] final unit/API integration
-- [ ] final type-check/lint/build/format
+- [x] final unit/API integration
+- [x] final type-check/lint/build/format
 
 ## Failure: streamed not-found transport status
 
@@ -67,3 +67,5 @@ Root cause: an earlier edit added the spy without the matching assertion.
 Fix: assert the exact safe structured log object; this also prevents raw exception/credential logging regressions. Rerun unit tests, lint and the final gates.
 
 The malformed-ID public route can hoist both noindex tags into head, so even head-scoping is insufficient. Replace singleton metadata assertions with one shared semantic check: at least one robots tag must exist in head and every such tag must be noindex. This covers both streaming paths without assuming framework tag cardinality or accepting contradictory indexing directives.
+
+Final application milestone: 58 unit/component + 9 API integration, 42 actual DB tests, 16 public desktop/mobile E2E and 6 real auth/social E2E pass. Type-check, lint, final production build and formatting pass; security advisor clear; production audit zero vulnerabilities. Reviewed desktop/mobile screenshots and navigation have no overflow/client runtime errors. Two server-side stream-closed messages appeared during one navigation run without failing the terminal page or client assertions; no raw private text was returned. Hosted deployment is not verified or claimed.
