@@ -4,11 +4,11 @@ The initial migration is 20260909091916_identity_schema.sql, generated from the 
 
 profiles references auth.users, has unique lowercase usernames, bounded display/bio/country fields, private visibility, timestamps and an avatar URL reserved for the storage milestone. Public readers see only non-private rows; authenticated owners see and modify their own. Column grants restrict writes to profile fields and prevent changes to identity or created_at. There is no browser delete grant.
 
-profile_preferences references profiles and is owner-only under RLS. It stores bounded supported sport interests and onboarding state. save_profile is security invoker, derives auth.uid(), and atomically upserts both tables. Constraint failure rolls back both writes. Timestamp triggers have a fixed empty search path and live in an unexposed private schema. No security-definer functions or auth metadata roles are used.
+profile_preferences references profiles and is owner-only under RLS. It stores bounded supported sport interests and onboarding state. save_profile is security invoker, derives auth.uid(), and atomically upserts both tables. Constraint failure rolls back both writes. Timestamp triggers have a fixed empty search path and live in an unexposed private schema. The identity layer uses no security-definer functions or auth metadata roles.
 
 Run npm run test:db against isolated local port 55431. The test runner uses local admin credentials only to provision/delete test users; all assertions use anonymous/user clients. It refuses a hosted target. Run npx supabase db reset --local --yes only on this disposable ArenaPulse development stack to verify replay, then run tests again. Never use a hosted database for destructive tests.
 
-Future relational sports, communities, fantasy, notifications and prediction schemas are tracked in plan.md. They do not exist yet.
+Community, fantasy, notification and prediction schemas remain tracked in plan.md for later phases.
 
 ## Sports catalog and follows (Phase 4 schema milestone)
 
@@ -23,3 +23,15 @@ The generated migration receives a reviewed final ACL baseline because pg-delta'
 The entity milestone connects these tables through verified follow actions and optional onboarding/preferences UI; see entities.md.
 
 Security reference: [Supabase RLS and grants](https://supabase.com/docs/guides/database/postgres/row-level-security). The [April 2026 API exposure change](https://supabase.com/changelog/45329-breaking-change-tables-not-exposed-to-data-and-graphql-api-automatically) is handled through explicit grants.
+
+## Social persistence (Phase 5 schema milestone)
+
+Migration `20260911203544_social_foundation.sql` adds posts, comments, one like per user/post, and user follows. Every table has RLS, explicit grants, foreign keys and access-path indexes. Generated IDs/timestamps and ownership columns cannot be edited. Posts support owner edits; comments/reactions support owner deletion. Deleting a post removes dependent interactions; deleting a comment removes its reply subtree.
+
+Public readers see public-profile authors only. A private profile's activity remains owner-only, and changing privacy immediately hides previous activity without rewriting each post. Following does not bypass privacy. Comment/reaction owners retain access to remove their own interactions when the parent post becomes private, without obtaining access to that post. New interactions require a visible post. A security-invoker trigger checks reply visibility and thread identity; a composite foreign key independently prevents cross-post replies.
+
+`private.social_write_limits` stores atomic per-user/minute budgets: 10 post creates/edits, 30 comments, 60 reactions and 30 follows. The trigger derives auth.uid(), rejects forged actors, and serializes concurrent increments through a primary-key upsert. Budgets survive deleting content and reset after a minute; rejected transactions roll back increments. Clients cannot access this table or invoke trigger helpers. This bounds successful writes per account, not all API traffic; deployment-level request throttling and account-abuse controls remain necessary before release.
+
+Two deliberate SECURITY DEFINER boundaries live in the unexposed private schema with fixed empty search paths: the budget trigger writes an inaccessible counter; the sports follower-count helper reads protected follow tables but returns only a bigint aggregate after checking authentication. Its public wrapper is SECURITY INVOKER, executable only by authenticated users. No follower identity list is exposed. Aggregate counts include private picks, as documented in the product privacy contract. Returned social interaction counts, in contrast, count only rows visible to the current reader under RLS.
+
+See [social.md](social.md) for the next application milestone. There is no social UI or notification delivery in this schema PR.
