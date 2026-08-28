@@ -28,6 +28,10 @@ export async function proxy(request: NextRequest) {
 }
 export const config = {
   matcher: [
+    '/feed',
+    '/people',
+    '/posts/:path*',
+    '/users/:path*',
     '/login',
     '/register',
     '/forgot-password',
