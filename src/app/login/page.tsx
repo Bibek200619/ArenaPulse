@@ -16,7 +16,7 @@ export default async function Page({
           That link is invalid or expired. Please request a new one.
         </p>
       ) : null}
-      <AuthForm mode="register" configured={isAuthConfigured()} />
+      <AuthForm mode="login" configured={isAuthConfigured()} />
       {isAuthConfigured() && process.env.GOOGLE_OAUTH_ENABLED === 'true' ? (
         <form action={startGoogleSignIn} className="auth-panel oauth-form">
           <button className="button secondary">Continue with Google</button>
