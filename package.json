@@ -21,7 +21,9 @@
     "db:start": "node scripts/start-database.mjs",
     "db:env": "node scripts/local-env.mjs",
     "test:db": "node scripts/test-database.mjs",
-    "test:e2e:auth": "playwright test --config playwright.auth.config.ts"
+    "test:e2e:auth": "playwright test --config playwright.auth.config.ts",
+    "db:seed:generate": "node --experimental-strip-types scripts/generate-sports-seed.mjs",
+    "db:seed:check": "node --experimental-strip-types scripts/generate-sports-seed.mjs --check"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
