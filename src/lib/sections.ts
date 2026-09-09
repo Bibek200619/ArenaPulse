@@ -1,7 +1,4 @@
-export const dynamicParams = false;
-import { notFound } from 'next/navigation';
-import { EmptyState } from '@/components/ui/empty-state';
-const sections: Record<string, [string, string]> = {
+export const sections: Record<string, [string, string]> = {
   matches: [
     'Your matchday starts here.',
     'Match browsing is being built. No live data provider is connected yet.',
@@ -43,24 +40,3 @@ const sections: Record<string, [string, string]> = {
     'Account registration is not available in this foundation preview.',
   ],
 };
-export function generateStaticParams() {
-  return Object.keys(sections).map((section) => ({ section }));
-}
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ section: string }>;
-}) {
-  const { section } = await params;
-  return { title: sections[section]?.[0] ?? 'Page not found' };
-}
-export default async function SectionPage({
-  params,
-}: {
-  params: Promise<{ section: string }>;
-}) {
-  const { section } = await params;
-  if (!Object.hasOwn(sections, section)) notFound();
-  const [title, description] = sections[section];
-  return <EmptyState title={title} description={description} />;
-}
