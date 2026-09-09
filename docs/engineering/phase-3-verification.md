@@ -17,9 +17,11 @@ Wrapping select labels include all option text for Playwright label-text queries
 
 ## Verification
 
-- [ ] failing test rerun
-- [ ] related tests
-- [ ] integration tests
-- [ ] type-check
-- [ ] lint
-- [ ] build
+- [x] failing test rerun
+- [x] related tests
+- [x] integration tests
+- [x] type-check
+- [x] lint
+- [x] build
+
+Final verification: 47 unit/component tests, 9 route integration tests, all 12 desktop/mobile E2E, type-check, lint and production build pass. Desktop/mobile match screenshots reviewed and browser errors empty. Sports PR #7 quality/identity CI green.

@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Added — Match experience
+
+- Shareable sport/competition/date/state filters, stable pagination, empty/invalid states and match detail navigation.
+- Participant scores, venue/time, available timeline/statistics/lineups and standings context.
+- Validated match detail API, loading/retry boundaries and visible-tab live refresh architecture.
+- UTC filter, polling and desktop/mobile journey tests.
+
+### Changed — Match experience
+
+- Demo snapshots explicitly avoid polling; partial demo events/lineups are labeled.
+
 ### Added — Sports foundation
 
 - Typed multi-sport provider contract and deterministic fictional football/cricket/basketball/tennis catalog.
