@@ -18,3 +18,5 @@ The baseline is a three-file Vite/React football demo with client-side data fetc
 Public pages must boot without credentials. Paired Supabase configuration is validated when supplied. Health is process liveness only and does not imply database/provider readiness. User-specific responses will be uncached. All feature placeholders explicitly state availability.
 
 See plan.md for entity groups, security boundaries, versioning, failure behavior and per-phase acceptance.
+
+Phase 4 catalog persistence: PostgreSQL stores normalized sports/matches and owner-private follows. Deterministic seed SQL is generated from the typed provider catalog; CI prevents drift. Public sports display still uses the provider interface. Follow writes will target PostgreSQL through verified server actions; no browser catalog writes are granted.

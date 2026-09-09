@@ -88,7 +88,7 @@ Preserve development integration branch and existing origin. First commit only p
 | 1     | Supabase migrations/RLS, register/login/logout/recovery, profiles/onboarding; full flow tested                | COMPLETE    |
 | 2     | Generic sports/provider/seed/cache with integration and outage coverage                                       | COMPLETE    |
 | 3     | Match filters/list/detail/timeline/available stats; navigation E2E                                            | COMPLETE    |
-| 4     | Team/player/competition pages, standings and secured follows                                                  | NOT_STARTED |
+| 4     | Team/player/competition pages, standings and secured follows                                                  | IN_PROGRESS |
 | 5     | Profiles/follows/posts/comments/reactions/feed with ownership tests                                           | NOT_STARTED |
 | 6     | Public/private communities, roles/membership/moderation and adversarial RLS tests                             | NOT_STARTED |
 | 7     | Two-user realtime match discussion/replies/reactions/moderation                                               | NOT_STARTED |
@@ -177,3 +177,13 @@ Tests: PASS — 47 unit/component, 9 route integration, 12 desktop/mobile E2E; t
 Known Issues: fixed demo snapshot; Today uses the real current UTC date and may be empty.
 Deferred: authenticated discussions in Phase 7 and fantasy associations in Phase 8.
 Next Phase: Phase 4 catalog persistence, entity pages and follows.
+
+## Phase 4 — sports entities and follows
+
+Phase: 4
+Status: IN_PROGRESS
+Completed: normalized catalog and owner-private follows, deterministic SQL seed generation, reviewed grants, generated types and clean replay. Entity UI remains pending.
+Tests: schema milestone PASS — 26 real database tests after replay, 47 unit/component and 9 API integration, types/lint/build/formatting, security advisor and seed drift check.
+Known Issues: catalog persistence must be seeded explicitly for demo follows; no external importer configured.
+Deferred: related communities and fantasy associations depend on later phases.
+Next Phase: finish entity pages, preferences and authenticated follow journeys before Phase 5.
