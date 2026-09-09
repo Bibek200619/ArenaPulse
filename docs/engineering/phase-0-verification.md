@@ -18,11 +18,11 @@ The initial PostCSS configuration exported an anonymous object, contrary to the 
 
 ## Verification
 
-- [ ] failing lint rerun
-- [ ] unit and integration tests
-- [ ] type-check
-- [ ] production build
-- [ ] desktop/mobile E2E and visual review
+- [x] failing lint rerun
+- [x] unit and integration tests
+- [x] type-check
+- [x] production build
+- [x] desktop/mobile E2E and visual review
 
 ## Failure 2
 
@@ -43,3 +43,24 @@ Verification: rerun build and both browser projects, then integration/type/lint 
 ## Follow-up from Failure 3
 
 The dynamicParams fix passed HTTP assertions but Next.js logged Internal: NoFallbackError for unknown routes. Replaced the temporary catch-all with explicit route files, removing runtime fallback routing entirely. The shared copy stays in lib/sections.ts. Rerun all gates after this change.
+
+## Failure 4
+
+Test: type-check after replacing dynamic routes.
+Expected: generated validators reflect current routes.
+Actual: .next/dev/types retained a validator importing the removed catch-all.
+Root cause: the running dev server retained generated route types during route restructuring.
+Fix: stop the task dev server and clear only generated .next/dev/types; rerun typegen and all gates. No source or tests are removed.
+
+## Environment failure 5
+
+Test: build inside restricted sandbox.
+Expected: CSS compilation. Actual: Turbopack worker could not bind a local port (Operation not permitted).
+Root cause: execution sandbox, not application code.
+Fix: rerun the unchanged full check with approved local-process permissions.
+
+The first approved rerun reproduced the cached CSS worker panic. Clear the generated .next cache and rebuild directly with approved permissions; no source changes.
+
+## Final result (2026-09-09)
+
+PASS: 10 unit, 1 real health-route integration, strict type-check, zero-warning lint, production build, 6 desktop/mobile E2E, formatting and npm audit (0 vulnerabilities). Unknown-route 404 is correct with no NoFallbackError log. Development browser screenshot review completed at desktop and 390px mobile; no runtime errors/overlay. Screenshots in docs/screenshots. No auth/database features claimed tested in this milestone.
