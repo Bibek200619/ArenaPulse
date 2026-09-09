@@ -39,3 +39,7 @@ Expected: 404. Actual: 200 with streamed not-found UI.
 Root cause: the dynamic placeholder route accepts arbitrary params and begins streaming before notFound executes.
 Fix: set dynamicParams=false because the foundation has a finite, statically generated set of sections. Keep the 404 assertion unchanged.
 Verification: rerun build and both browser projects, then integration/type/lint gates.
+
+## Follow-up from Failure 3
+
+The dynamicParams fix passed HTTP assertions but Next.js logged Internal: NoFallbackError for unknown routes. Replaced the temporary catch-all with explicit route files, removing runtime fallback routing entirely. The shared copy stays in lib/sections.ts. Rerun all gates after this change.
