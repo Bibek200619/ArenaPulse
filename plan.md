@@ -85,7 +85,7 @@ Preserve development integration branch and existing origin. First commit only p
 | Phase | Deliverable / acceptance                                                                                      | Status      |
 | ----- | ------------------------------------------------------------------------------------------------------------- | ----------- |
 | 0     | Plan, preserved legacy, Next/TS shell, env validation/docs/CI and green lint/types/unit/integration/build/E2E | COMPLETE    |
-| 1     | Supabase migrations/RLS, register/login/logout/recovery, profiles/onboarding; full flow tested                | NOT_STARTED |
+| 1     | Supabase migrations/RLS, register/login/logout/recovery, profiles/onboarding; full flow tested                | COMPLETE    |
 | 2     | Generic sports/provider/seed/cache with integration and outage coverage                                       | NOT_STARTED |
 | 3     | Match filters/list/detail/timeline/available stats; navigation E2E                                            | NOT_STARTED |
 | 4     | Team/player/competition pages, standings and secured follows                                                  | NOT_STARTED |
@@ -147,3 +147,13 @@ Tests: 10 unit and 1 integration passed; types/lint/build passed; all 6 final de
 Known Issues: source-free .next cache required clearing after sandbox worker panic; no backend configured. GitHub access verified, tracking issue #1 created.
 Deferred: production features remain phases 1–13; custom ML intentionally unimplemented.
 Next Phase: publish foundation PR then Phase 1 database/authentication.
+
+## Phase 1 — identity milestone
+
+Phase: 1
+Status: COMPLETE
+Completed: verified SSR auth, registration/confirmation, login/logout, recovery/password replacement, profiles/private preferences, atomic onboarding, edit/privacy controls, generated migration/types, fixed least-privilege grants after clean replay, optional Google OAuth entry, CI database/browser job.
+Tests: PASS — 20 unit/component, 1 route integration, 8 real local Supabase identity/RLS tests, 6 public desktop/mobile E2E, 4 real auth desktop/mobile E2E, type-check, lint, build, formatting; security advisor clear and npm audit zero vulnerabilities. Migration replay verified. Foundation PR #2 CI green.
+Known Issues: hosted SMTP/OAuth/deployment not configured or claimed tested. Local auth port 55431 and inbox 55434. Google OAuth entry remains off. Team/competition/player onboarding preferences depend on the Phase 2 sports catalog.
+Deferred: sports/social/community/fantasy/notification milestones and final custom ML model.
+Next Phase: publish identity PR linked to issue #3, then Phase 2 sports foundation.
