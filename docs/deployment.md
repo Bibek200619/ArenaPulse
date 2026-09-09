@@ -1,6 +1,6 @@
 # Deployment
 
-Use separate Supabase projects and environment values for test/staging/production. No hosted deployment has been performed for this milestone.
+Use separate Supabase projects and environment values for test/staging/production. No hosted deployment has been performed. Local identity flows are verified; hosted SMTP/OAuth and deployment remain separate configuration.
 
 ## Node hosting
 
@@ -19,3 +19,5 @@ Use Node 22. Run npm ci then npm run check and npm run format:check. Start the b
 The Phase 0 public shell may deploy without Supabase. That does not enable auth. Before Phase 1 deployment, create a dedicated project, apply reviewed migrations, configure callback origins and email settings, and run real auth/RLS tests. Never point tests at production. Before release configure branch protection requiring Quality checks, backups, log retention and migration rollback/forward-fix procedure. These remote settings are not configured by adding a workflow file.
 
 GET /api/health is liveness only; it returns no configuration values. Verify the deployed URL, response status and critical browser journeys after deployment. Do not claim readiness from a successful build alone.
+
+For identity, apply the reviewed identity_schema migration, follow docs/auth.md for confirmation/recovery templates and exact redirect origins, and configure GOOGLE_OAUTH_ENABLED only after the provider is enabled. Never use local test secret keys in production. Require both quality and identity CI jobs before integration.
