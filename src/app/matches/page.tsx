@@ -1,21 +1,38 @@
+import Link from 'next/link';
 import { sportsService } from '@/services/sports/service';
-import { EmptyState } from '@/components/ui/empty-state';
-
+import {
+  matchFiltersSchema,
+  matchesHref,
+  toMatchQuery,
+} from '@/features/matches/filters';
+import { MatchFilters } from '@/components/matches/match-filters';
+import { FixtureRow } from '@/components/matches/fixture-row';
+import { LiveRefresh } from '@/components/matches/live-refresh';
 export const metadata = { title: 'Matches' };
-export const revalidate = 30;
-export default async function MatchesPage() {
-  const result = await Promise.all([
-    sportsService.getCatalog(),
-    sportsService.getFixtures({ offset: 0, limit: 20 }),
-  ]).catch(() => null);
-  if (!result)
+export default async function MatchesPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const parsed = matchFiltersSchema.safeParse(await searchParams);
+  if (!parsed.success)
     return (
-      <EmptyState
-        title="Matches unavailable"
-        description="Sports data could not be loaded. Please try again shortly."
-      />
+      <section className="empty-state">
+        <h1>Invalid match filters</h1>
+        <p>Choose valid filters and a page number between 1 and 1000.</p>
+        <Link className="button" href="/matches">
+          Clear filters
+        </Link>
+      </section>
     );
-  const [catalog, fixtures] = result;
+  const filters = parsed.data;
+  const [catalog, fixtures] = await Promise.all([
+    sportsService.getCatalog(),
+    sportsService.getFixtures(toMatchQuery(filters, new Date())),
+  ]);
+  const competitions = new Map(
+    catalog.data.competitions.map((c) => [c.id, c.name]),
+  );
   return (
     <section className="section sports-page">
       <div className="section-heading">
@@ -23,64 +40,82 @@ export default async function MatchesPage() {
           <p className="eyebrow accent">THE MATCHDAY DESK</p>
           <h1>Matches</h1>
         </div>
-        <p>Every sport. One place to start.</p>
+        <LiveRefresh
+          enabled={
+            !fixtures.provenance.isDemo &&
+            (filters.view === 'live' ||
+              fixtures.data.items.some((m) => m.state === 'live'))
+          }
+        />
       </div>
       <p className="data-notice">{fixtures.provenance.label}</p>
-      {catalog.data.sports.map((sport) => {
-        const matches = fixtures.data.items.filter(
-          (match) => match.sportId === sport.id,
-        );
-        return (
-          <section
-            className="sport-group"
-            key={sport.id}
-            aria-labelledby={`sport-${sport.slug}`}
+      <MatchFilters
+        key={matchesHref(filters)}
+        filters={filters}
+        sports={catalog.data.sports}
+        competitions={catalog.data.competitions}
+      />
+      <p className="results-count">
+        {fixtures.data.total} matches · Page {filters.page} · Times in UTC
+      </p>
+      {fixtures.data.items.length ? (
+        catalog.data.sports.map((sport) => {
+          const matches = fixtures.data.items.filter(
+            (match) => match.sportId === sport.id,
+          );
+          return matches.length > 0 ? (
+            <section
+              className="sport-group"
+              key={sport.id}
+              aria-labelledby={`sport-${sport.slug}`}
+            >
+              <h2 id={`sport-${sport.slug}`}>{sport.name}</h2>
+              <ul className="fixture-list">
+                {matches.map((match) => (
+                  <FixtureRow
+                    key={match.id}
+                    match={match}
+                    competition={
+                      competitions.get(match.competitionId) ??
+                      'Competition unavailable'
+                    }
+                    isDemo={fixtures.provenance.isDemo}
+                  />
+                ))}
+              </ul>
+            </section>
+          ) : null;
+        })
+      ) : (
+        <div className="match-empty">
+          <h2>No matches found</h2>
+          <p>
+            Try another date, sport or competition. Demo fixtures use fixed
+            dates in September 2026.
+          </p>
+          <Link className="text-link" href="/matches">
+            View all demo fixtures →
+          </Link>
+        </div>
+      )}
+      <nav aria-label="Match pagination" className="match-pagination">
+        {filters.page > 1 && (
+          <Link
+            className="button secondary"
+            href={matchesHref(filters, filters.page - 1)}
           >
-            <h2 id={`sport-${sport.slug}`}>{sport.name}</h2>
-            <ul className="fixture-list">
-              {matches.map((match) => (
-                <li key={match.id} className="fixture-row">
-                  <div className="fixture-context">
-                    <span>
-                      {
-                        catalog.data.competitions.find(
-                          (competition) =>
-                            competition.id === match.competitionId,
-                        )?.name
-                      }
-                    </span>
-                    <time dateTime={match.startsAt}>
-                      {new Intl.DateTimeFormat('en-GB', {
-                        day: 'numeric',
-                        month: 'short',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        timeZone: 'UTC',
-                      }).format(new Date(match.startsAt))}{' '}
-                      UTC
-                    </time>
-                  </div>
-                  <div className="fixture-participants">
-                    {match.participants.map((participant) => (
-                      <div key={participant.id}>
-                        <span>{participant.name}</span>
-                        <strong>{participant.score ?? '—'}</strong>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="fixture-state">
-                    {match.state === 'live'
-                      ? 'In progress · Demo'
-                      : match.state}
-                    <span>{match.clock}</span>
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </section>
-        );
-      })}
-      {fixtures.data.total === 0 && <p>No fixtures are available.</p>}
+            Previous page
+          </Link>
+        )}
+        {fixtures.data.offset + fixtures.data.limit < fixtures.data.total && (
+          <Link
+            className="button secondary"
+            href={matchesHref(filters, filters.page + 1)}
+          >
+            Next page
+          </Link>
+        )}
+      </nav>
     </section>
   );
 }

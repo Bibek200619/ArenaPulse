@@ -35,3 +35,32 @@ it.each([
     error: { code: 'VALIDATION_ERROR' },
   });
 });
+
+it('returns match details and standardized invalid/missing errors', async () => {
+  const { GET } = await import('@/app/api/matches/[id]/route');
+  const fixtures = await (
+    await getMatches(new Request('http://localhost/api/matches?limit=1'))
+  ).json();
+  const id = fixtures.data.items[0].id;
+  const response = await GET(
+    new Request(`http://localhost/api/matches/${id}`),
+    { params: Promise.resolve({ id }) },
+  );
+  expect(response.status).toBe(200);
+  expect(await response.json()).toMatchObject({
+    data: { id, participants: expect.any(Array) },
+    provenance: { isDemo: true },
+  });
+  for (const [value, status] of [
+    ['invalid', 400],
+    ['00000000-0000-4000-8000-000000000000', 404],
+  ] as const) {
+    expect(
+      (
+        await GET(new Request('http://localhost'), {
+          params: Promise.resolve({ id: value }),
+        })
+      ).status,
+    ).toBe(status);
+  }
+});

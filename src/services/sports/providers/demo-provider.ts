@@ -66,7 +66,9 @@ export class DemoSportsProvider implements SportsDataProvider {
           (!query.competitionId ||
             match.competitionId === query.competitionId) &&
           (!query.state || match.state === query.state) &&
-          (!query.date || match.startsAt.slice(0, 10) === query.date),
+          (!query.date || match.startsAt.slice(0, 10) === query.date) &&
+          (!query.startsAfter ||
+            Date.parse(match.startsAt) >= Date.parse(query.startsAfter)),
       )
       .sort(
         (a, b) =>
