@@ -140,3 +140,13 @@ it('normalizes provider failures without leaking internal details and retries', 
     service.getMatch('00000000-0000-4000-8000-000000000000'),
   ).rejects.toMatchObject({ code: 'NOT_FOUND' });
 });
+
+it('scheduled matches before the cutoff are excluded from upcoming results', async () => {
+  const result = await provider.getFixtures({
+    state: 'scheduled',
+    startsAfter: '2026-09-13T00:00:00Z',
+    offset: 0,
+    limit: 20,
+  });
+  expect(result.data.total).toBe(0);
+});

@@ -53,7 +53,15 @@ export class SportsService {
       () => this.provider.getFixtures(query),
     );
   }
-  getMatch(id: string) {
+  getStandings(competitionId: string) {
+    return this.read(`standings:${competitionId}`, 60_000, () =>
+      this.provider.getStandings(competitionId),
+    );
+  }
+  getVenue(id: string) {
+    return this.read(`venue:${id}`, 300_000, () => this.provider.getVenue(id));
+  }
+  async getMatch(id: string) {
     if (!entityIdSchema.safeParse(id).success)
       throw new AppError('VALIDATION_ERROR', 'Invalid match ID.');
     return this.read(`match:${id}`, 30_000, () => this.provider.getMatch(id));

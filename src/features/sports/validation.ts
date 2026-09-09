@@ -14,6 +14,7 @@ export const matchQuerySchema = z
     competitionId: z.uuid().optional(),
     state: z.enum(states).optional(),
     date: z.iso.date().optional(),
+    startsAfter: z.iso.datetime().optional(),
     offset: z.coerce.number().int().min(0).max(10_000).default(0),
     limit: z.coerce.number().int().min(1).max(50).default(20),
   })
