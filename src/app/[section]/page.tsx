@@ -1,3 +1,4 @@
+export const dynamicParams = false;
 import { notFound } from 'next/navigation';
 import { EmptyState } from '@/components/ui/empty-state';
 const sections: Record<string, [string, string]> = {
