@@ -2,7 +2,7 @@
 
 **Follow the game. Build your squad. Join the crowd. Predict what comes next.**
 
-ArenaPulse is being developed as a multi-sport discovery, community and fantasy platform. **Current milestone: Phase 0 foundation.** The public UI is an early preview; accounts, live data, community writes and fantasy are not yet implemented. The prediction model is intentionally deferred.
+ArenaPulse is being developed as a multi-sport discovery, community and fantasy platform. **Current milestone: authentication and onboarding.** The public foundation and real Supabase account flows are implemented. Sports data, communities, fantasy and personalization are subsequent milestones. The prediction model is intentionally deferred.
 
 ## Run locally
 
@@ -14,7 +14,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open http://localhost:3000. The foundation does not need external credentials. Never put service-role/secret keys in NEXT_PUBLIC variables.
+Open http://localhost:3000. The public shell does not need external credentials. For accounts, run `npm run db:start` and `npm run db:env` before starting Next.js; the latter creates `.env.local` and refuses to overwrite an existing file. See [authentication setup](docs/auth.md). Never put service-role/secret keys in NEXT_PUBLIC variables.
 
 ## Verify
 
@@ -24,7 +24,7 @@ npm run check
 npm run format:check
 ```
 
-The check script runs unit, integration, types, lint, production build, then desktop/mobile browser tests against the production server on port 3100. CI runs the same checks. Current integration coverage is the real health route, not database/auth coverage. Database and authenticated journeys are added in Phase 1.
+The check script runs unit, integration, types, lint, production build, then desktop/mobile browser tests against the production server on port 3100. CI runs the same checks. Run `npm run test:db` for real local RLS/auth integration and `npm run test:e2e:auth` after a configured build for confirmation/onboarding/recovery browser journeys. Both have dedicated CI coverage.
 
 ## Project
 
