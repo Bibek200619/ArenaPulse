@@ -9,6 +9,398 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      competition_follows: {
+        Row: {
+          competition_id: string;
+          created_at: string;
+          user_id: string;
+        };
+        Insert: {
+          competition_id: string;
+          created_at?: string;
+          user_id: string;
+        };
+        Update: {
+          competition_id?: string;
+          created_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'competition_follows_competition_id_fkey';
+            columns: ['competition_id'];
+            isOneToOne: false;
+            referencedRelation: 'competitions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'competition_follows_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      competitions: {
+        Row: {
+          country: string;
+          id: string;
+          name: string;
+          sport_id: string;
+        };
+        Insert: {
+          country: string;
+          id: string;
+          name: string;
+          sport_id: string;
+        };
+        Update: {
+          country?: string;
+          id?: string;
+          name?: string;
+          sport_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'competitions_sport_id_fkey';
+            columns: ['sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'sports';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      match_events: {
+        Row: {
+          clock: string;
+          description: string;
+          id: string;
+          match_id: string;
+          participant_id: string;
+          period: string;
+          player_id: string | null;
+          sequence: number;
+          type: string;
+        };
+        Insert: {
+          clock: string;
+          description: string;
+          id: string;
+          match_id: string;
+          participant_id: string;
+          period: string;
+          player_id?: string | null;
+          sequence: number;
+          type: string;
+        };
+        Update: {
+          clock?: string;
+          description?: string;
+          id?: string;
+          match_id?: string;
+          participant_id?: string;
+          period?: string;
+          player_id?: string | null;
+          sequence?: number;
+          type?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'match_events_participant_id_match_id_fkey';
+            columns: ['participant_id', 'match_id'];
+            isOneToOne: false;
+            referencedRelation: 'match_participants';
+            referencedColumns: ['id', 'match_id'];
+          },
+          {
+            foreignKeyName: 'match_events_player_id_fkey';
+            columns: ['player_id'];
+            isOneToOne: false;
+            referencedRelation: 'players';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      match_lineups: {
+        Row: {
+          match_id: string;
+          participant_id: string;
+          player_id: string;
+          position: string;
+          starter: boolean;
+        };
+        Insert: {
+          match_id: string;
+          participant_id: string;
+          player_id: string;
+          position: string;
+          starter: boolean;
+        };
+        Update: {
+          match_id?: string;
+          participant_id?: string;
+          player_id?: string;
+          position?: string;
+          starter?: boolean;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'match_lineups_participant_id_match_id_fkey';
+            columns: ['participant_id', 'match_id'];
+            isOneToOne: false;
+            referencedRelation: 'match_participants';
+            referencedColumns: ['id', 'match_id'];
+          },
+          {
+            foreignKeyName: 'match_lineups_player_id_fkey';
+            columns: ['player_id'];
+            isOneToOne: false;
+            referencedRelation: 'players';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      match_participants: {
+        Row: {
+          display_order: number;
+          id: string;
+          match_id: string;
+          player_id: string | null;
+          score: string | null;
+          sport_id: string;
+          team_id: string | null;
+          winner: boolean | null;
+        };
+        Insert: {
+          display_order: number;
+          id: string;
+          match_id: string;
+          player_id?: string | null;
+          score?: string | null;
+          sport_id: string;
+          team_id?: string | null;
+          winner?: boolean | null;
+        };
+        Update: {
+          display_order?: number;
+          id?: string;
+          match_id?: string;
+          player_id?: string | null;
+          score?: string | null;
+          sport_id?: string;
+          team_id?: string | null;
+          winner?: boolean | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'match_participants_match_id_sport_id_fkey';
+            columns: ['match_id', 'sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'matches';
+            referencedColumns: ['id', 'sport_id'];
+          },
+          {
+            foreignKeyName: 'match_participants_player_id_sport_id_fkey';
+            columns: ['player_id', 'sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'players';
+            referencedColumns: ['id', 'sport_id'];
+          },
+          {
+            foreignKeyName: 'match_participants_team_id_sport_id_fkey';
+            columns: ['team_id', 'sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'teams';
+            referencedColumns: ['id', 'sport_id'];
+          },
+        ];
+      };
+      match_statistics: {
+        Row: {
+          code: string;
+          label: string;
+          match_id: string;
+          participant_id: string;
+          unit: string | null;
+          value: number;
+        };
+        Insert: {
+          code: string;
+          label: string;
+          match_id: string;
+          participant_id: string;
+          unit?: string | null;
+          value: number;
+        };
+        Update: {
+          code?: string;
+          label?: string;
+          match_id?: string;
+          participant_id?: string;
+          unit?: string | null;
+          value?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'match_statistics_participant_id_match_id_fkey';
+            columns: ['participant_id', 'match_id'];
+            isOneToOne: false;
+            referencedRelation: 'match_participants';
+            referencedColumns: ['id', 'match_id'];
+          },
+        ];
+      };
+      matches: {
+        Row: {
+          clock: string | null;
+          competition_id: string;
+          id: string;
+          observed_at: string;
+          season_id: string;
+          source_id: string;
+          sport_id: string;
+          starts_at: string;
+          state: string;
+          venue_id: string | null;
+        };
+        Insert: {
+          clock?: string | null;
+          competition_id: string;
+          id: string;
+          observed_at: string;
+          season_id: string;
+          source_id: string;
+          sport_id: string;
+          starts_at: string;
+          state: string;
+          venue_id?: string | null;
+        };
+        Update: {
+          clock?: string | null;
+          competition_id?: string;
+          id?: string;
+          observed_at?: string;
+          season_id?: string;
+          source_id?: string;
+          sport_id?: string;
+          starts_at?: string;
+          state?: string;
+          venue_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'matches_competition_id_sport_id_fkey';
+            columns: ['competition_id', 'sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'competitions';
+            referencedColumns: ['id', 'sport_id'];
+          },
+          {
+            foreignKeyName: 'matches_season_id_competition_id_fkey';
+            columns: ['season_id', 'competition_id'];
+            isOneToOne: false;
+            referencedRelation: 'seasons';
+            referencedColumns: ['id', 'competition_id'];
+          },
+          {
+            foreignKeyName: 'matches_source_id_fkey';
+            columns: ['source_id'];
+            isOneToOne: false;
+            referencedRelation: 'sports_data_sources';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'matches_sport_id_fkey';
+            columns: ['sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'sports';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'matches_venue_id_fkey';
+            columns: ['venue_id'];
+            isOneToOne: false;
+            referencedRelation: 'venues';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      player_follows: {
+        Row: {
+          created_at: string;
+          player_id: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          player_id: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          player_id?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'player_follows_player_id_fkey';
+            columns: ['player_id'];
+            isOneToOne: false;
+            referencedRelation: 'players';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'player_follows_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      players: {
+        Row: {
+          id: string;
+          name: string;
+          nationality: string;
+          position: string;
+          sport_id: string;
+          team_id: string | null;
+        };
+        Insert: {
+          id: string;
+          name: string;
+          nationality: string;
+          position: string;
+          sport_id: string;
+          team_id?: string | null;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          nationality?: string;
+          position?: string;
+          sport_id?: string;
+          team_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'players_sport_id_fkey';
+            columns: ['sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'sports';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'players_team_id_sport_id_fkey';
+            columns: ['team_id', 'sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'teams';
+            referencedColumns: ['id', 'sport_id'];
+          },
+        ];
+      };
       profile_preferences: {
         Row: {
           favorite_sports: string[];
@@ -71,6 +463,224 @@ export type Database = {
           is_private?: boolean;
           updated_at?: string;
           username?: string;
+        };
+        Relationships: [];
+      };
+      seasons: {
+        Row: {
+          competition_id: string;
+          ends_on: string;
+          id: string;
+          name: string;
+          starts_on: string;
+        };
+        Insert: {
+          competition_id: string;
+          ends_on: string;
+          id: string;
+          name: string;
+          starts_on: string;
+        };
+        Update: {
+          competition_id?: string;
+          ends_on?: string;
+          id?: string;
+          name?: string;
+          starts_on?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'seasons_competition_id_fkey';
+            columns: ['competition_id'];
+            isOneToOne: false;
+            referencedRelation: 'competitions';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      sports: {
+        Row: {
+          id: string;
+          name: string;
+          slug: string;
+        };
+        Insert: {
+          id: string;
+          name: string;
+          slug: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          slug?: string;
+        };
+        Relationships: [];
+      };
+      sports_data_sources: {
+        Row: {
+          id: string;
+          is_demo: boolean;
+          label: string;
+        };
+        Insert: {
+          id: string;
+          is_demo: boolean;
+          label: string;
+        };
+        Update: {
+          id?: string;
+          is_demo?: boolean;
+          label?: string;
+        };
+        Relationships: [];
+      };
+      standings: {
+        Row: {
+          competition_id: string;
+          drawn: number | null;
+          lost: number;
+          played: number;
+          points: number;
+          rank: number;
+          season_id: string;
+          sport_id: string;
+          team_id: string;
+          won: number;
+        };
+        Insert: {
+          competition_id: string;
+          drawn?: number | null;
+          lost: number;
+          played: number;
+          points: number;
+          rank: number;
+          season_id: string;
+          sport_id: string;
+          team_id: string;
+          won: number;
+        };
+        Update: {
+          competition_id?: string;
+          drawn?: number | null;
+          lost?: number;
+          played?: number;
+          points?: number;
+          rank?: number;
+          season_id?: string;
+          sport_id?: string;
+          team_id?: string;
+          won?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'standings_competition_id_sport_id_fkey';
+            columns: ['competition_id', 'sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'competitions';
+            referencedColumns: ['id', 'sport_id'];
+          },
+          {
+            foreignKeyName: 'standings_season_id_competition_id_fkey';
+            columns: ['season_id', 'competition_id'];
+            isOneToOne: false;
+            referencedRelation: 'seasons';
+            referencedColumns: ['id', 'competition_id'];
+          },
+          {
+            foreignKeyName: 'standings_team_id_sport_id_fkey';
+            columns: ['team_id', 'sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'teams';
+            referencedColumns: ['id', 'sport_id'];
+          },
+        ];
+      };
+      team_follows: {
+        Row: {
+          created_at: string;
+          team_id: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          team_id: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          team_id?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'team_follows_team_id_fkey';
+            columns: ['team_id'];
+            isOneToOne: false;
+            referencedRelation: 'teams';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'team_follows_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      teams: {
+        Row: {
+          color: string;
+          country: string;
+          id: string;
+          name: string;
+          short_name: string;
+          sport_id: string;
+        };
+        Insert: {
+          color: string;
+          country: string;
+          id: string;
+          name: string;
+          short_name: string;
+          sport_id: string;
+        };
+        Update: {
+          color?: string;
+          country?: string;
+          id?: string;
+          name?: string;
+          short_name?: string;
+          sport_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'teams_sport_id_fkey';
+            columns: ['sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'sports';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      venues: {
+        Row: {
+          city: string;
+          country: string;
+          id: string;
+          name: string;
+        };
+        Insert: {
+          city: string;
+          country: string;
+          id: string;
+          name: string;
+        };
+        Update: {
+          city?: string;
+          country?: string;
+          id?: string;
+          name?: string;
         };
         Relationships: [];
       };
