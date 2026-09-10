@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Added — Sports foundation
+
+- Typed multi-sport provider contract and deterministic fictional football/cricket/basketball/tennis catalog.
+- Public catalog/fixture APIs with validated filters and pagination, bounded cache and failure recovery.
+- Responsive fixture preview with explicit source labels and unavailable data preserved.
+- Provider/cache/API tests and desktop/mobile accessibility coverage.
+
+### Deferred — Sports foundation
+
+- Licensed provider integration; persistent catalog import and secured follows in Phase 4.
+- Match filters/details in Phase 3; custom ML model remains unimplemented.
+
 ### Added — Identity milestone
 
 - Supabase SSR registration/confirmation, login/logout, password recovery and fixed callbacks.
