@@ -86,7 +86,7 @@ Preserve development integration branch and existing origin. First commit only p
 | ----- | ------------------------------------------------------------------------------------------------------------- | ----------- |
 | 0     | Plan, preserved legacy, Next/TS shell, env validation/docs/CI and green lint/types/unit/integration/build/E2E | COMPLETE    |
 | 1     | Supabase migrations/RLS, register/login/logout/recovery, profiles/onboarding; full flow tested                | COMPLETE    |
-| 2     | Generic sports/provider/seed/cache with integration and outage coverage                                       | NOT_STARTED |
+| 2     | Generic sports/provider/seed/cache with integration and outage coverage                                       | COMPLETE    |
 | 3     | Match filters/list/detail/timeline/available stats; navigation E2E                                            | NOT_STARTED |
 | 4     | Team/player/competition pages, standings and secured follows                                                  | NOT_STARTED |
 | 5     | Profiles/follows/posts/comments/reactions/feed with ownership tests                                           | NOT_STARTED |
@@ -157,3 +157,13 @@ Tests: PASS — 20 unit/component, 1 route integration, 8 real local Supabase id
 Known Issues: hosted SMTP/OAuth/deployment not configured or claimed tested. Local auth port 55431 and inbox 55434. Google OAuth entry remains off. Team/competition/player onboarding preferences depend on the Phase 2 sports catalog.
 Deferred: sports/social/community/fantasy/notification milestones and final custom ML model.
 Next Phase: publish identity PR linked to issue #3, then Phase 2 sports foundation.
+
+## Phase 2 — sports provider milestone
+
+Phase: 2
+Status: COMPLETE
+Completed: typed multi-sport provider, stable fictional catalog, bounded cache/deduplication, safe failure recovery, public catalog/fixture APIs, responsive preview and reviewed screenshots.
+Tests: PASS — 36 unit/component, 8 API integration, 8 local identity/RLS and 8 public desktop/mobile E2E; type-check/lint/build and formatting green. Locator failure documented and fixed.
+Known Issues: no licensed external provider configured.
+Deferred: persistent sports import tables and team/competition/player preferences ship with Phase 4 follows, when database foreign keys are required; Phase 2 catalog is versioned read-only source data.
+Next Phase: Phase 3 match browsing after this milestone passes verification and is published.
