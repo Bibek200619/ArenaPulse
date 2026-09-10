@@ -87,7 +87,7 @@ Preserve development integration branch and existing origin. First commit only p
 | 0     | Plan, preserved legacy, Next/TS shell, env validation/docs/CI and green lint/types/unit/integration/build/E2E | COMPLETE    |
 | 1     | Supabase migrations/RLS, register/login/logout/recovery, profiles/onboarding; full flow tested                | COMPLETE    |
 | 2     | Generic sports/provider/seed/cache with integration and outage coverage                                       | COMPLETE    |
-| 3     | Match filters/list/detail/timeline/available stats; navigation E2E                                            | NOT_STARTED |
+| 3     | Match filters/list/detail/timeline/available stats; navigation E2E                                            | COMPLETE    |
 | 4     | Team/player/competition pages, standings and secured follows                                                  | NOT_STARTED |
 | 5     | Profiles/follows/posts/comments/reactions/feed with ownership tests                                           | NOT_STARTED |
 | 6     | Public/private communities, roles/membership/moderation and adversarial RLS tests                             | NOT_STARTED |
@@ -167,3 +167,13 @@ Tests: PASS — 36 unit/component, 8 API integration, 8 local identity/RLS and 8
 Known Issues: no licensed external provider configured.
 Deferred: persistent sports import tables and team/competition/player preferences ship with Phase 4 follows, when database foreign keys are required; Phase 2 catalog is versioned read-only source data.
 Next Phase: Phase 3 match browsing after this milestone passes verification and is published.
+
+## Phase 3 — match experience
+
+Phase: 3
+Status: COMPLETE
+Completed: shareable filters, pagination, match detail/API, timeline/statistics/lineups/standings, loading/retry/not-found states, visible-tab live refresh architecture and explicit demo provenance.
+Tests: PASS — 47 unit/component, 9 route integration, 12 desktop/mobile E2E; type-check, lint, build and formatting. Visual review complete. Filter label test failure fixed and rerun.
+Known Issues: fixed demo snapshot; Today uses the real current UTC date and may be empty.
+Deferred: authenticated discussions in Phase 7 and fantasy associations in Phase 8.
+Next Phase: Phase 4 catalog persistence, entity pages and follows.

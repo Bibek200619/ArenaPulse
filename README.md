@@ -38,3 +38,5 @@ The check script runs unit, integration, types, lint, production build, then des
 See [plan.md](plan.md), [ARCHITECTURE.md](ARCHITECTURE.md), [deployment](docs/deployment.md), and [contribution guide](CONTRIBUTING.md). Existing GitHub origin redirects from fifa to ArenaPulse; the integration branch remains development.
 
 Sports foundation: `/matches` displays a fixed fictional multi-sport snapshot through the provider service. `/api/sports` and `/api/matches` include mandatory demo provenance. See [sports data](docs/sports-data.md) and [API contracts](docs/api.md).
+
+Match experience: shareable filters and paginated fixtures lead to `/matches/{id}` with available scores, events, statistics, lineups and standings. See [match behavior](docs/matches.md). No live provider or predictions are configured.
