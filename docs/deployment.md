@@ -21,3 +21,5 @@ The Phase 0 public shell may deploy without Supabase. That does not enable auth.
 GET /api/health is liveness only; it returns no configuration values. Verify the deployed URL, response status and critical browser journeys after deployment. Do not claim readiness from a successful build alone.
 
 For identity, apply the reviewed identity_schema migration, follow docs/auth.md for confirmation/recovery templates and exact redirect origins, and configure GOOGLE_OAUTH_ENABLED only after the provider is enabled. Never use local test secret keys in production. Require both quality and identity CI jobs before integration.
+
+Sports schema: apply the catalog/follows migration after identity. For an explicitly demo-only environment, review and load `supabase/seed.sql` so follow foreign keys resolve. This is fictional content; do not seed a licensed live environment with it. `npm run db:seed:check` verifies repository seed consistency. Local `supabase db reset --local` destroys disposable local users and reapplies migrations/seeds; never use a hosted target for tests.
