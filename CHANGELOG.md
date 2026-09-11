@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+### Added — Social persistence
+
+- Posts, threaded comments, likes and user follows with indexed relationships.
+- Authenticated aggregate sports follower totals without exposing private picks.
+- Real database tests for privacy changes, ownership, replies and concurrent write limits.
+
+### Security — Social persistence
+
+- Profile-derived activity visibility, immutable actor columns and explicit grants/RLS.
+- Atomic per-user write budgets that survive content deletion; private trigger helpers.
+
+### Deferred — Social persistence
+
+- Social feed/profile/interaction UI remains the next Phase 5 milestone.
+
 ### Added — Sports entities
 
 - Team/player/competition browsing, detail pages, available squads, standings and match history.
