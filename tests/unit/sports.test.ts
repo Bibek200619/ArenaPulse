@@ -150,3 +150,23 @@ it('scheduled matches before the cutoff are excluded from upcoming results', asy
   });
   expect(result.data.total).toBe(0);
 });
+
+it('filters team fixtures and actual available player appearances independently', async () => {
+  const team = await provider.getFixtures({
+    teamId: catalog.teams[0].id,
+    offset: 0,
+    limit: 20,
+  });
+  expect(team.data.items).toHaveLength(3);
+  const player = await provider.getFixtures({
+    playerId: catalog.players[0].id,
+    offset: 0,
+    limit: 20,
+  });
+  expect(player.data.items).toHaveLength(2);
+  expect(
+    player.data.items.every((m) =>
+      m.lineups.some((l) => l.playerId === catalog.players[0].id),
+    ),
+  ).toBe(true);
+});
