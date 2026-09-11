@@ -20,6 +20,6 @@ The generated migration receives a reviewed final ACL baseline because pg-delta'
 
 `supabase/seed.sql` is generated from the same typed fictional catalog as the demo provider. Run `npm run db:seed:generate` after catalog changes; CI runs `npm run db:seed:check`. Seeds contain no accounts and no user activity. Local reset applies migrations and seeds. This repository currently runs demo mode only; hosted demo environments must explicitly apply this seed if follow targets are needed. Do not import this fictional catalog into a live sports environment. A provider-backed ingestion/mapping service remains unconfigured.
 
-The schema milestone alone does not complete Phase 4. Entity pages, follow actions and preference UI follow in the next PR.
+The entity milestone connects these tables through verified follow actions and optional onboarding/preferences UI; see entities.md.
 
 Security reference: [Supabase RLS and grants](https://supabase.com/docs/guides/database/postgres/row-level-security). The [April 2026 API exposure change](https://supabase.com/changelog/45329-breaking-change-tables-not-exposed-to-data-and-graphql-api-automatically) is handled through explicit grants.
