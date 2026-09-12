@@ -9,6 +9,55 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      comments: {
+        Row: {
+          author_id: string;
+          body: string;
+          created_at: string;
+          id: string;
+          parent_id: string | null;
+          post_id: string;
+        };
+        Insert: {
+          author_id: string;
+          body: string;
+          created_at?: string;
+          id?: string;
+          parent_id?: string | null;
+          post_id: string;
+        };
+        Update: {
+          author_id?: string;
+          body?: string;
+          created_at?: string;
+          id?: string;
+          parent_id?: string | null;
+          post_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'comments_author_id_fkey';
+            columns: ['author_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'comments_parent_id_post_id_fkey';
+            columns: ['parent_id', 'post_id'];
+            isOneToOne: false;
+            referencedRelation: 'comments';
+            referencedColumns: ['id', 'post_id'];
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey';
+            columns: ['post_id'];
+            isOneToOne: false;
+            referencedRelation: 'posts';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       competition_follows: {
         Row: {
           competition_id: string;
@@ -401,6 +450,38 @@ export type Database = {
           },
         ];
       };
+      posts: {
+        Row: {
+          author_id: string;
+          body: string;
+          created_at: string;
+          id: string;
+          updated_at: string;
+        };
+        Insert: {
+          author_id: string;
+          body: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+        };
+        Update: {
+          author_id?: string;
+          body?: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'posts_author_id_fkey';
+            columns: ['author_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       profile_preferences: {
         Row: {
           favorite_sports: string[];
@@ -465,6 +546,42 @@ export type Database = {
           username?: string;
         };
         Relationships: [];
+      };
+      reactions: {
+        Row: {
+          created_at: string;
+          kind: string;
+          post_id: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          kind?: string;
+          post_id: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          kind?: string;
+          post_id?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reactions_post_id_fkey';
+            columns: ['post_id'];
+            isOneToOne: false;
+            referencedRelation: 'posts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'reactions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       seasons: {
         Row: {
@@ -663,6 +780,39 @@ export type Database = {
           },
         ];
       };
+      user_follows: {
+        Row: {
+          created_at: string;
+          followed_id: string;
+          follower_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          followed_id: string;
+          follower_id: string;
+        };
+        Update: {
+          created_at?: string;
+          followed_id?: string;
+          follower_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'user_follows_followed_id_fkey';
+            columns: ['followed_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'user_follows_follower_id_fkey';
+            columns: ['follower_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       venues: {
         Row: {
           city: string;
@@ -699,6 +849,10 @@ export type Database = {
           p_username: string;
         };
         Returns: undefined;
+      };
+      sports_follower_count: {
+        Args: { p_id: string; p_kind: string };
+        Returns: number;
       };
     };
     Enums: {
