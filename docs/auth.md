@@ -19,3 +19,5 @@ Google OAuth entry is implemented behind GOOGLE_OAUTH_ENABLED=false. To enable i
 ## Limits
 
 Signout revokes refresh sessions but an already-issued access token remains valid until expiry (local default one hour). Protected server operations use getUser; do not claim immediate JWT revocation at the database. Advanced account deletion/MFA and media uploads belong to subsequent settings/security work.
+
+After initial profile creation, `/onboarding/sports` offers optional team/competition/player follows. Choices save individually; Continue reaches the profile without forcing selections. Existing profile edits keep returning to `/profile`. `/settings/sports` edits favorites later.

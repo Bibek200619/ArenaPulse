@@ -37,6 +37,11 @@ export function ProfileForm({ profile }: { profile?: ProfileInput }) {
         startTransition(() => action(form));
       }}
     >
+      <input
+        type="hidden"
+        name="onboarding"
+        value={profile ? 'false' : 'true'}
+      />
       <div className="form-field">
         <label htmlFor="username">Username</label>
         <input

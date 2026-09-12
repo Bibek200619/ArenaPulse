@@ -59,12 +59,69 @@ test('register → confirm → onboard → edit → logout → login → recover
   await page.getByLabel('Display name', { exact: true }).fill('Matchday Fan');
   await page.getByLabel('football', { exact: true }).check();
   await page.getByRole('button', { name: 'Save profile' }).click();
+  await expect(page).toHaveURL(/\/onboarding\/sports$/);
+  await page
+    .getByRole('button', { name: 'Follow Harbour Athletic', exact: true })
+    .click();
+  await expect(
+    page.getByRole('button', {
+      name: 'Unfollow Harbour Athletic',
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page
+    .getByRole('button', {
+      name: 'Follow Harbour Football League',
+      exact: true,
+    })
+    .click();
+  await expect(
+    page.getByRole('button', {
+      name: 'Unfollow Harbour Football League',
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page.getByRole('link', { name: 'Continue to profile' }).click();
   await expect(page).toHaveURL(/\/profile$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
     'Matchday Fan',
   );
   await page.reload();
   await expect(page.getByText(`@${username}`, { exact: false })).toBeVisible();
+  await page.goto('/teams');
+  await page.getByRole('link', { name: /Harbour Athletic/ }).click();
+  await expect(
+    page.getByRole('button', {
+      name: 'Unfollow Harbour Athletic',
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page.getByRole('link', { name: 'Alex Vale Goalkeeper' }).click();
+  await page
+    .getByRole('button', { name: 'Follow Alex Vale', exact: true })
+    .click();
+  await expect(
+    page.getByRole('button', { name: 'Unfollow Alex Vale', exact: true }),
+  ).toBeVisible();
+  await page.reload();
+  await page
+    .getByRole('button', { name: 'Unfollow Alex Vale', exact: true })
+    .click();
+  await expect(
+    page.getByRole('button', { name: 'Follow Alex Vale', exact: true }),
+  ).toBeVisible();
+  await page.goto('/settings/sports');
+  await expect(
+    page.getByRole('button', {
+      name: 'Unfollow Harbour Athletic',
+      exact: true,
+    }),
+  ).toBeVisible();
+  expect(
+    (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze())
+      .violations,
+  ).toEqual([]);
+  await page.getByRole('link', { name: 'Continue to profile' }).click();
   await page.getByRole('link', { name: 'Edit profile' }).click();
   await page.getByLabel('Bio', { exact: true }).fill('Here for every moment.');
   await page.getByLabel('Keep my profile private').check();
