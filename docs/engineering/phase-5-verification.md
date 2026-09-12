@@ -19,3 +19,19 @@ Fix: run Prettier again on the test and verify the complete formatting gate; no 
 - [x] existing authentication/follow browser regressions: 4 desktop/mobile passed
 
 Security advisor returned no issues before and after replay. Local migration history matches all three migrations. The generated social migration receives explicit final ACLs for column grants and private function permissions, accounting for the already documented pg-delta ordering issue.
+
+## Failure: ambiguous reply disclosure locator
+
+Test: two-user social browser journey, desktop and mobile.
+Expected: open Bob's reply disclosure.
+Actual: getByText matched both the disclosure summary and the enclosed textarea label.
+Root cause: both intentionally describe the same reply recipient; a text-only selector is ambiguous, including hidden label nodes.
+Fix: target the semantic summary element for the disclosure, retaining the explicit textarea label for input. No accessibility labels or application behavior are removed.
+
+## Application verification
+
+- [ ] rerun two-user browser flow
+- [ ] related public browser flows
+- [x] following-feed join against actual Supabase: 42 DB tests passed
+- [ ] final unit/API integration
+- [ ] final type-check/lint/build/format
