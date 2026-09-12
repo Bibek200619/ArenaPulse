@@ -108,6 +108,8 @@ export type MatchQuery = {
   state?: MatchState;
   date?: string;
   startsAfter?: string;
+  teamId?: string;
+  playerId?: string;
   offset: number;
   limit: number;
 };

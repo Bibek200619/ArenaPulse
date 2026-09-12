@@ -36,5 +36,9 @@ export const config = {
     '/profile/:path*',
     '/auth/:path*',
     '/settings/:path*',
+    '/teams/:path*',
+    '/players/:path*',
+    '/competitions/:path*',
+    '/onboarding/:path*',
   ],
 };
