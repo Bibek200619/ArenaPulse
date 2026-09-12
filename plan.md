@@ -88,7 +88,7 @@ Preserve development integration branch and existing origin. First commit only p
 | 1     | Supabase migrations/RLS, register/login/logout/recovery, profiles/onboarding; full flow tested                | COMPLETE    |
 | 2     | Generic sports/provider/seed/cache with integration and outage coverage                                       | COMPLETE    |
 | 3     | Match filters/list/detail/timeline/available stats; navigation E2E                                            | COMPLETE    |
-| 4     | Team/player/competition pages, standings and secured follows                                                  | IN_PROGRESS |
+| 4     | Team/player/competition pages, standings and secured follows                                                  | COMPLETE    |
 | 5     | Profiles/follows/posts/comments/reactions/feed with ownership tests                                           | NOT_STARTED |
 | 6     | Public/private communities, roles/membership/moderation and adversarial RLS tests                             | NOT_STARTED |
 | 7     | Two-user realtime match discussion/replies/reactions/moderation                                               | NOT_STARTED |
@@ -181,9 +181,9 @@ Next Phase: Phase 4 catalog persistence, entity pages and follows.
 ## Phase 4 — sports entities and follows
 
 Phase: 4
-Status: IN_PROGRESS
-Completed: normalized catalog and owner-private follows, deterministic SQL seed generation, reviewed grants, generated types and clean replay. Entity UI remains pending.
-Tests: schema milestone PASS — 26 real database tests after replay, 47 unit/component and 9 API integration, types/lint/build/formatting, security advisor and seed drift check.
+Status: COMPLETE
+Completed: normalized catalog/RLS/seed, team/player/competition pages, available squads/standings/history, verified follow/unfollow, optional onboarding picks, sports settings, loading/retry and visual review. Schema PR #14 CI green.
+Tests: PASS — 51 unit/component, 9 API integration, 26 real database tests, 14 public desktop/mobile E2E, 4 real auth/follow E2E; types/lint/build/formatting, replay/security advisor and seed drift verification. Transient title-readiness failure fixed without disabling accessibility rules.
 Known Issues: catalog persistence must be seeded explicitly for demo follows; no external importer configured.
-Deferred: related communities and fantasy associations depend on later phases.
-Next Phase: finish entity pages, preferences and authenticated follow journeys before Phase 5.
+Deferred: public follower totals/social visibility in Phase 5; related communities in Phase 6; fantasy associations in Phase 8. Complete individual statistics require an actual provider.
+Next Phase: Phase 5 social profiles, user following, posts/comments/reactions and activity feed.

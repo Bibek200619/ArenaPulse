@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Added — Sports entities
+
+- Team/player/competition browsing, detail pages, available squads, standings and match history.
+- Verified follow/unfollow actions, optional onboarding picks and sports preference settings.
+- Loading/retry states, source labels and authenticated persistence journeys.
+
+### Fixed — Sports entities
+
+- Browser accessibility checks wait for expected document title after client navigation.
+- Exact-entity follow checks avoid truncation by list limits.
+
 ### Added — Sports persistence
 
 - Normalized catalog/match tables, sport-consistent relationships and provenance.

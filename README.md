@@ -40,3 +40,5 @@ See [plan.md](plan.md), [ARCHITECTURE.md](ARCHITECTURE.md), [deployment](docs/de
 Sports foundation: `/matches` displays a fixed fictional multi-sport snapshot through the provider service. `/api/sports` and `/api/matches` include mandatory demo provenance. See [sports data](docs/sports-data.md) and [API contracts](docs/api.md).
 
 Match experience: shareable filters and paginated fixtures lead to `/matches/{id}` with available scores, events, statistics, lineups and standings. See [match behavior](docs/matches.md). No live provider or predictions are configured.
+
+Sports entities: browse teams, players and competitions, then follow them from detail pages or `/settings/sports`. New profiles get an optional sports-picks step. Follow lists are private and stored in Supabase with RLS. See [entity behavior](docs/entities.md).
