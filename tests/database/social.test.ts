@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { beforeAll, afterAll, expect, it } from 'vitest';
 import { createClient } from '@supabase/supabase-js';
 import catalog from '../../src/features/sports/demo-catalog';
+import { readPosts } from '../../src/features/social/repository';
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -529,4 +530,15 @@ it('rejects unknown aggregate kinds', async () => {
       })
     ).error?.code,
   ).toBe('22023');
+});
+
+it('filters the actual following-feed join without leaking other authors or private posts', async () => {
+  // Bob follows Alice, not Carol, after the earlier follow/visibility tests.
+  const result = await readPosts(bob.client, 1, { following: bob.id });
+  expect(result.length).toBeGreaterThan(0);
+  expect(result.every((entry) => entry.author_id === alice.id)).toBe(true);
+  expect(result.some((entry) => entry.id === privatePostId)).toBe(false);
+  const author = await readPosts(anon, 1, { author: alice.id });
+  expect(author.length).toBeGreaterThan(0);
+  expect(author.every((entry) => entry.author_id === alice.id)).toBe(true);
 });
