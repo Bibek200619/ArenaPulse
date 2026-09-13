@@ -34,7 +34,9 @@ test('visitor can explore the crowd with honest account availability', async ({
     ),
   ).toBe(true);
   await page.goto('/feed?page=-1');
-  await expect(page.getByRole('alert')).toContainText('valid feed and page');
+  await expect(page.getByRole('main').getByRole('alert')).toContainText(
+    'valid feed and page',
+  );
   await page.goto('/posts/not-a-uuid');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
     'This one is out of play.',

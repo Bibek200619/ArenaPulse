@@ -45,5 +45,15 @@ Root cause: installed Next.js not-found documentation explicitly specifies 200 f
 Fix: require the not-found UI and noindex metadata, assert private text is absent both from the rendered document and complete HTML response, and keep actual RLS permission tests. Apply the same terminal-state assertion to deleted posts. Do not remove loading states or weaken privacy checks.
 Verification: rerun the two-user flows and complete public/auth browser suites.
 
-
 Follow-up: the streamed not-found response briefly contains robots metadata in both head and body. The initial metadata locator was ambiguous. Scope the assertion to `head meta[name="robots"]`, the document metadata that controls indexing; retain the full-response private-text checks.
+
+## Failure: public validation alert selector
+
+Test: public social navigation, desktop/mobile.
+Expected: invalid pagination message is announced.
+Actual: the page alert and Next.js route announcer both matched an unscoped alert selector.
+Root cause: Next.js adds a second alert outside main during navigation.
+Fix: scope the validation assertion to main, consistent with existing authentication tests. Keep both live regions intact.
+Verification: rerun all public browser cases.
+
+Visual verification: agent-browser loaded the feed and reported no browser errors, but subsequent captures intermittently returned an empty tool page. Used Playwright with an explicit page lifecycle to capture the actual desktop/mobile feed and verify Find fans navigation/overflow. Chromium needed the normal macOS sandbox escalation. Both reviewed screenshots contain only disposable local test activity, including an intentionally escaped HTML test string; this is not production content.
