@@ -69,6 +69,13 @@ it('returns safe errors, including database rate limits, without internal detail
   expect(
     (await changeSocial({}, form({ operation: 'post', body: 'valid' }))).error,
   ).toBe('Unable to save your change. Please try again.');
+  expect(log).toHaveBeenCalledWith(
+    JSON.stringify({
+      level: 'error',
+      event: 'social_write_failed',
+      operation: 'post',
+    }),
+  );
 });
 it('does not report deleting another user’s missing or inaccessible post as success', async () => {
   writeSocial.mockResolvedValueOnce({ error: null, data: null });

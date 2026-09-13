@@ -57,3 +57,11 @@ Fix: scope the validation assertion to main, consistent with existing authentica
 Verification: rerun all public browser cases.
 
 Visual verification: agent-browser loaded the feed and reported no browser errors, but subsequent captures intermittently returned an empty tool page. Used Playwright with an explicit page lifecycle to capture the actual desktop/mobile feed and verify Find fans navigation/overflow. Chromium needed the normal macOS sandbox escalation. Both reviewed screenshots contain only disposable local test activity, including an intentionally escaped HTML test string; this is not production content.
+
+## Failure: logging spy was unused
+
+Test: lint, zero-warning gate.
+Expected: safe-error test verifies the structured log envelope.
+Actual: a spy was created but the intended assertion was missing, producing an unused-variable warning.
+Root cause: an earlier edit added the spy without the matching assertion.
+Fix: assert the exact safe structured log object; this also prevents raw exception/credential logging regressions. Rerun unit tests, lint and the final gates.
