@@ -35,6 +35,13 @@ test('visitor can explore the crowd with honest account availability', async ({
   ).toBe(true);
   await page.goto('/feed?page=-1');
   await expect(page.getByRole('alert')).toContainText('valid feed and page');
-  expect((await page.goto('/posts/not-a-uuid'))?.status()).toBe(404);
+  await page.goto('/posts/not-a-uuid');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'This one is out of play.',
+  );
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    'content',
+    'noindex',
+  );
   expect(errors).toEqual([]);
 });
