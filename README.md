@@ -2,7 +2,7 @@
 
 **Follow the game. Build your squad. Join the crowd. Predict what comes next.**
 
-ArenaPulse is being developed as a multi-sport discovery, community and fantasy platform. **Current milestone: Phase 5 social foundation.** Authentication, onboarding, demo sports discovery, match/entity pages and private sports follows are implemented. Social persistence is verified locally; its interaction screens are next. Communities, fantasy and personalization remain later milestones. The prediction model is intentionally deferred.
+ArenaPulse is being developed as a multi-sport discovery, community and fantasy platform. **Current milestone: Phase 5 social foundation.** Authentication, onboarding, demo sports discovery, match/entity pages and private sports follows are implemented. Social persistence, fan profiles, activity feeds and interaction screens are implemented and undergoing final milestone verification. Communities, fantasy and personalization remain later milestones. The prediction model is intentionally deferred.
 
 ## Run locally
 
@@ -42,3 +42,5 @@ Sports foundation: `/matches` displays a fixed fictional multi-sport snapshot th
 Match experience: shareable filters and paginated fixtures lead to `/matches/{id}` with available scores, events, statistics, lineups and standings. See [match behavior](docs/matches.md). No live provider or predictions are configured.
 
 Sports entities: browse teams, players and competitions, then follow them from detail pages or `/settings/sports`. New profiles get an optional sports-picks step. Follow lists are private and stored in Supabase with RLS. See [entity behavior](docs/entities.md).
+
+Social experience: `/feed` offers latest/following activity; `/people` finds public fans; `/users/{username}` and `/posts/{id}` provide following, comments, replies and likes with profile-derived privacy. See [social behavior](docs/social.md). No notification delivery or realtime discussion is claimed yet.

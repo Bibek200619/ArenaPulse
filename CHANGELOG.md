@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+### Added — Social experience
+
+- Paginated latest/following feeds, public fan discovery and social profile pages.
+- Verified post/comment/reply/like/user-follow actions with safe errors and draft retention.
+- Privacy notices, visible interaction counts and authenticated sports follower totals.
+- Two-user desktop/mobile privacy, interaction and escaped-content browser coverage.
+
+### Fixed — Social experience
+
+- Browser checks wait for terminal streamed not-found pages and scope live-region/metadata assertions correctly.
+
+### Deferred — Social experience
+
+- Community moderation, match realtime and notification delivery remain their planned phases; notification integration contract documented.
+
 ### Added — Social persistence
 
 - Posts, threaded comments, likes and user follows with indexed relationships.
