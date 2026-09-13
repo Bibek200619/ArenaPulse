@@ -1,3 +1,4 @@
+import { expectNoIndex } from '../helpers/browser';
 import {
   test,
   expect,
@@ -33,10 +34,7 @@ async function unavailable(page: Page, url: string, hiddenText: string) {
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
     'This one is out of play.',
   );
-  await expect(page.locator('head meta[name="robots"]')).toHaveAttribute(
-    'content',
-    'noindex',
-  );
+  await expectNoIndex(page);
   await expect(page.getByText(hiddenText, { exact: false })).toHaveCount(0);
   expect(await response!.text()).not.toContain(hiddenText);
   expect(response!.headers()['cache-control']).toContain('no-store');
