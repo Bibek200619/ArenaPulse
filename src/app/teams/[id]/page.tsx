@@ -89,8 +89,8 @@ export default async function TeamPage({
       <section className="match-section">
         <h2>Fan community</h2>
         <p className="muted">
-          Related communities and public follower totals will appear when the
-          social layer is available.
+          Related communities will appear when the community experience is
+          available.
         </p>
       </section>
     </article>

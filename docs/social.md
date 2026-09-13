@@ -1,6 +1,6 @@
 # Social foundation
 
-The Phase 5 schema supports public-profile discovery, user following, posts, threaded comments and one like per user/post. The feed and interaction screens are the next milestone; schema availability alone does not mean those user journeys are complete.
+Phase 5 provides public-profile discovery, user following, posts, threaded comments and one like per user/post. The responsive feed, profile and conversation screens use verified server actions backed by RLS.
 
 ## Visibility contract
 
@@ -17,6 +17,21 @@ Authenticated clients supply content and target IDs; the server must derive acto
 
 The authenticated RPC `sports_follower_count(p_kind, p_id)` accepts team/player/competition and a UUID. It returns the real aggregate count, including zero for a missing target, and rejects anonymous callers or unknown kinds. The UI should first resolve its sports entity and display an unavailable state on RPC failure.
 
-## Next application milestone
+## Application routes
 
-Implement paginated feeds and public user pages, verified server actions, input schemas, safe rate-limit responses and accessible posting/comment/reaction/follow controls. Verify two-user browser journeys and privacy changes. Keep community-scoped posts/roles for Phase 6 and match discussions/realtime for Phase 7. Notification event production and delivery belong to Phase 10; this schema does not claim to send notifications.
+- `/feed`: latest visible activity or people you follow, with a post composer for completed profiles.
+- `/people`: paginated public profiles and literal username-prefix search.
+- `/users/{username}`: visible profile, follower/following counts, follow control and authored activity. Private or missing profiles have the same not-found UI for outsiders.
+- `/posts/{id}`: post, visible likes/comments, replies and owner deletion. Private or missing posts have the same not-found UI for outsiders.
+
+Pagination uses 20 displayed items plus one look-ahead row, stable timestamp/ID ordering and bounded page numbers. Following-feed filtering runs in the database through an inner relationship query; it never truncates a client-side list of followed IDs. Counts are explicitly labeled visible. Replies are stored as a tree but displayed chronologically, preserving parent IDs without revealing hidden parent content. Realtime is not enabled for the global feed.
+
+Forms validate content/IDs/operations, derive actors from `getUser()`, and return safe errors. Drafts survive failed saves. Likes and follows are idempotent; deleting inaccessible content is not reported as success. Text renders through React escaping, never unsafe HTML. All social paths refresh sessions and send private/no-store cache headers. Unexpected action failures log a structured operation/event only, never raw exceptions, text or credentials.
+
+Next.js may send a 200 loading shell for asynchronous not-found pages. Verification waits for the final not-found UI and noindex metadata and checks the complete response for private-text leakage, alongside actual database RLS tests.
+
+## Notification integration design (Phase 10)
+
+Future successful comment, reply, like and follow inserts will append an outbox event in the same PostgreSQL transaction. Proposed envelope: event_id (UUID), version, event_type, actor_id, recipient_id, target_type, target_id and occurred_at. Use unique event IDs for idempotent delivery and derive recipients from persisted target ownership, never a browser payload. Do not emit an event for rejected/rolled-back writes or duplicate likes/follows. A worker must recheck recipient preferences, blocks and current visibility before delivering; deleting content or making it private must not leak text through queued notifications. This milestone documents the contract only; no outbox or notification is emitted yet.
+
+Community context/roles/moderation are Phase 6, match discussions/realtime Phase 7, and notification persistence/delivery Phase 10. Editing posts has database support but no editor UI in this initial social experience.
