@@ -35,3 +35,12 @@ Fix: target the semantic summary element for the disclosure, retaining the expli
 - [x] following-feed join against actual Supabase: 42 DB tests passed
 - [ ] final unit/API integration
 - [ ] final type-check/lint/build/format
+
+## Failure: streamed not-found transport status
+
+Test: private post/profile navigation in the two-user browser journey.
+Expected: transport status 404 immediately after navigation.
+Actual: Next.js sent a 200 loading shell before the asynchronous RLS lookup completed.
+Root cause: installed Next.js not-found documentation explicitly specifies 200 for streamed responses and 404 for non-streamed responses. The test asserted a transport status before the terminal page rendered.
+Fix: require the not-found UI and noindex metadata, assert private text is absent both from the rendered document and complete HTML response, and keep actual RLS permission tests. Apply the same terminal-state assertion to deleted posts. Do not remove loading states or weaken privacy checks.
+Verification: rerun the two-user flows and complete public/auth browser suites.

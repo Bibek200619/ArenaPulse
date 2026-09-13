@@ -28,6 +28,19 @@ async function register(page: Page, request: APIRequestContext) {
   await expect(page).toHaveURL(/\/onboarding\/sports$/);
   return username;
 }
+async function unavailable(page: Page, url: string, hiddenText: string) {
+  const response = await page.goto(url);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'This one is out of play.',
+  );
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    'content',
+    'noindex',
+  );
+  await expect(page.getByText(hiddenText, { exact: false })).toHaveCount(0);
+  expect(await response!.text()).not.toContain(hiddenText);
+  expect(response!.headers()['cache-control']).toContain('no-store');
+}
 test('two fans publish, follow, react, reply and preserve privacy', async ({
   page,
   browser,
@@ -120,8 +133,8 @@ test('two fans publish, follow, react, reply and preserve privacy', async ({
     await page.getByLabel('Keep my profile private').check();
     await page.getByRole('button', { name: 'Save profile' }).click();
     await expect(page).toHaveURL(/\/profile$/);
-    expect((await bobPage.goto(postUrl))?.status()).toBe(404);
-    expect((await bobPage.goto(`/users/${alice}`))?.status()).toBe(404);
+    await unavailable(bobPage, postUrl, `Opening night for ${alice}`);
+    await unavailable(bobPage, `/users/${alice}`, `Crowd ${alice.slice(6)}`);
     await bobPage.goto('/feed?view=following');
     await expect(bobPage.getByText(body, { exact: true })).toHaveCount(0);
     await page.goto(postUrl);
@@ -131,7 +144,7 @@ test('two fans publish, follow, react, reply and preserve privacy', async ({
       .getByRole('button', { name: 'Delete post', exact: true })
       .click();
     await expect(page).toHaveURL(/\/feed$/);
-    expect((await page.goto(postUrl))?.status()).toBe(404);
+    await unavailable(page, postUrl, `Opening night for ${alice}`);
     expect(errors).toEqual([]);
   } finally {
     await other.close();
