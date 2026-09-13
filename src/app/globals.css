@@ -1216,3 +1216,121 @@ a.fixture-row:hover {
   color: var(--muted);
   margin-top: 5px;
 }
+
+.social-page {
+  max-width: 960px;
+  min-height: 70vh;
+}
+.social-heading {
+  padding-bottom: 28px;
+}
+.social-heading h1 {
+  font-size: clamp(36px, 5vw, 64px);
+  margin: 16px 0;
+  overflow-wrap: anywhere;
+}
+.social-heading nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  margin-top: 24px;
+  font-size: 14px;
+}
+.social-heading nav a:hover,
+.social-author a:hover {
+  color: var(--accent);
+}
+.social-privacy {
+  font-size: 13px;
+  padding: 16px 0;
+}
+.social-privacy a {
+  text-decoration: underline;
+}
+.social-composer {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 24px;
+  margin: 16px 0 28px;
+  gap: 12px;
+}
+.social-composer textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+.social-composer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.social-composer-footer small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.social-post {
+  padding: 28px 0;
+  border-block-end: 1px solid var(--line);
+}
+.social-author {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 14px;
+}
+.social-author .entity-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+.social-author time {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 3px;
+}
+.social-body {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 20px 0;
+  line-height: 1.8;
+}
+.social-post-footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 12px;
+}
+.social-action .form-error {
+  max-width: 340px;
+  margin-top: 8px;
+}
+.social-subheading {
+  font-size: 28px;
+  margin: 40px 0 20px;
+}
+.social-reply {
+  margin: 18px 0;
+  font-size: 13px;
+}
+.social-reply summary {
+  min-height: 44px;
+  padding-top: 10px;
+}
+.social-reply-note {
+  font-size: 12px;
+  margin-top: 14px;
+}
+@media (max-width: 760px) {
+  .social-composer {
+    padding: 16px;
+  }
+  .social-author a span {
+    display: block;
+  }
+  .social-composer-footer {
+    flex-wrap: wrap;
+  }
+}

@@ -46,5 +46,18 @@ export async function FollowControl({
       </p>
     );
   const following = (data ?? []).some((row) => Object.values(row).includes(id));
-  return <FollowButton kind={kind} id={id} name={name} following={following} />;
+  const count = await client.rpc('sports_follower_count', {
+    p_kind: kind,
+    p_id: id,
+  });
+  return (
+    <div>
+      <FollowButton kind={kind} id={id} name={name} following={following} />
+      <p className="muted detail-note">
+        {count.error
+          ? 'Follower count unavailable.'
+          : `${count.data} fans following`}
+      </p>
+    </div>
+  );
 }

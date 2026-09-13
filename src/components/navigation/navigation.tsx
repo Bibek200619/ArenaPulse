@@ -12,6 +12,8 @@ export const navigation = [
   ['Predictions', '/predictions'],
   ['Notifications', '/notifications'],
   ['Profile', '/profile'],
+  ['Feed', '/feed'],
+  ['Find fans', '/people'],
 ] as const;
 
 export function Navigation() {
@@ -25,6 +27,7 @@ export function Navigation() {
           </span>
         </Link>
         <nav className="desktop-nav" aria-label="Primary">
+          <Link href="/feed">Feed</Link>
           {navigation.slice(1, 8).map(([label, href]) => (
             <Link key={href} href={href}>
               {label}
