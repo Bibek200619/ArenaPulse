@@ -44,3 +44,6 @@ Actual: Next.js sent a 200 loading shell before the asynchronous RLS lookup comp
 Root cause: installed Next.js not-found documentation explicitly specifies 200 for streamed responses and 404 for non-streamed responses. The test asserted a transport status before the terminal page rendered.
 Fix: require the not-found UI and noindex metadata, assert private text is absent both from the rendered document and complete HTML response, and keep actual RLS permission tests. Apply the same terminal-state assertion to deleted posts. Do not remove loading states or weaken privacy checks.
 Verification: rerun the two-user flows and complete public/auth browser suites.
+
+
+Follow-up: the streamed not-found response briefly contains robots metadata in both head and body. The initial metadata locator was ambiguous. Scope the assertion to `head meta[name="robots"]`, the document metadata that controls indexing; retain the full-response private-text checks.
