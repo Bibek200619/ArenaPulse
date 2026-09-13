@@ -2,7 +2,7 @@
 
 **Follow the game. Build your squad. Join the crowd. Predict what comes next.**
 
-ArenaPulse is being developed as a multi-sport discovery, community and fantasy platform. **Current milestone: Phase 5 social foundation.** Authentication, onboarding, demo sports discovery, match/entity pages and private sports follows are implemented. Social persistence, fan profiles, activity feeds and interaction screens are implemented and undergoing final milestone verification. Communities, fantasy and personalization remain later milestones. The prediction model is intentionally deferred.
+ArenaPulse is being developed as a multi-sport discovery, community and fantasy platform. **Current milestone: Phase 5 social foundation.** Authentication, onboarding, demo sports discovery, match/entity pages and private sports follows are implemented. Social persistence, fan profiles, activity feeds and interaction screens are implemented and verified locally. Communities, fantasy and personalization remain later milestones. The prediction model is intentionally deferred.
 
 ## Run locally
 
