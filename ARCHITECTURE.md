@@ -24,3 +24,7 @@ Phase 4 catalog persistence: PostgreSQL stores normalized sports/matches and own
 ## Decision 002 — social privacy and write budgets
 
 Phase 5 social activity inherits profile visibility dynamically through RLS. Following is a feed preference, not permission to read a private profile. Parent visibility is required to create an interaction; authors can always remove their own interactions. Atomic private counters enforce per-account write budgets independently of deleted content. The only aggregate privilege boundary exposes authenticated sports follower totals without disclosing individual private favorites. See docs/database.md for the narrowly scoped SECURITY DEFINER helpers and grants.
+
+## Decision 003 — serialize community authority transitions
+
+Community role and membership tables are read-only to Data API clients, including service_role. Narrow private procedures own creation and transitions, enforce current database roles and take a community row lock. This prevents races from creating two owners or retaining membership after a ban. The public RPC surface remains SECURITY INVOKER. Private communities are unlisted, with explicit link-based requests; requests do not reveal metadata before approval. See docs/communities.md for access and lifecycle decisions. Community posts are a separate upcoming extension and must not weaken existing social privacy.

@@ -90,7 +90,7 @@ Preserve development integration branch and existing origin. First commit only p
 | 3     | Match filters/list/detail/timeline/available stats; navigation E2E                                            | COMPLETE    |
 | 4     | Team/player/competition pages, standings and secured follows                                                  | COMPLETE    |
 | 5     | Profiles/follows/posts/comments/reactions/feed with ownership tests                                           | COMPLETE    |
-| 6     | Public/private communities, roles/membership/moderation and adversarial RLS tests                             | NOT_STARTED |
+| 6     | Public/private communities, roles/membership/moderation and adversarial RLS tests                             | IN_PROGRESS |
 | 7     | Two-user realtime match discussion/replies/reactions/moderation                                               | NOT_STARTED |
 | 8     | Rules/gameweeks/squad builder; persist valid roster, budget, captain and deadline enforcement                 | NOT_STARTED |
 | 9     | Reproducible idempotent scoring, private leagues/codes, leaderboards                                          | NOT_STARTED |
@@ -199,3 +199,15 @@ Deferred: community context/roles in Phase 6, match discussion/realtime in Phase
 Next Phase: Phase 6 community creation/discovery, public/private membership and moderation (#21).
 
 Social permission decision: posts/comments/reactions require authenticated profiles. Public discovery shows only public-profile authors; private-profile activity remains owner-only. Changing profile privacy hides prior activity from outsiders. User follows do not grant private-profile access. Authors retain access to delete their own interactions even if a parent post becomes private; this does not expose the parent content. Replies require a visible parent in the same post. Social writes are bounded by atomic per-user database budgets that survive content deletion and serialize concurrent writes. Sports follower totals expose only an aggregate to authenticated users; private pick identities remain protected.
+
+## Phase 6 — community foundation
+
+Phase: 6
+Status: IN_PROGRESS
+Completed: Phase 5 PR #22 merged with green CI; community schema, transactional membership/role procedures, bans, ownership transfers, rate limits and audit records implemented. Generated migration replayed cleanly with explicit final ACLs.
+Tests: 59 real database tests, 67 unit/component/API tests, 16 public browser regressions and six authenticated browser journeys passed; type-check, lint, formatting, production build, seed consistency, security advisors and migration history checks passed.
+Known Issues: private communities will be unlisted; members can share a UUID link for access requests without exposing the member directory or content. Bans prevent participation; public content remains publicly readable.
+Deferred: community content and moderation UI follow the membership schema; match realtime remains Phase 7 and notification delivery Phase 10.
+Next Phase: connect community discovery, creation and membership controls, then add scoped content and moderation while preserving private visibility across existing social feeds.
+
+Community decision: owner/admin/moderator/member roles are stored in PostgreSQL. Direct client membership/role writes are denied. Narrow private security-definer functions implement audited transitions with verified auth.uid(), fixed search paths and a per-community row lock. Only owners transfer ownership; owners cannot leave without transfer. Staff may moderate lower-ranked members only. Existing profile privacy continues to protect global social activity; adding community context must preserve private content in every feed/query.
