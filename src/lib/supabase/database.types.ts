@@ -58,6 +58,262 @@ export type Database = {
           },
         ];
       };
+      communities: {
+        Row: {
+          banner_url: string | null;
+          competition_id: string | null;
+          created_at: string;
+          description: string;
+          id: string;
+          image_url: string | null;
+          name: string;
+          owner_id: string;
+          rules: string;
+          slug: string;
+          sport_id: string | null;
+          team_id: string | null;
+          updated_at: string;
+          visibility: string;
+        };
+        Insert: {
+          banner_url?: string | null;
+          competition_id?: string | null;
+          created_at?: string;
+          description?: string;
+          id?: string;
+          image_url?: string | null;
+          name: string;
+          owner_id: string;
+          rules?: string;
+          slug: string;
+          sport_id?: string | null;
+          team_id?: string | null;
+          updated_at?: string;
+          visibility: string;
+        };
+        Update: {
+          banner_url?: string | null;
+          competition_id?: string | null;
+          created_at?: string;
+          description?: string;
+          id?: string;
+          image_url?: string | null;
+          name?: string;
+          owner_id?: string;
+          rules?: string;
+          slug?: string;
+          sport_id?: string | null;
+          team_id?: string | null;
+          updated_at?: string;
+          visibility?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'communities_competition_id_sport_id_fkey';
+            columns: ['competition_id', 'sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'competitions';
+            referencedColumns: ['id', 'sport_id'];
+          },
+          {
+            foreignKeyName: 'communities_owner_id_fkey';
+            columns: ['owner_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'communities_sport_id_fkey';
+            columns: ['sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'sports';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'communities_team_id_sport_id_fkey';
+            columns: ['team_id', 'sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'teams';
+            referencedColumns: ['id', 'sport_id'];
+          },
+        ];
+      };
+      community_audit: {
+        Row: {
+          action: string;
+          actor_id: string | null;
+          community_id: string;
+          created_at: string;
+          detail: string;
+          id: string;
+          target_id: string | null;
+        };
+        Insert: {
+          action: string;
+          actor_id?: string | null;
+          community_id: string;
+          created_at?: string;
+          detail?: string;
+          id?: string;
+          target_id?: string | null;
+        };
+        Update: {
+          action?: string;
+          actor_id?: string | null;
+          community_id?: string;
+          created_at?: string;
+          detail?: string;
+          id?: string;
+          target_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'community_audit_actor_id_fkey';
+            columns: ['actor_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'community_audit_community_id_fkey';
+            columns: ['community_id'];
+            isOneToOne: false;
+            referencedRelation: 'communities';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'community_audit_target_id_fkey';
+            columns: ['target_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      community_bans: {
+        Row: {
+          banned_by: string | null;
+          community_id: string;
+          created_at: string;
+          issuer_rank: number;
+          reason: string;
+          user_id: string;
+        };
+        Insert: {
+          banned_by?: string | null;
+          community_id: string;
+          created_at?: string;
+          issuer_rank: number;
+          reason: string;
+          user_id: string;
+        };
+        Update: {
+          banned_by?: string | null;
+          community_id?: string;
+          created_at?: string;
+          issuer_rank?: number;
+          reason?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'community_bans_banned_by_fkey';
+            columns: ['banned_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'community_bans_community_id_fkey';
+            columns: ['community_id'];
+            isOneToOne: false;
+            referencedRelation: 'communities';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'community_bans_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      community_join_requests: {
+        Row: {
+          community_id: string;
+          requested_at: string;
+          resolved_at: string | null;
+          status: string;
+          user_id: string;
+        };
+        Insert: {
+          community_id: string;
+          requested_at?: string;
+          resolved_at?: string | null;
+          status?: string;
+          user_id: string;
+        };
+        Update: {
+          community_id?: string;
+          requested_at?: string;
+          resolved_at?: string | null;
+          status?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'community_join_requests_community_id_fkey';
+            columns: ['community_id'];
+            isOneToOne: false;
+            referencedRelation: 'communities';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'community_join_requests_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      community_members: {
+        Row: {
+          community_id: string;
+          joined_at: string;
+          role: string;
+          user_id: string;
+        };
+        Insert: {
+          community_id: string;
+          joined_at?: string;
+          role: string;
+          user_id: string;
+        };
+        Update: {
+          community_id?: string;
+          joined_at?: string;
+          role?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'community_members_community_id_fkey';
+            columns: ['community_id'];
+            isOneToOne: false;
+            referencedRelation: 'communities';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'community_members_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       competition_follows: {
         Row: {
           competition_id: string;
@@ -839,6 +1095,29 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      community_transition: {
+        Args: {
+          p_action: string;
+          p_id: string;
+          p_reason?: string;
+          p_role?: string;
+          p_target?: string;
+        };
+        Returns: string;
+      };
+      create_community: {
+        Args: {
+          p_competition_id?: string;
+          p_description?: string;
+          p_name: string;
+          p_rules?: string;
+          p_slug: string;
+          p_sport_id?: string;
+          p_team_id?: string;
+          p_visibility?: string;
+        };
+        Returns: string;
+      };
       save_profile: {
         Args: {
           p_bio: string;
