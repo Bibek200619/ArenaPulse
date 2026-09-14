@@ -2,7 +2,7 @@
 
 **Follow the game. Build your squad. Join the crowd. Predict what comes next.**
 
-ArenaPulse is being developed as a multi-sport discovery, community and fantasy platform. **Current milestone: Phase 5 social foundation.** Authentication, onboarding, demo sports discovery, match/entity pages and private sports follows are implemented. Social persistence, fan profiles, activity feeds and interaction screens are implemented and verified locally. Communities, fantasy and personalization remain later milestones. The prediction model is intentionally deferred.
+ArenaPulse is being developed as a multi-sport discovery, community and fantasy platform. **Current milestone: Phase 6 community foundation.** Authentication, onboarding, demo sports discovery, match/entity pages, private sports follows and social feeds are implemented. Community membership, roles, access requests and bans now have a tested database boundary; community screens and content moderation remain in progress. Fantasy and personalization follow later. The prediction model is intentionally deferred.
 
 ## Run locally
 
@@ -44,3 +44,5 @@ Match experience: shareable filters and paginated fixtures lead to `/matches/{id
 Sports entities: browse teams, players and competitions, then follow them from detail pages or `/settings/sports`. New profiles get an optional sports-picks step. Follow lists are private and stored in Supabase with RLS. See [entity behavior](docs/entities.md).
 
 Social experience: `/feed` offers latest/following activity; `/people` finds public fans; `/users/{username}` and `/posts/{id}` provide following, comments, replies and likes with profile-derived privacy. See [social behavior](docs/social.md). No notification delivery or realtime discussion is claimed yet.
+
+Community foundation: transactional database procedures enforce public/private membership, staff authority, ownership transfer and bans. See [community permissions](docs/communities.md). The `/communities` screen remains a placeholder until the next application milestone.
