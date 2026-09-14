@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+### Added — Community permissions foundation
+
+- Community metadata, membership, private access requests, bans and immutable client-facing audit records.
+- Transactional creation, joins, approvals, role changes and ownership transfers.
+- Per-user creation/transition budgets and concurrency tests.
+
+### Security — Community permissions foundation
+
+- Private communities unlisted; member directories and staff records protected by RLS.
+- Direct Data API mutations denied; role hierarchy and ban authority enforced in private procedures.
+
+### Deferred — Community permissions foundation
+
+- Community screens, scoped posts, reports, pinning and content moderation remain Phase 6 work.
+
 ### Added — Social experience
 
 - Paginated latest/following feeds, public fan discovery and social profile pages.
