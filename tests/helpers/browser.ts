@@ -2,13 +2,19 @@ import { expect, type Page } from '@playwright/test';
 export async function expectNoIndex(page: Page) {
   await expect
     .poll(async () =>
-      page
-        .locator('head meta[name="robots"]')
-        .evaluateAll(
-          (nodes) =>
-            nodes.length > 0 &&
-            nodes.every((node) => node.getAttribute('content') === 'noindex'),
-        ),
+      page.locator('head meta[name="robots"]').evaluateAll(
+        (nodes) =>
+          nodes.length > 0 &&
+          nodes.every((node) => {
+            const directives = (node.getAttribute('content') ?? '')
+              .toLowerCase()
+              .split(',')
+              .map((value) => value.trim());
+            return (
+              directives.includes('noindex') && !directives.includes('index')
+            );
+          }),
+      ),
     )
     .toBe(true);
 }

@@ -1,34 +1,7 @@
 import { expectNoIndex } from '../helpers/browser';
-import {
-  test,
-  expect,
-  type Page,
-  type APIRequestContext,
-} from '@playwright/test';
-import { randomUUID } from 'node:crypto';
+import { test, expect, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { emailLink } from './helpers';
-async function register(page: Page, request: APIRequestContext) {
-  const suffix = randomUUID().slice(0, 8),
-    username = `crowd_${suffix}`,
-    email = `${username}@example.test`;
-  await page.goto('/register');
-  await page.getByLabel('Email', { exact: true }).fill(email);
-  await page
-    .getByLabel('Password', { exact: true })
-    .fill(`Social-${randomUUID()}`);
-  await page.getByRole('button', { name: 'Create account' }).click();
-  await expect(page.getByRole('status')).toContainText('Check your email');
-  await page.goto(await emailLink(request, email, 'Confirm'));
-  await expect(page).toHaveURL(/\/onboarding$/);
-  await page.getByLabel('Username', { exact: true }).fill(username);
-  await page
-    .getByLabel('Display name', { exact: true })
-    .fill(`Crowd ${suffix}`);
-  await page.getByRole('button', { name: 'Save profile' }).click();
-  await expect(page).toHaveURL(/\/onboarding\/sports$/);
-  return username;
-}
+import { registerFan } from './helpers';
 async function unavailable(page: Page, url: string, hiddenText: string) {
   const response = await page.goto(url);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
@@ -47,7 +20,7 @@ test('two fans publish, follow, react, reply and preserve privacy', async ({
   test.setTimeout(90_000);
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  const alice = await register(page, request);
+  const alice = await registerFan(page, request);
   await page.goto('/feed');
   const body = `Opening night for ${alice}. <script>window.pwned=true</script>`;
   await page.getByLabel('Your sports take').fill(body);
@@ -64,7 +37,7 @@ test('two fans publish, follow, react, reply and preserve privacy', async ({
   const bobPage = await other.newPage();
   bobPage.on('pageerror', (error) => errors.push(error.message));
   try {
-    const bob = await register(bobPage, request);
+    const bob = await registerFan(bobPage, request);
     await bobPage.goto(`/people?q=${alice}`);
     await bobPage.getByRole('link', { name: new RegExp(`@${alice}`) }).click();
     await bobPage
