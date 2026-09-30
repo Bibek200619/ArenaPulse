@@ -158,6 +158,29 @@ test('two fans create, request, approve, manage roles, ban and transfer a privat
     });
     expect(errors).toEqual([]);
     expect(alice).not.toBe(bob);
+    await page.goto('/communities/new');
+    const publicName = `Public ${randomUUID().slice(0, 8)}`;
+    await page.getByLabel('Community name', { exact: true }).fill(publicName);
+    await page
+      .getByLabel('Unique slug')
+      .fill(publicName.toLowerCase().replace(' ', '-'));
+    await page
+      .getByRole('button', { name: 'Create community', exact: true })
+      .click();
+    await expect(page).toHaveURL(/\/communities\/[0-9a-f-]+$/);
+    await bobPage.goto(`/communities?q=${encodeURIComponent(publicName)}`);
+    await bobPage.getByRole('link', { name: new RegExp(publicName) }).click();
+    await bobPage
+      .getByRole('button', { name: 'Join or request access' })
+      .click();
+    await expect(
+      bobPage.getByText('Your role: member', { exact: true }),
+    ).toBeVisible();
+    await bobPage.reload();
+    await expect(
+      bobPage.getByText('Your role: member', { exact: true }),
+    ).toBeVisible();
+    expect(errors).toEqual([]);
   } finally {
     await other.close();
   }

@@ -16,8 +16,8 @@ Parse comma-separated directives and require noindex in every robots tag, reject
 
 ## Verification
 
-- [ ] failing desktop/mobile journeys rerun
-- [ ] public/social browser regressions
+- [x] failing desktop/mobile journeys rerun; private and public membership passed
+- [x] 18 public and eight authenticated browser regressions passed
 - [x] real database integration: 59 passed
 - [x] unit/component/API integration: 73 passed
-- [ ] final type-check/lint/format/build
+- [x] final type-check/lint/format/build passed
