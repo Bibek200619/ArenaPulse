@@ -211,3 +211,13 @@ Deferred: community content and moderation UI follow the membership schema; matc
 Next Phase: connect community discovery, creation and membership controls, then add scoped content and moderation while preserving private visibility across existing social feeds.
 
 Community decision: owner/admin/moderator/member roles are stored in PostgreSQL. Direct client membership/role writes are denied. Narrow private security-definer functions implement audited transitions with verified auth.uid(), fixed search paths and a per-community row lock. Only owners transfer ownership; owners cannot leave without transfer. Staff may moderate lower-ranked members only. Existing profile privacy continues to protect global social activity; adding community context must preserve private content in every feed/query.
+
+## Phase 6 — community application milestone
+
+Phase: 6
+Status: IN_PROGRESS
+Completed: community foundation PR #23 merged with green CI. Discovery and membership-filtered pagination, creation, public joins/private requests, member/staff views, role changes, bans, transfer and leave are implemented. SSR sessions and no-store responses protect account-specific pages. Desktop/mobile screenshots reviewed.
+Tests: 73 unit/component/API tests, 59 real database tests and 18 public browser tests passed. All eight authenticated community/account/social browser journeys passed on desktop/mobile. Type-check, lint, format and production build passed.
+Known Issues: browser robots helper corrected to recognize noindex alongside nofollow without accepting index. Recurring Next.js destination-stream-closed log observed during navigation; privacy/runtime assertions remain enabled.
+Deferred: scoped posts, reports, pinning, moderator removal and blocks are the remaining Phase 6 milestone. No community images/uploads yet.
+Next Phase: community content and moderation, then Phase 7 realtime match discussions.

@@ -1,5 +1,20 @@
 # Changelog
 
+### Added — Community membership experience
+
+- Community discovery/search, creation, private request/approval, member directory and staff management screens.
+- Role changes, ownership transfer, ban/unban, request cancellation and leave controls through validated server actions.
+- Desktop/mobile two-user community journeys and private-response checks.
+
+### Security — Community membership experience
+
+- Private, no-store community routes with verified sessions, database-enforced authority and no private metadata on outsider pages.
+- Profile RLS preserved in member directories; staff-only tabs reject ordinary members.
+
+### Deferred — Community membership experience
+
+- Scoped community posts, reports, pinning, moderator content removal and blocks remain Phase 6 work.
+
 ## Unreleased
 
 ### Added — Community permissions foundation

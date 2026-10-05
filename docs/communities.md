@@ -1,6 +1,6 @@
 # Communities
 
-Phase 6 begins with the membership/permission boundary. The application screens, community-scoped content and content moderation remain in progress; this schema milestone does not expose community posts or claim those user journeys are complete.
+Phase 6 now includes discovery, creation and membership-management screens backed by the verified permission boundary. Community-scoped content and content moderation remain in progress; this milestone does not expose community posts or claim those user journeys are complete.
 
 ## Access contract
 
@@ -36,4 +36,12 @@ Per-user database budgets allow three community creations and 30 transition call
 
 ## Remaining Phase 6 work
 
-Connect discovery, creation, join requests and member/staff controls to validated server actions. Add community-scoped posts with visibility enforced through every social read/write path; require membership and reject banned participants. Add pinning, reports, moderator removal, blocks architecture and audited content actions. Verify private-community leakage against direct APIs and existing feeds before exposing content. Match discussions/realtime remain Phase 7; notification delivery remains Phase 10.
+Add community-scoped posts with visibility enforced through every social read/write path; require membership and reject banned participants. Add pinning, reports, moderator removal, blocks architecture and audited content actions. Verify private-community leakage against direct APIs and existing feeds before exposing content. Match discussions/realtime remain Phase 7; notification delivery remains Phase 10.
+
+## Application routes
+
+`/communities` searches public community name prefixes; `?view=mine` joins membership in PostgreSQL before paginating, including private memberships without exposing them to outsiders. `/communities/new` requires a verified account and completed profile. Creation forms retain entered text on failure.
+
+`/communities/{uuid}` shows visible metadata/rules and current membership or a generic private/unavailable access screen. The latter never serializes private metadata. Pending requests can be cancelled. `/communities/{uuid}/members` provides paginated members, requests, bans and audit views; staff-only views fail closed for ordinary members. Private profiles appear as a short member identifier rather than bypassing profile RLS.
+
+All community routes refresh SSR sessions and use private, no-store responses. Sensitive detail/management routes prohibit indexing. Server actions validate payloads and use the verified user client; database procedures remain authoritative even if form role/target values are forged. Ownership transfers and bans ask for confirmation in the UI. Uploads and metadata editing remain deferred.
