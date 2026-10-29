@@ -46,3 +46,6 @@ Sports entities: browse teams, players and competitions, then follow them from d
 Social experience: `/feed` offers latest/following activity; `/people` finds public fans; `/users/{username}` and `/posts/{id}` provide following, comments, replies and likes with profile-derived privacy. See [social behavior](docs/social.md). No notification delivery or realtime discussion is claimed yet.
 
 Communities: `/communities` supports discovery, creation, public joins and private access requests. Members and staff can manage requests, roles, bans and ownership with database-enforced authority. See [community permissions](docs/communities.md). Community posts and content moderation remain in progress.
+
+
+contributers - bibek200619, roushan-23
