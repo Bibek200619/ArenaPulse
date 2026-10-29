@@ -11,17 +11,36 @@ import {
   readMembership,
 } from '@/features/communities/repository';
 import { communityId } from '@/features/communities/validation';
+import { readCommunityPosts } from '@/features/social/repository';
+import {
+  CommunityPostComposer,
+  CommunityPostList,
+} from '@/features/communities/content';
+import { SocialPagination } from '@/features/social/presentation';
+import {
+  socialQuerySchema,
+  SOCIAL_PAGE_SIZE,
+} from '@/features/social/validation';
 export const metadata = {
   title: 'Community',
   robots: { index: false, follow: false },
 };
 export default async function CommunityPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { id } = await params;
   if (!communityId.safeParse(id).success) notFound();
+  const parsed = socialQuerySchema.safeParse(await searchParams);
+  if (!parsed.success)
+    return (
+      <CommunityShell title="Community">
+        <p role="alert">Choose a valid page number.</p>
+      </CommunityShell>
+    );
   const context = await socialContext();
   if (!context)
     return (
@@ -39,6 +58,10 @@ export default async function CommunityPage({
           ban: undefined,
         }),
   ]);
+  const posts =
+    group && membership.role
+      ? await readCommunityPosts(context.client, id, parsed.data.page)
+      : [];
   return (
     <CommunityShell title={group?.name ?? 'Community access'}>
       {group ? (
@@ -79,6 +102,25 @@ export default async function CommunityPage({
             approval.
           </p>
         </section>
+      )}
+      {membership.role && (
+        <>
+          <CommunityPostComposer
+            id={id}
+            signedIn={!!context.user && !!context.profile}
+          />
+          <CommunityPostList
+            id={id}
+            posts={posts}
+            role={membership.role}
+            userId={context.user!.id}
+          />
+          <SocialPagination
+            path={`/communities/${id}`}
+            page={parsed.data.page}
+            hasMore={posts.length > SOCIAL_PAGE_SIZE}
+          />
+        </>
       )}
     </CommunityShell>
   );

@@ -5,10 +5,12 @@ import { changeSocial } from './actions';
 import type { SocialMutation } from './validation';
 export function ContentForm({
   postId,
+  communityId,
   parentId,
   replyTo,
 }: {
   postId?: string;
+  communityId?: string;
   parentId?: string;
   replyTo?: string;
 }) {
@@ -45,6 +47,9 @@ export function ContentForm({
         name="operation"
         value={postId ? 'comment' : 'post'}
       />
+      {communityId && (
+        <input type="hidden" name="communityId" value={communityId} />
+      )}
       {postId && <input type="hidden" name="postId" value={postId} />}
       {parentId && <input type="hidden" name="parentId" value={parentId} />}
       <label htmlFor={id}>{label}</label>
@@ -114,7 +119,11 @@ export function SocialButton({
         ? selected
           ? 'unfollow'
           : 'follow'
-        : input.operation;
+        : input.operation === 'block'
+          ? selected
+            ? 'unblock'
+            : 'block'
+          : input.operation;
   return (
     <form
       action={action}

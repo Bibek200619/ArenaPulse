@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { z } from 'zod';
 import { socialContext } from '@/features/social/context';
 import { readPost, readComments } from '@/features/social/repository';
@@ -11,6 +12,7 @@ import {
   SocialShell,
   SocialUnavailable,
   Author,
+  SocialPostAuthor,
   SocialPagination,
   WriteNotice,
 } from '@/features/social/presentation';
@@ -56,12 +58,23 @@ export default async function PostPage({
   return (
     <SocialShell title="Conversation">
       <article className="social-post">
-        <Author
-          name={post.author.display_name}
-          username={post.author.username}
-          date={post.created_at}
-        />
+        {post.community_id && (
+          <p className="muted">
+            <Link
+              className="text-link"
+              href={`/communities/${post.community_id}`}
+            >
+              ← Back to community
+            </Link>
+          </p>
+        )}
+        <SocialPostAuthor author={post.author} date={post.created_at} />
         <p className="social-body">{post.body}</p>
+        {post.community_id && (
+          <p className="social-privacy muted">
+            This post and its discussion are visible to community members.
+          </p>
+        )}
         <p className="muted">{post.reactions[0]?.count ?? 0} visible likes</p>
         <div className="actions">
           {user && profile && (
@@ -83,7 +96,13 @@ export default async function PostPage({
         </div>
       </article>
       <h2 className="social-subheading">Comments</h2>
-      <WriteNotice signedIn={!!user} isPrivate={profile?.is_private} />
+      {post.community_id ? (
+        <p className="social-privacy muted">
+          Replies are visible to members of this community.
+        </p>
+      ) : (
+        <WriteNotice signedIn={!!user} isPrivate={profile?.is_private} />
+      )}
       {user && profile && <ContentForm postId={id} />}
       <div className="social-stream">
         {comments.slice(0, SOCIAL_PAGE_SIZE).map((comment) => (
@@ -92,11 +111,15 @@ export default async function PostPage({
             className="social-post"
             id={`comment-${comment.id}`}
           >
-            <Author
-              name={comment.author.display_name}
-              username={comment.author.username}
-              date={comment.created_at}
-            />
+            {comment.author ? (
+              <Author
+                name={comment.author.display_name}
+                username={comment.author.username}
+                date={comment.created_at}
+              />
+            ) : (
+              <SocialPostAuthor author={null} date={comment.created_at} />
+            )}
             {comment.parent_id && (
               <p className="muted social-reply-note">
                 Reply in this conversation
@@ -105,11 +128,20 @@ export default async function PostPage({
             <p className="social-body">{comment.body}</p>
             {user && profile && (
               <details className="social-reply">
-                <summary>Reply to @{comment.author.username}</summary>
+                <summary>
+                  Reply to{' '}
+                  {comment.author
+                    ? `@${comment.author.username}`
+                    : 'a private fan'}
+                </summary>
                 <ContentForm
                   postId={id}
                   parentId={comment.id}
-                  replyTo={`@${comment.author.username}`}
+                  replyTo={
+                    comment.author
+                      ? `@${comment.author.username}`
+                      : 'a private fan'
+                  }
                 />
               </details>
             )}

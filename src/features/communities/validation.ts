@@ -28,6 +28,19 @@ export const communityMutationSchema = z.discriminatedUnion('operation', [
   z.object({ operation: z.literal('transfer'), ...target }),
   z.object({ operation: z.literal('unban'), ...target }),
   z.object({
+    operation: z.enum(['pin-post', 'unpin-post', 'remove-post']),
+    ...target,
+  }),
+  z.object({
+    operation: z.literal('report-post'),
+    ...target,
+    reason: z.string().trim().min(1).max(500),
+  }),
+  z.object({
+    operation: z.enum(['resolve-report', 'dismiss-report']),
+    ...target,
+  }),
+  z.object({
     operation: z.literal('role'),
     ...target,
     role: z.enum(['admin', 'moderator', 'member']),
@@ -51,7 +64,9 @@ export const communityQuerySchema = z.object({
 });
 export const memberQuerySchema = z.object({
   page: communityQuerySchema.shape.page,
-  tab: z.enum(['members', 'requests', 'bans', 'audit']).default('members'),
+  tab: z
+    .enum(['members', 'requests', 'bans', 'audit', 'reports'])
+    .default('members'),
 });
 export function roleRank(role: string | null | undefined) {
   return (

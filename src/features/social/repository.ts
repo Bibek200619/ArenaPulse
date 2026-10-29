@@ -3,13 +3,16 @@ import type { Database } from '@/lib/supabase/database.types';
 import { SOCIAL_PAGE_SIZE } from './validation';
 type Client = SupabaseClient<Database>;
 const postFields =
-  'id,body,author_id,created_at,author:profiles!posts_author_id_fkey!inner(username,display_name),comments(count),reactions(count)' as const;
+  'id,body,author_id,community_id,is_pinned,is_removed,created_at,author:profiles!posts_author_id_fkey(username,display_name),comments(count),reactions(count)' as const;
 export type SocialPost = {
   id: string;
   body: string;
   author_id: string;
+  community_id: string | null;
+  is_pinned: boolean;
+  is_removed: boolean;
   created_at: string;
-  author: { username: string; display_name: string };
+  author: { username: string; display_name: string } | null;
   comments: { count: number }[];
   reactions: { count: number }[];
 };
@@ -23,8 +26,9 @@ export async function readPosts(
     const { data, error } = await client
       .from('posts')
       .select(
-        'id,body,author_id,created_at,author:profiles!posts_author_id_fkey!inner(username,display_name,user_follows!user_follows_followed_id_fkey!inner(follower_id)),comments(count),reactions(count)',
+        'id,body,author_id,community_id,is_pinned,is_removed,created_at,author:profiles!posts_author_id_fkey(username,display_name,user_follows!user_follows_followed_id_fkey!inner(follower_id)),comments(count),reactions(count)',
       )
+      .is('community_id', null)
       .eq('author.user_follows.follower_id', options.following)
       .order('created_at', { ascending: false })
       .order('id', { ascending: false })
@@ -35,6 +39,7 @@ export async function readPosts(
   let query = client
     .from('posts')
     .select(postFields)
+    .is('community_id', null)
     .order('created_at', { ascending: false })
     .order('id', { ascending: false })
     .range(start, start + SOCIAL_PAGE_SIZE);
@@ -52,12 +57,29 @@ export async function readPost(client: Client, id: string) {
   if (error) throw new Error('Post is unavailable');
   return data;
 }
+export async function readCommunityPosts(
+  client: Client,
+  id: string,
+  page: number,
+) {
+  const start = (page - 1) * SOCIAL_PAGE_SIZE;
+  const { data, error } = await client
+    .from('posts')
+    .select(postFields)
+    .eq('community_id', id)
+    .order('is_pinned', { ascending: false })
+    .order('created_at', { ascending: false })
+    .order('id', { ascending: false })
+    .range(start, start + SOCIAL_PAGE_SIZE);
+  if (error) throw new Error('Community posts are unavailable');
+  return data;
+}
 export async function readComments(client: Client, id: string, page: number) {
   const start = (page - 1) * SOCIAL_PAGE_SIZE;
   const { data, error } = await client
     .from('comments')
     .select(
-      'id,body,author_id,parent_id,created_at,author:profiles!comments_author_id_fkey!inner(username,display_name)',
+      'id,body,author_id,parent_id,created_at,author:profiles!comments_author_id_fkey(username,display_name)',
     )
     .eq('post_id', id)
     .order('created_at')

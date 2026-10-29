@@ -180,6 +180,39 @@ test('two fans create, request, approve, manage roles, ban and transfer a privat
     await expect(
       bobPage.getByText('Your role: member', { exact: true }),
     ).toBeVisible();
+    const communityPost = `Matchday take ${randomUUID().slice(0, 8)}`;
+    await bobPage.getByLabel('Your sports take').fill(communityPost);
+    await bobPage.getByRole('button', { name: 'Publish post' }).click();
+    await expect(
+      bobPage.getByText(communityPost, { exact: true }),
+    ).toBeVisible();
+    await page.goto(url);
+    const ownerPost = page
+      .locator('article.social-post')
+      .filter({ hasText: communityPost });
+    await expect(ownerPost).toBeVisible();
+    await ownerPost.getByRole('button', { name: 'Pin post' }).click();
+    await expect(
+      ownerPost.getByText('Pinned post', { exact: true }),
+    ).toBeVisible();
+    await ownerPost
+      .getByLabel('Why are you reporting this post?')
+      .fill('Please review this community post.');
+    await ownerPost.getByRole('button', { name: 'Report post' }).click();
+    await expect(ownerPost.getByRole('status')).toContainText('Saved.');
+    await page.goto(`${url}/members?tab=reports`);
+    await expect(
+      page.getByText('Please review this community post.', { exact: true }),
+    ).toBeVisible();
+    await page.getByRole('button', { name: 'Resolve report' }).click();
+    await expect(page.getByText('Report · resolved')).toBeVisible();
+    await page.goto(url);
+    const removablePost = page
+      .locator('article.social-post')
+      .filter({ hasText: communityPost });
+    page.once('dialog', (dialog) => dialog.accept());
+    await removablePost.getByRole('button', { name: 'Remove post' }).click();
+    await expect(removablePost).toHaveCount(0);
     expect(errors).toEqual([]);
   } finally {
     await other.close();

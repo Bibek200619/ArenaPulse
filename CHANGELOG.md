@@ -11,10 +11,6 @@
 - Private, no-store community routes with verified sessions, database-enforced authority and no private metadata on outsider pages.
 - Profile RLS preserved in member directories; staff-only tabs reject ordinary members.
 
-### Deferred — Community membership experience
-
-- Scoped community posts, reports, pinning, moderator content removal and blocks remain Phase 6 work.
-
 ## Unreleased
 
 ### Added — Community permissions foundation
@@ -28,9 +24,15 @@
 - Private communities unlisted; member directories and staff records protected by RLS.
 - Direct Data API mutations denied; role hierarchy and ban authority enforced in private procedures.
 
-### Deferred — Community permissions foundation
+### Added — Community content
 
-- Community screens, scoped posts, reports, pinning and content moderation remain Phase 6 work.
+- Community-scoped posts with member-only database visibility and interaction checks, separate from public social feeds.
+- Community post reports, staff resolution, owner/admin pinning, audited moderation removal and user blocking.
+- Community reports management view and profile block/unblock control.
+
+### Security — Community content
+
+- PostgreSQL policies hide community posts, comments and reactions from outsiders, banned users and blocked users across direct reads and nested social queries.
 
 ### Added — Social experience
 

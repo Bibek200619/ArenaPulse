@@ -11,7 +11,7 @@ const options = { auth: { autoRefreshToken: false, persistSession: false } };
 const service = createClient(url, secret, options),
   anon = createClient(url, key, options);
 const users: string[] = [];
-async function actor() {
+async function actor(isPrivate = false) {
   const client = createClient(url!, key!, options),
     email = `community-${randomUUID()}@example.test`,
     password = randomUUID();
@@ -34,7 +34,7 @@ async function actor() {
         p_bio: '',
         p_country: '',
         p_favorite_sports: [],
-        p_is_private: false,
+        p_is_private: isPrivate,
       })
     ).error,
   ).toBeNull();
@@ -530,4 +530,193 @@ it('requires an actual profile before accepting community operations', async () 
     ).error?.code,
   ).toBe('42501');
   expect((await command(user, randomUUID(), 'join')).error?.code).toBe('42501');
+});
+
+it('scopes community posts, reports, pins and moderation to members and staff', async () => {
+  const { owner, id } = await group('public');
+  await join(bob, id);
+  const privateMember = await actor(true);
+  await join(privateMember, id);
+  const ownerPost = await owner.client
+    .from('posts')
+    .insert({ author_id: owner.id, community_id: id, body: 'Welcome fans' })
+    .select('id')
+    .single();
+  const memberPost = await bob.client
+    .from('posts')
+    .insert({ author_id: bob.id, community_id: id, body: 'Match day' })
+    .select('id')
+    .single();
+  expect(ownerPost.error).toBeNull();
+  expect(memberPost.error).toBeNull();
+  const privatePost = await privateMember.client
+    .from('posts')
+    .insert({
+      author_id: privateMember.id,
+      community_id: id,
+      body: 'Shared with this community only',
+    })
+    .select('id')
+    .single();
+  expect(privatePost.error).toBeNull();
+  const privatePostAsMember = await owner.client
+    .from('posts')
+    .select('id,body,author:profiles!posts_author_id_fkey(username)')
+    .eq('id', privatePost.data!.id)
+    .single();
+  expect(privatePostAsMember.data?.body).toBe(
+    'Shared with this community only',
+  );
+  expect(privatePostAsMember.data?.author).toBeNull();
+  expect(
+    (
+      await privateMember.client.from('comments').insert({
+        author_id: privateMember.id,
+        post_id: privatePost.data!.id,
+        body: 'Only members can read this reply.',
+      })
+    ).error,
+  ).toBeNull();
+  const privateCommentAsMember = await owner.client
+    .from('comments')
+    .select('body,author:profiles!comments_author_id_fkey(username)')
+    .eq('post_id', privatePost.data!.id)
+    .single();
+  expect(privateCommentAsMember.data?.body).toBe(
+    'Only members can read this reply.',
+  );
+  expect(privateCommentAsMember.data?.author).toBeNull();
+  const outsiderRead = await carol.client
+    .from('posts')
+    .select('id')
+    .eq('id', memberPost.data!.id);
+  expect(outsiderRead.error).toBeNull();
+  expect(outsiderRead.data).toEqual([]);
+  expect(
+    (
+      await carol.client.from('comments').insert({
+        author_id: carol.id,
+        post_id: memberPost.data!.id,
+        body: 'Intrusion',
+      })
+    ).error?.code,
+  ).toBe('42501');
+  expect(
+    (
+      await owner.client.rpc('moderate_community_post', {
+        p_post: ownerPost.data!.id,
+        p_action: 'pin',
+      })
+    ).error,
+  ).toBeNull();
+  expect(
+    (
+      await bob.client.rpc('moderate_community_post', {
+        p_post: ownerPost.data!.id,
+        p_action: 'pin',
+      })
+    ).error?.code,
+  ).toBe('42501');
+  expect(
+    (
+      await owner.client
+        .from('posts')
+        .select('is_pinned')
+        .eq('id', ownerPost.data!.id)
+    ).data,
+  ).toEqual([{ is_pinned: true }]);
+  expect(
+    (
+      await bob.client.rpc('report_community_post', {
+        p_post: ownerPost.data!.id,
+        p_reason: 'Spam',
+      })
+    ).error,
+  ).toBeNull();
+  const report = await owner.client
+    .from('community_post_reports')
+    .select('id,post_id,status')
+    .eq('community_id', id)
+    .single();
+  expect(report.data?.post_id).toBe(ownerPost.data!.id);
+  expect(
+    (
+      await owner.client.rpc('resolve_community_report', {
+        p_report: report.data!.id,
+        p_action: 'resolve',
+      })
+    ).data,
+  ).toBe('resolve');
+  expect(
+    (
+      await owner.client.rpc('moderate_community_post', {
+        p_post: memberPost.data!.id,
+        p_action: 'remove',
+      })
+    ).data,
+  ).toBe('removed');
+  expect(
+    (await bob.client.from('posts').select('id').eq('id', memberPost.data!.id))
+      .data,
+  ).toEqual([]);
+  const audit = await owner.client
+    .from('community_audit')
+    .select('action')
+    .eq('community_id', id);
+  expect(audit.data?.map((row) => row.action)).toEqual(
+    expect.arrayContaining([
+      'pin-post',
+      'report-post',
+      'resolve-report',
+      'remove-post',
+    ]),
+  );
+  expect(
+    (await command(owner, id, 'ban', bob.id, undefined, 'Repeated abuse'))
+      .error,
+  ).toBeNull();
+  expect(
+    (await bob.client.from('posts').select('id').eq('id', ownerPost.data!.id))
+      .data,
+  ).toEqual([]);
+});
+
+it('hides blocked users’ global posts from both sides and denies interaction', async () => {
+  const ownerPost = await alice.client
+    .from('posts')
+    .insert({ author_id: alice.id, body: 'Visible before block' })
+    .select('id')
+    .single();
+  const bobPost = await bob.client
+    .from('posts')
+    .insert({ author_id: bob.id, body: 'Also visible before block' })
+    .select('id')
+    .single();
+  expect(ownerPost.error).toBeNull();
+  expect(bobPost.error).toBeNull();
+  expect(
+    (
+      await bob.client.from('user_blocks').insert({
+        blocker_id: bob.id,
+        blocked_id: alice.id,
+      })
+    ).error,
+  ).toBeNull();
+  expect(
+    (await bob.client.from('posts').select('id').eq('id', ownerPost.data!.id))
+      .data,
+  ).toEqual([]);
+  expect(
+    (await alice.client.from('posts').select('id').eq('id', bobPost.data!.id))
+      .data,
+  ).toEqual([]);
+  expect(
+    (
+      await alice.client.from('comments').insert({
+        author_id: alice.id,
+        post_id: bobPost.data!.id,
+        body: 'Blocked reply',
+      })
+    ).error?.code,
+  ).toBe('42501');
 });
