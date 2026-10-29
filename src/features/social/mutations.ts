@@ -10,7 +10,11 @@ export async function writeSocial(
     case 'post':
       return client
         .from('posts')
-        .insert({ author_id: actor, body: input.body })
+        .insert({
+          author_id: actor,
+          body: input.body,
+          ...(input.communityId ? { community_id: input.communityId } : {}),
+        })
         .select('id')
         .single();
     case 'delete-post':
@@ -61,6 +65,16 @@ export async function writeSocial(
         .delete()
         .eq('follower_id', actor)
         .eq('followed_id', input.userId);
+    case 'block':
+      return client
+        .from('user_blocks')
+        .insert({ blocker_id: actor, blocked_id: input.userId });
+    case 'unblock':
+      return client
+        .from('user_blocks')
+        .delete()
+        .eq('blocker_id', actor)
+        .eq('blocked_id', input.userId);
   }
 }
 export function socialWriteError(code?: string) {

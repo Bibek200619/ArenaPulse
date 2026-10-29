@@ -90,6 +90,22 @@ test('two fans publish, follow, react, reply and preserve privacy', async ({
     await expect(
       page.getByText('See you in the crowd!', { exact: true }),
     ).toBeVisible();
+    await bobPage.goto(`/users/${alice}`);
+    await bobPage
+      .getByRole('button', { name: `Block @${alice}`, exact: true })
+      .click();
+    await expect(
+      bobPage.getByRole('button', { name: `Unblock @${alice}`, exact: true }),
+    ).toBeVisible();
+    await bobPage.goto('/feed?view=following');
+    await expect(bobPage.getByText(body, { exact: true })).toHaveCount(0);
+    await bobPage.goto(`/users/${alice}`);
+    await bobPage
+      .getByRole('button', { name: `Unblock @${alice}`, exact: true })
+      .click();
+    await expect(
+      bobPage.getByRole('button', { name: `Block @${alice}`, exact: true }),
+    ).toBeVisible();
     await expect(page).toHaveTitle('Conversation | ArenaPulse');
     expect(
       (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze())

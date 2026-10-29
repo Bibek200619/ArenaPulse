@@ -314,6 +314,42 @@ export type Database = {
           },
         ];
       };
+      community_post_reports: {
+        Row: {
+          community_id: string;
+          created_at: string;
+          id: string;
+          post_id: string;
+          reason: string;
+          reporter_id: string;
+          resolved_at: string | null;
+          resolved_by: string | null;
+          status: string;
+        };
+        Insert: {
+          community_id: string;
+          created_at?: string;
+          id?: string;
+          post_id: string;
+          reason: string;
+          reporter_id: string;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+          status?: string;
+        };
+        Update: {
+          community_id?: string;
+          created_at?: string;
+          id?: string;
+          post_id?: string;
+          reason?: string;
+          reporter_id?: string;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+          status?: string;
+        };
+        Relationships: [];
+      };
       competition_follows: {
         Row: {
           competition_id: string;
@@ -710,25 +746,41 @@ export type Database = {
         Row: {
           author_id: string;
           body: string;
+          community_id: string | null;
           created_at: string;
           id: string;
+          is_pinned: boolean;
+          is_removed: boolean;
           updated_at: string;
         };
         Insert: {
           author_id: string;
           body: string;
+          community_id?: string | null;
           created_at?: string;
           id?: string;
+          is_pinned?: boolean;
+          is_removed?: boolean;
           updated_at?: string;
         };
         Update: {
           author_id?: string;
           body?: string;
+          community_id?: string | null;
           created_at?: string;
           id?: string;
+          is_pinned?: boolean;
+          is_removed?: boolean;
           updated_at?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'posts_community_id_fkey';
+            columns: ['community_id'];
+            isOneToOne: false;
+            referencedRelation: 'communities';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'posts_author_id_fkey';
             columns: ['author_id'];
@@ -1069,6 +1121,16 @@ export type Database = {
           },
         ];
       };
+      user_blocks: {
+        Row: { blocker_id: string; blocked_id: string; created_at: string };
+        Insert: { blocker_id: string; blocked_id: string; created_at?: string };
+        Update: {
+          blocker_id?: string;
+          blocked_id?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       venues: {
         Row: {
           city: string;
@@ -1116,6 +1178,18 @@ export type Database = {
           p_team_id?: string;
           p_visibility?: string;
         };
+        Returns: string;
+      };
+      moderate_community_post: {
+        Args: { p_action: string; p_post: string };
+        Returns: string;
+      };
+      report_community_post: {
+        Args: { p_post: string; p_reason: string };
+        Returns: string;
+      };
+      resolve_community_report: {
+        Args: { p_action: string; p_report: string };
         Returns: string;
       };
       save_profile: {

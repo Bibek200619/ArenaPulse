@@ -82,7 +82,7 @@ export async function readMembership(
 export async function readCommunityRoster(
   client: Client,
   id: string,
-  tab: 'members' | 'requests' | 'bans' | 'audit',
+  tab: 'members' | 'requests' | 'bans' | 'audit' | 'reports',
   page: number,
 ) {
   const start = (page - 1) * COMMUNITY_PAGE_SIZE,
@@ -96,7 +96,18 @@ export async function readCommunityRoster(
       .order('id')
       .range(start, end);
     if (error) throw new Error('Audit is unavailable');
-    return { audit: data, people: [] };
+    return { audit: data, people: [], reports: [] };
+  }
+  if (tab === 'reports') {
+    const { data, error } = await client
+      .from('community_post_reports')
+      .select('id,post_id,reporter_id,reason,status,created_at')
+      .eq('community_id', id)
+      .order('created_at', { ascending: false })
+      .order('id')
+      .range(start, end);
+    if (error) throw new Error('Community reports are unavailable');
+    return { audit: [], people: [], reports: data };
   }
   const result =
     tab === 'members'
@@ -130,5 +141,5 @@ export async function readCommunityRoster(
             .order('user_id')
             .range(start, end);
   if (result.error) throw new Error('Community members are unavailable');
-  return { audit: [], people: result.data };
+  return { audit: [], people: result.data, reports: [] };
 }

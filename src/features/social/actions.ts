@@ -26,7 +26,9 @@ export async function changeSocial(
   try {
     const { error, data } = await writeSocial(client, user.id, input);
     const idempotent =
-      input.operation === 'like' || input.operation === 'follow';
+      input.operation === 'like' ||
+      input.operation === 'follow' ||
+      input.operation === 'block';
     if (error && !(idempotent && error.code === '23505')) {
       if (!['P0001', '23503', '42501'].includes(error.code))
         console.error(
@@ -61,11 +63,14 @@ export async function changeSocial(
   revalidatePath('/people');
   revalidatePath('/users/[username]', 'page');
   revalidatePath('/profile');
+  revalidatePath('/settings/blocks');
   if ('postId' in input) revalidatePath(`/posts/${input.postId}`);
+  if (input.operation === 'post' && input.communityId)
+    revalidatePath(`/communities/${input.communityId}`);
   return {
     success: 'Saved.',
     postId,
-    active: ['like', 'follow'].includes(input.operation),
+    active: ['like', 'follow', 'block'].includes(input.operation),
     deleted: input.operation === 'delete-post',
   };
 }

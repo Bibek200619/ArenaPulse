@@ -5,6 +5,7 @@ export const socialMutationSchema = z.discriminatedUnion('operation', [
   z.object({
     operation: z.literal('post'),
     body: z.string().trim().min(1).max(2000),
+    communityId: z.union([id, z.literal('')]).optional(),
   }),
   z.object({ operation: z.literal('delete-post'), ...postId }),
   z.object({
@@ -22,6 +23,8 @@ export const socialMutationSchema = z.discriminatedUnion('operation', [
   z.object({ operation: z.literal('unlike'), ...postId }),
   z.object({ operation: z.literal('follow'), userId: id }),
   z.object({ operation: z.literal('unfollow'), userId: id }),
+  z.object({ operation: z.literal('block'), userId: id }),
+  z.object({ operation: z.literal('unblock'), userId: id }),
 ]);
 export type SocialMutation = z.infer<typeof socialMutationSchema>;
 export const socialQuerySchema = z.object({

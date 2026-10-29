@@ -90,6 +90,35 @@ export function Author({
     </div>
   );
 }
+export function SocialPostAuthor({
+  author,
+  date,
+}: {
+  author: { username: string; display_name: string } | null;
+  date: string;
+}) {
+  if (author)
+    return (
+      <Author
+        name={author.display_name}
+        username={author.username}
+        date={date}
+      />
+    );
+  return (
+    <div className="social-author">
+      <span className="entity-badge" aria-hidden="true">
+        F
+      </span>
+      <div>
+        <strong>Private community member</strong>
+        <time dateTime={date}>
+          {new Date(date).toISOString().slice(0, 16).replace('T', ' ')} UTC
+        </time>
+      </div>
+    </div>
+  );
+}
 export function PostList({ posts }: { posts: SocialPost[] }) {
   if (!posts.length)
     return (
@@ -105,11 +134,7 @@ export function PostList({ posts }: { posts: SocialPost[] }) {
     <div className="social-stream">
       {posts.slice(0, SOCIAL_PAGE_SIZE).map((post) => (
         <article key={post.id} className="social-post">
-          <Author
-            name={post.author.display_name}
-            username={post.author.username}
-            date={post.created_at}
-          />
+          <SocialPostAuthor author={post.author} date={post.created_at} />
           <p className="social-body">{post.body}</p>
           <div className="social-post-footer">
             <Link className="text-link" href={`/posts/${post.id}`}>

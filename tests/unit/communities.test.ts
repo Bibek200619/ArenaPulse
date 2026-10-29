@@ -92,6 +92,39 @@ it('forwards only permitted transition arguments and explains pending approval',
     p_action: 'join',
   });
 });
+it('routes report actions through the community report RPC and handles duplicate reports safely', async () => {
+  rpc.mockResolvedValueOnce({ data: id, error: null });
+  await changeCommunity(
+    {},
+    form({
+      operation: 'report-post',
+      id,
+      targetId: id,
+      reason: 'Spam',
+    }),
+  );
+  expect(rpc).toHaveBeenCalledWith('report_community_post', {
+    p_post: id,
+    p_reason: 'Spam',
+  });
+  rpc.mockResolvedValueOnce({
+    data: null,
+    error: { code: '23505', message: 'duplicate key' },
+  });
+  expect(
+    (
+      await changeCommunity(
+        {},
+        form({
+          operation: 'report-post',
+          id,
+          targetId: id,
+          reason: 'Spam',
+        }),
+      )
+    ).error,
+  ).toBe('You already reported this post.');
+});
 it('handles conflicts, denied authority, rate limits and unknown failures without leaking internals', async () => {
   for (const code of ['23505', '23514', '23503', '42501', 'P0001']) {
     rpc.mockResolvedValueOnce({
@@ -128,4 +161,20 @@ it('bounds community search, pagination and member tabs', () => {
   ])
     expect(communityQuerySchema.safeParse(input).success).toBe(false);
   expect(memberQuerySchema.safeParse({ tab: 'secrets' }).success).toBe(false);
+  expect(memberQuerySchema.parse({ tab: 'reports' }).tab).toBe('reports');
+  expect(
+    communityMutationSchema.safeParse({
+      operation: 'report-post',
+      id,
+      targetId: id,
+      reason: 'Spam',
+    }).success,
+  ).toBe(true);
+  expect(
+    communityMutationSchema.safeParse({
+      operation: 'remove-post',
+      id,
+      targetId: id,
+    }).success,
+  ).toBe(true);
 });

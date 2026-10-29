@@ -1,6 +1,6 @@
 # Communities
 
-Phase 6 now includes discovery, creation and membership-management screens backed by the verified permission boundary. Community-scoped content and content moderation remain in progress; this milestone does not expose community posts or claim those user journeys are complete.
+Phase 6 includes discovery, creation, membership management and community-scoped posts. PostgreSQL enforces post visibility and interaction permissions so private community content never enters global, following or profile feeds. Community post, report and moderation journeys remain part of this milestone.
 
 ## Access contract
 
@@ -36,12 +36,20 @@ Per-user database budgets allow three community creations and 30 transition call
 
 ## Remaining Phase 6 work
 
-Add community-scoped posts with visibility enforced through every social read/write path; require membership and reject banned participants. Add pinning, reports, moderator removal, blocks architecture and audited content actions. Verify private-community leakage against direct APIs and existing feeds before exposing content. Match discussions/realtime remain Phase 7; notification delivery remains Phase 10.
+Community posts are available only to current community members, including in public communities. Only members may create posts, comments and reactions; bans remove access and prevent future writes. Community posts are excluded from global, following and profile feeds. Direct post, comment, reaction and aggregate reads all follow the database visibility policies. Private profile privacy still limits profile identity and global posts. Reports are readable by their reporter and community staff; reports can be resolved or dismissed by staff. Only owners/admins may pin posts; staff may remove content from lower-ranked members. These actions and report events are written to the immutable community audit log. A removed post is replaced with a short marker while the audit record remains.
+
+Private-profile members may choose to publish to a community. Members can read that community post and its discussion, while profile RLS hides the author's identity and the interface labels them as a private community member.
+
+Users may block and unblock another profile from its profile page. Blocks hide posts and interactions in both directions and prevent comments/reactions between the blocked users. A user can still access the profile to unblock it. Block records are private to the blocker.
+
+Match discussions/realtime remain Phase 7; notification delivery remains Phase 10.
 
 ## Application routes
 
 `/communities` searches public community name prefixes; `?view=mine` joins membership in PostgreSQL before paginating, including private memberships without exposing them to outsiders. `/communities/new` requires a verified account and completed profile. Creation forms retain entered text on failure.
 
 `/communities/{uuid}` shows visible metadata/rules and current membership or a generic private/unavailable access screen. The latter never serializes private metadata. Pending requests can be cancelled. `/communities/{uuid}/members` provides paginated members, requests, bans and audit views; staff-only views fail closed for ordinary members. Private profiles appear as a short member identifier rather than bypassing profile RLS.
+
+Current members can post and read the community's pinned-first discussion at `/communities/{uuid}`. Reports appear in the staff-only Reports tab. Post details remain available only while the reader has access to that community.
 
 All community routes refresh SSR sessions and use private, no-store responses. Sensitive detail/management routes prohibit indexing. Server actions validate payloads and use the verified user client; database procedures remain authoritative even if form role/target values are forged. Ownership transfers and bans ask for confirmation in the UI. Uploads and metadata editing remain deferred.

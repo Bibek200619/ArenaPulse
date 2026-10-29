@@ -7,6 +7,7 @@ import {
   CommunityUnavailable,
 } from '@/features/communities/presentation';
 import { CommunityControl } from '@/features/communities/forms';
+import { CommunityReportList } from '@/features/communities/content';
 import {
   readCommunity,
   readMembership,
@@ -63,7 +64,7 @@ export default async function CommunityMembersPage({
       </Link>
       <nav className="community-tabs" aria-label="Member management">
         {(rank >= 2
-          ? ['members', 'requests', 'bans', 'audit']
+          ? ['members', 'requests', 'bans', 'reports', 'audit']
           : ['members']
         ).map((value) => (
           <Link
@@ -82,9 +83,11 @@ export default async function CommunityMembersPage({
           ? 'Pending access requests'
           : tab === 'audit'
             ? 'Moderation audit'
-            : tab === 'bans'
-              ? 'Community bans'
-              : 'Members'}
+            : tab === 'reports'
+              ? 'Community reports'
+              : tab === 'bans'
+                ? 'Community bans'
+                : 'Members'}
       </h2>
       <div className="social-stream">
         {roster.people.slice(0, COMMUNITY_PAGE_SIZE).map((person) => {
@@ -210,17 +213,26 @@ export default async function CommunityMembersPage({
             {event.detail && <p className="social-body">{event.detail}</p>}
           </article>
         ))}
+        {tab === 'reports' && (
+          <CommunityReportList
+            id={id}
+            reports={roster.reports.slice(0, COMMUNITY_PAGE_SIZE)}
+          />
+        )}
       </div>
-      {!roster.people.length && !roster.audit.length && (
-        <p className="match-empty">Nothing to show in this view.</p>
-      )}
+      {!roster.people.length &&
+        !roster.audit.length &&
+        !roster.reports.length && (
+          <p className="match-empty">Nothing to show in this view.</p>
+        )}
       <SocialPagination
         path={path}
         page={page}
         query={{ tab }}
         hasMore={
           roster.people.length > COMMUNITY_PAGE_SIZE ||
-          roster.audit.length > COMMUNITY_PAGE_SIZE
+          roster.audit.length > COMMUNITY_PAGE_SIZE ||
+          roster.reports.length > COMMUNITY_PAGE_SIZE
         }
       />
     </CommunityShell>

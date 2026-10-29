@@ -221,3 +221,19 @@ Tests: 73 unit/component/API tests, 59 real database tests and 18 public browser
 Known Issues: browser robots helper corrected to recognize noindex alongside nofollow without accepting index. Recurring Next.js destination-stream-closed log observed during navigation; privacy/runtime assertions remain enabled.
 Deferred: scoped posts, reports, pinning, moderator removal and blocks are the remaining Phase 6 milestone. No community images/uploads yet.
 Next Phase: community content and moderation, then Phase 7 realtime match discussions.
+
+## Active GitHub issue #21 — community content and moderation
+
+- [x] Extend posts with optional community scope while preserving the existing global feed; enforce membership, community visibility and block rules in database policies for posts, comments and reactions.
+- [x] Add community post creation/listing, pin/unpin controls, member reports, staff content removal, and audited moderation actions. Keep moderation authority in the database.
+- [x] Add user blocks and ensure blocked relationships do not reveal or enable interaction with protected content.
+- [x] Add real database and authenticated browser coverage for members, outsiders, public/private communities, bans, blocks, reporting, pinning and moderation.
+- [ ] Replay migrations, run the database suite/security advisor and authenticated desktop/mobile journeys; the local Supabase runtime is unavailable without Docker.
+- [x] Update community docs, this plan and changelog; run available type, lint, unit, integration, formatting, build and public browser gates; record actual results.
+- [x] Commit only issue-specific changes on the task branch.
+- [x] Push `codex/phase-6-community-content-21` and open PR #35 targeting `development`; issue #21 remains open until the PR merges and its outstanding verification is complete.
+- [x] Track the environment-dependent migration/database/security/authenticated-browser verification in follow-up issue #34, linked from PR #35 and issue #21.
+
+Validation cycle 1: type-check, lint, 65 unit tests, 9 integration tests, production build and all 18 public desktop/mobile browser tests passed. Prettier passed for every changed Markdown/TypeScript/test file. Repository-wide `format:check` warns on 192 files in this Windows checkout because unchanged Git files use CRLF; the Linux CI checkout uses LF. `npm run db:start` could not start because Docker/Podman and the isolated local database are absent, so migration replay, security advisors, database tests and new authenticated browser journeys remain unverified. See `docs/engineering/phase-6-content-verification.md` and follow-up issue #34 for the targeted rerun plan. PR #35 is open and its Quality workflow is running; Vercel status passed. Keep issue #21 open until PR #35 merges and outstanding verification is complete.
+
+Security follow-up: `npm audit --omit=dev` reports four production dependency advisories, including a critical advisory for the pinned Next.js 16.3.4 and high advisories for sharp, source-map-js and zod. No dependency versions were changed in this community issue; tracked separately in GitHub issue #33.

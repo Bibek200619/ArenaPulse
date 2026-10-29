@@ -46,26 +46,40 @@ export default async function UserPage({
     .maybeSingle();
   if (error) throw new Error('Profile is unavailable');
   if (!profile) notFound();
-  const [posts, followers, following, relation] = await Promise.all([
-    readPosts(client, parsed.data.page, { author: profile.id }),
-    client
-      .from('user_follows')
-      .select('follower_id', { count: 'exact', head: true })
-      .eq('followed_id', profile.id),
-    client
-      .from('user_follows')
-      .select('followed_id', { count: 'exact', head: true })
-      .eq('follower_id', profile.id),
-    user
-      ? client
-          .from('user_follows')
-          .select('followed_id')
-          .eq('follower_id', user.id)
-          .eq('followed_id', profile.id)
-          .maybeSingle()
-      : null,
-  ]);
-  if (followers.error || following.error || relation?.error)
+  const [posts, followers, following, relation, blockRelation] =
+    await Promise.all([
+      readPosts(client, parsed.data.page, { author: profile.id }),
+      client
+        .from('user_follows')
+        .select('follower_id', { count: 'exact', head: true })
+        .eq('followed_id', profile.id),
+      client
+        .from('user_follows')
+        .select('followed_id', { count: 'exact', head: true })
+        .eq('follower_id', profile.id),
+      user
+        ? client
+            .from('user_follows')
+            .select('followed_id')
+            .eq('follower_id', user.id)
+            .eq('followed_id', profile.id)
+            .maybeSingle()
+        : null,
+      user
+        ? client
+            .from('user_blocks')
+            .select('blocked_id')
+            .eq('blocker_id', user.id)
+            .eq('blocked_id', profile.id)
+            .maybeSingle()
+        : null,
+    ]);
+  if (
+    followers.error ||
+    following.error ||
+    relation?.error ||
+    blockRelation?.error
+  )
     throw new Error('Follow status is unavailable');
   return (
     <SocialShell title={profile.display_name}>
@@ -84,7 +98,8 @@ export default async function UserPage({
         {user &&
         context.profile &&
         user.id !== profile.id &&
-        !profile.is_private ? (
+        !profile.is_private &&
+        !blockRelation?.data ? (
           <SocialButton
             key={String(!!relation?.data)}
             input={{ operation: 'follow', userId: profile.id }}
@@ -96,6 +111,15 @@ export default async function UserPage({
           <WriteNotice signedIn={!!user} />
         ) : null}
       </div>
+      {user && context.profile && user.id !== profile.id && (
+        <SocialButton
+          key={String(!!blockRelation?.data)}
+          input={{ operation: 'block', userId: profile.id }}
+          active={!!blockRelation?.data}
+          label={`Block @${profile.username}`}
+          activeLabel={`Unblock @${profile.username}`}
+        />
+      )}
       <h2 className="social-subheading">Sports activity</h2>
       <PostList posts={posts} />
       <SocialPagination
