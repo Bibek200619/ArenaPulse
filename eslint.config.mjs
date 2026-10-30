@@ -6,6 +6,7 @@ export default defineConfig([
   ...nextTs,
   globalIgnores([
     '.next/**',
+    '.next-live/**',
     'next-env.d.ts',
     'legacy/**',
     'graphify-out/**',

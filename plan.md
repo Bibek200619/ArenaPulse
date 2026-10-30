@@ -238,6 +238,17 @@ Validation cycle 1 (implementation PR): type-check, lint, 65 unit tests, 9 integ
 
 Security follow-up: `npm audit --omit=dev` reports four production dependency advisories, including a critical advisory for the pinned Next.js 16.3.4 and high advisories for sharp, source-map-js and zod. No dependency versions were changed in this community issue; tracked separately in GitHub issue #33.
 
+## Active GitHub issue #24 — Phase 7 realtime match discussions and moderation
+
+- [x] Inspect existing social schema, match routes and auth patterns; choose a match-scoped data model with RLS.
+- [x] Add validated authenticated discussion/reply/reaction writes, bounded history, and owner/moderator controls.
+- [x] Add scoped realtime subscriptions with polling fallback/reconnect behavior on desktop and mobile match pages.
+- [x] Add two-user database/authenticated browser coverage and document actual verification results.
+- [x] Run relevant database, security, unit/integration, browser, type, lint and build checks.
+- [ ] Commit and push `codex/phase-7-match-discussions-24`, open a PR linked to #24, and close after verification.
+
+Validation cycle 1: local migration applied; database tests passed 64/64; security advisor found no issues; unit tests passed 65/65; integration tests passed 9/9; type-check, lint and production build passed; public desktop/mobile browser tests passed 18/18; authenticated match discussion tests passed on desktop and mobile. Targeted Prettier checks passed for changed source, tests, docs and configuration.
+
 ## Completed GitHub issue #34 — verify Phase 6 community content migration and authenticated journeys
 
 - [x] Fix merged PR #35 CI failures: global post inserts under RLS, staff moderation writes blocked by the social write-limit trigger, private interaction author deletion, and the following-feed nested join.

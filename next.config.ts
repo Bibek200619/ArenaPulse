@@ -3,6 +3,7 @@ import { parseEnvironment } from './src/lib/env';
 
 parseEnvironment(process.env);
 const config: NextConfig = {
+  distDir: process.env.NEXT_BUILD_OUTPUT_DIR || '.next',
   poweredByHeader: false,
   reactStrictMode: true,
   async headers() {
