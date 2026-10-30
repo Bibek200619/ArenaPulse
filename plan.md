@@ -385,8 +385,10 @@ Resolved versions: Next.js and `eslint-config-next` 16.4.3; Zod 4.6.7; Sharp 0.3
 
 - [x] Set an explicit local-only `APP_URL` for the Quality workflow so Next route type generation receives the required environment without weakening production validation.
 - [x] Rerun type-check and the full local quality suite with the same value; `npm run check` passed again.
-- [ ] Commit and push the CI fix to PR #47, then verify Quality, Identity, and Vercel checks.
+- [x] Commit and push the CI fix to PR #47, then verify Quality, Identity, and Vercel checks.
 
 Failure evidence: GitHub Quality run #66 stopped at `npm run type-check` with `Invalid environment configuration: APP_URL`; unit, integration, format and seed checks passed before it. The local full suite passed when run with `APP_URL=http://127.0.0.1:3000`.
 
 Validation cycle 4: added `APP_URL=http://127.0.0.1:3000` to the Quality job only. With that value, `npm run check` passed again: 81 unit, 9 integration, type-check, lint, production build, and 18 public E2E tests.
+
+Validation cycle 5: CI follow-up commit 65cddbe passed both Quality and Identity workflows; Vercel deployment succeeded.
