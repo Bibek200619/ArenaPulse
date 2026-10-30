@@ -251,7 +251,8 @@ export class SportScoreProvider extends DemoSportsProvider {
         },
         provenance: {
           ...demo.provenance,
-          label: 'SportScore unavailable · Showing fictional demo fixtures only',
+          label:
+            'SportScore unavailable · Showing fictional demo fixtures only',
         },
       };
     }
