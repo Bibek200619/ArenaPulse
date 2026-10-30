@@ -12,12 +12,11 @@ async function openMatch(page: Page, matchId: string) {
 test('two fans discuss a match without leaking messages to another match', async ({
   page,
   browser,
-  request,
 }, testInfo) => {
   test.setTimeout(120_000);
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await registerFan(page, request);
+  await registerFan(page);
   const firstMatch = '513a966a-6a38-58a4-ad7a-6ec05e3789a2';
   const otherMatch = 'd2455f96-3463-5adb-bb88-b61129227b5d';
   const bobContext = await browser.newContext({
@@ -28,7 +27,7 @@ test('two fans discuss a match without leaking messages to another match', async
   const bobPage = await bobContext.newPage();
   bobPage.on('pageerror', (error) => errors.push(error.message));
   try {
-    const bob = await registerFan(bobPage, request);
+    const bob = await registerFan(bobPage);
     const message = `Match take ${randomUUID().slice(0, 8)}`;
     await openMatch(page, firstMatch);
     await page.getByLabel('Your match comment').fill(message);

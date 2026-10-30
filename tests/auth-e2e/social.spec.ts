@@ -15,12 +15,11 @@ async function unavailable(page: Page, url: string, hiddenText: string) {
 test('two fans publish, follow, react, reply and preserve privacy', async ({
   page,
   browser,
-  request,
 }, testInfo) => {
   test.setTimeout(90_000);
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  const alice = await registerFan(page, request);
+  const alice = await registerFan(page);
   await page.goto('/feed');
   const body = `Opening night for ${alice}. <script>window.pwned=true</script>`;
   await page.getByLabel('Your sports take').fill(body);
@@ -37,7 +36,7 @@ test('two fans publish, follow, react, reply and preserve privacy', async ({
   const bobPage = await other.newPage();
   bobPage.on('pageerror', (error) => errors.push(error.message));
   try {
-    const bob = await registerFan(bobPage, request);
+    const bob = await registerFan(bobPage);
     await bobPage.goto(`/people?q=${alice}`);
     await bobPage.getByRole('link', { name: new RegExp(`@${alice}`) }).click();
     await bobPage

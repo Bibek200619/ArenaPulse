@@ -26,10 +26,9 @@ async function saveFootballSquad(page: import('@playwright/test').Page) {
 
 test('a fan builds, saves and reloads a rules-checked fantasy squad', async ({
   page,
-  request,
 }, testInfo) => {
   test.setTimeout(120_000);
-  await registerFan(page, request);
+  await registerFan(page);
   await page.goto('/fantasy');
   const football = page.locator('.fantasy-competition-card').filter({
     has: page.getByRole('heading', { name: 'Harbour Fantasy League' }),
@@ -69,10 +68,9 @@ test('a fan builds, saves and reloads a rules-checked fantasy squad', async ({
 test('two fans create and join a private fantasy league without exposing it to outsiders', async ({
   page,
   browser,
-  request,
 }, testInfo) => {
   test.setTimeout(120_000);
-  await registerFan(page, request);
+  await registerFan(page);
   await saveFootballSquad(page);
   await page.goto('/fantasy');
   await page
@@ -99,7 +97,7 @@ test('two fans create and join a private fantasy league without exposing it to o
   });
   const bobPage = await other.newPage();
   try {
-    await registerFan(bobPage, request);
+    await registerFan(bobPage);
     await bobPage.goto(leagueUrl!);
     await expect(
       bobPage.getByRole('heading', { name: 'Harbour private group' }),

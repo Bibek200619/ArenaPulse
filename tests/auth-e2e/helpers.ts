@@ -32,7 +32,7 @@ export async function emailLink(
   return link!;
 }
 
-export async function registerFan(page: Page, request: APIRequestContext) {
+export async function registerFan(page: Page) {
   const suffix = randomUUID().slice(0, 8),
     username = `crowd_${suffix}`,
     email = `${username}@example.test`;
@@ -42,8 +42,6 @@ export async function registerFan(page: Page, request: APIRequestContext) {
     .getByLabel('Password', { exact: true })
     .fill(`Social-${randomUUID()}`);
   await page.getByRole('button', { name: 'Create account' }).click();
-  await expect(page.getByRole('status')).toContainText('Check your email');
-  await page.goto(await emailLink(request, email, 'Confirm'));
   await expect(page).toHaveURL(/\/onboarding$/);
   await page.getByLabel('Username', { exact: true }).fill(username);
   await page

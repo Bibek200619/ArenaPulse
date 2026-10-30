@@ -2,7 +2,7 @@ import { emailLink } from './helpers';
 import { test, expect } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
 import AxeBuilder from '@axe-core/playwright';
-test('register → confirm → onboard → edit → logout → login → recover', async ({
+test('register → onboard → edit → logout → login → recover', async ({
   page,
   request,
 }) => {
@@ -21,9 +21,6 @@ test('register → confirm → onboard → edit → logout → login → recover
       .violations,
   ).toEqual([]);
   await page.getByRole('button', { name: 'Create account' }).click();
-  await expect(page.getByRole('status')).toContainText('Check your email');
-  const confirmation = await emailLink(request, email, 'Confirm');
-  await page.goto(confirmation);
   await expect(page).toHaveURL(/\/onboarding$/);
   await page.getByLabel('Username', { exact: true }).fill(username);
   await page.getByLabel('Display name', { exact: true }).fill('Matchday Fan');

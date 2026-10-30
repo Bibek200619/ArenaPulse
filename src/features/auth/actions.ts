@@ -25,10 +25,11 @@ export async function register(
 ): Promise<FormState> {
   const parsed = credentialsSchema.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: parsed.error.issues[0].message };
+  let signedIn = false;
   try {
     const client = await serverClient();
     const { APP_URL } = parseEnvironment(process.env);
-    const { error } = await client.auth.signUp({
+    const { data, error } = await client.auth.signUp({
       ...parsed.data,
       options: { emailRedirectTo: `${APP_URL}/auth/callback` },
     });
@@ -37,13 +38,15 @@ export async function register(
         error:
           'Unable to create an account. Check your details or try again later.',
       };
-    return {
-      success:
-        'Check your email to confirm your account, then complete your profile.',
-    };
+    signedIn = Boolean(data.session);
   } catch (error) {
     return publicFailure(error);
   }
+  if (signedIn) redirect('/onboarding');
+  return {
+    success:
+      'Check your email to confirm your account, then complete your profile.',
+  };
 }
 export async function login(
   _state: FormState,
