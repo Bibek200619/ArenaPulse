@@ -49,7 +49,7 @@ export default async function MatchesPage({
         />
       </div>
       <p className="data-notice">{fixtures.provenance.label}</p>
-      {fixtures.provenance.source === 'sportscore-football-v1' && (
+      {fixtures.provenance.source.startsWith('sportscore-football-v1') && (
         <SportScoreAttribution />
       )}
       <MatchFilters
