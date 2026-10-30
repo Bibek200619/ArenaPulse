@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { saveFantasySquadSchema } from '@/features/fantasy/validation';
+import {
+  createFantasyLeagueSchema,
+  joinFantasyLeagueSchema,
+} from '@/features/fantasy/league-validation';
 
 const playerIds = [
   '746cbcb5-71dd-58a3-b928-924b93d29b2d',
@@ -55,5 +59,40 @@ describe('fantasy squad input', () => {
         playerIds: Array(41).fill(playerIds[0]),
       }).success,
     ).toBe(false);
+  });
+});
+
+describe('private fantasy league input', () => {
+  it('accepts a bounded league name and cryptographically generated invite shape', () => {
+    expect(
+      createFantasyLeagueSchema.safeParse({
+        competitionId: valid.competitionId,
+        name: 'Harbour supporters',
+      }).success,
+    ).toBe(true);
+    expect(
+      joinFantasyLeagueSchema.safeParse({
+        inviteCode: `${'A'.repeat(30)}_-`,
+      }).success,
+    ).toBe(true);
+  });
+
+  it('rejects malformed IDs, short names, and invalid invitation codes', () => {
+    expect(
+      createFantasyLeagueSchema.safeParse({
+        competitionId: 'bad',
+        name: 'League',
+      }).success,
+    ).toBe(false);
+    expect(
+      createFantasyLeagueSchema.safeParse({
+        competitionId: valid.competitionId,
+        name: '  ',
+      }).success,
+    ).toBe(false);
+    for (const inviteCode of ['short', 'A'.repeat(33), 'A'.repeat(31) + '!'])
+      expect(joinFantasyLeagueSchema.safeParse({ inviteCode }).success).toBe(
+        false,
+      );
   });
 });

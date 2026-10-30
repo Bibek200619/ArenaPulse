@@ -251,7 +251,7 @@ Validation cycle 1: local migration applied; database tests passed 64/64; securi
 
 Validation cycle 2: GitHub CI showed public match pages assumed Supabase auth was configured. Anonymous discussion reads/session lookup were made optional and the browser subscription was disabled without auth configuration. Production build passed without `.env.local`; public match journeys passed 4/4 across desktop/mobile with no auth configuration, including an explicit guest discussion/sign-in assertion. Configured-auth discussion journey passed 2/2 across desktop/mobile. A subsequent merge of PR #38 exposed duplicate match-page declarations and a stale homepage E2E expectation; both were corrected. After the merge, database tests passed 64/64, unit tests 71/71, integration tests 9/9, lint and type-check passed, production build passed, public E2E passed 18/18 without `.env.local`, and authenticated E2E passed 10/10. PR #39 was merged to `development`; Vercel preview deployed and issue #24 closed.
 
-## Active GitHub issue #25 — Phase 8 fantasy rules, gameweeks and squad builder
+## Completed GitHub issue #25 — Phase 8 fantasy rules, gameweeks and squad builder
 
 - [x] Inspect existing sports catalog IDs, player positions, auth/server-action patterns, database permissions and Fantasy architecture before designing the schema. The demo catalog has 8 football, 8 cricket and 8 basketball players; tennis has only 2, so initial fantasy pools cover the first three sports. Next.js Server Action docs and the local RLS/RPC patterns were reviewed.
 - [x] Add configurable sport-aware fantasy competitions with immutable/versioned rules and gameweeks, including authoritative player prices, roster positions, team caps, budget, captain/vice multipliers, transfer allowance and deadlines.
@@ -260,11 +260,29 @@ Validation cycle 2: GitHub CI showed public match pages assumed Supabase auth wa
 - [x] Build a responsive fantasy squad builder with loading, validation, success, deadline and recoverable error states; keep scoring/private leagues/leaderboards in Phase 9.
 - [x] Add unit, database and integration coverage plus authenticated desktop/mobile browser journeys; update fantasy/database docs.
 - [x] Run database replay/security advisors, unit, integration, browser, type-check, lint, format and build gates; record actual results.
-- [ ] Commit and push `codex/phase-8-fantasy-25`, open a PR linked to #25, and close only after verified merge.
+- [x] Commit and push `codex/phase-8-fantasy-25`; PR #40 linked to #25 was merged and closed issue #25. Follow-up PR #41 fixed the existing SportScore Prettier failure and merged with quality, identity, security and Vercel checks passing.
 
 Validation cycle 0: GitHub issue #25 is the next roadmap issue and its Phase 7 dependency (#24) is merged/closed. Baseline `npm audit --omit=dev` reports four findings: one critical advisory affecting Next.js and high advisories affecting sharp, source-map-js and zod; the separate remediation is tracked in #33.
 
 Validation cycle 1: clean migration replay succeeded; database tests passed 68/68; Supabase security advisor found no issues; unit tests passed 74/74; integration passed 9/9; seed consistency, type-check, lint, targeted Prettier and diff checks passed; production build passed. Public E2E passed 18/18 and fantasy authenticated save/reload passed on desktop and mobile (2/2). The full authenticated suite passed 11/12: all auth, community, fantasy and social cases passed, while the existing mobile match-discussion journey timed out during registration because onboarding remained at `/onboarding` rather than advancing to `/onboarding/sports`. First database teardown exposed a foreign-key cleanup ordering issue; tests now remove gameweeks before their rules and pass on clean reset.
+
+## Active GitHub issue #26 — Phase 9 fantasy scoring, private leagues and leaderboards
+
+- [x] Inspect existing fantasy squad/rule/gameweek schema, normalized match events, auth/RLS boundaries, route/action patterns, tests and docs before designing scoring and league persistence.
+- [x] Implement idempotent, replayable score calculation tied to immutable rule versions, including captain and vice-captain multipliers and corrected match events.
+- [x] Add private fantasy league creation and membership with unpredictable join codes; enforce visibility, join authorization and non-leaking code behavior.
+- [x] Add deterministic rankings, tie handling and leaderboard reads/updates that reflect score corrections and membership changes.
+- [x] Build responsive league and leaderboard journeys with recoverable loading, join, authorization and error states.
+- [x] Add unit, database, integration and authenticated browser coverage; update fantasy/database docs and generated database types.
+- [x] Run clean migration replay, security advisors, unit/integration/database/browser, type, lint, format and production build checks; record actual results.
+- [x] Commit `e727293`, push `codex/phase-9-fantasy-26`, and open PR #42 linked to #26; reviewer `Bibek200619`, assignee `roushan-23`, and `area:fantasy`, `feature`, `testing` labels are set.
+- [ ] Close issue #26 only after verified merge of PR #42.
+
+Validation cycle 0: GitHub issue #26 is the next roadmap issue and its Phase 8 dependency (#25) is merged/closed through PR #40. The separate production dependency remediation remains open as issue #33 and is outside this issue's scope.
+
+Validation cycle 1 (design): existing match events are normalized rows with nullable `player_id`, free-text `type`, and a match FK; matches include source competition, start time and finished state. Scoring will map configured event types to points and ignore events without a player or an unknown type; score calculation will rebuild a complete gameweek snapshot under a row lock so corrections/retries replace prior totals atomically. Fantasy rule versions are immutable once a gameweek references them, so scoring weights can live in the versioned rule record. League codes will be generated cryptographically server-side, hashed in the database, returned only to the creator, and accepted through a narrow authenticated join RPC. League reads and scoreboards will be member-scoped; ranks will be calculated from current score snapshots with deterministic tie ordering rather than stored as stale rank values.
+
+Validation cycle 2 (implementation): clean local migration replay succeeded. Database tests passed 69/69, including corrected event replay, revision increments, captain/vice calculations, rank ties and reordering, private score reads, hidden invitation hashes and non-member denial. Supabase security advisor found no issues; unit tests passed 76/76; integration tests passed 9/9; seed consistency, type-check, lint and targeted Prettier checks passed. Production build passed and generated `/fantasy/leagues/[id]`. Public browser tests passed 18/18. Authenticated fantasy browser journeys passed 4/4 across desktop/mobile, including league creation, outsider denial, joining and leaderboard loading.
 
 ## Completed GitHub issue #37 — integrate SportScore live football match data
 

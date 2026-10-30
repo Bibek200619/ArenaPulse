@@ -9,6 +9,7 @@ export type FantasyDemoCompetition = {
   captainMultiplier: number;
   viceCaptainMultiplier: number;
   transfersPerGameweek: number;
+  scoringRules: Record<string, number>;
   positionLimits: Record<string, { min: number; max: number }>;
   prices: Record<string, number>;
   gameweeks: { id: string; number: number }[];
@@ -26,6 +27,13 @@ export const fantasyDemoCompetitions: FantasyDemoCompetition[] = [
     captainMultiplier: 2,
     viceCaptainMultiplier: 1.5,
     transfersPerGameweek: 2,
+    scoringRules: {
+      goal: 5,
+      assist: 3,
+      yellow_card: -1,
+      red_card: -3,
+      own_goal: -2,
+    },
     positionLimits: {
       Goalkeeper: { min: 1, max: 1 },
       Defender: { min: 1, max: 1 },
@@ -50,6 +58,7 @@ export const fantasyDemoCompetitions: FantasyDemoCompetition[] = [
     captainMultiplier: 2,
     viceCaptainMultiplier: 1.5,
     transfersPerGameweek: 2,
+    scoringRules: { run: 1, four: 1, six: 2, wicket: 20, catch: 8 },
     positionLimits: {
       Wicketkeeper: { min: 1, max: 1 },
       Batter: { min: 1, max: 1 },
@@ -74,6 +83,15 @@ export const fantasyDemoCompetitions: FantasyDemoCompetition[] = [
     captainMultiplier: 2,
     viceCaptainMultiplier: 1.5,
     transfersPerGameweek: 2,
+    scoringRules: {
+      field_goal: 2,
+      three_pointer: 3,
+      rebound: 1,
+      assist: 2,
+      block: 3,
+      steal: 3,
+      turnover: -1,
+    },
     positionLimits: {
       Guard: { min: 2, max: 2 },
       Forward: { min: 1, max: 1 },
