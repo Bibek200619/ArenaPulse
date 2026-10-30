@@ -31,6 +31,7 @@ export type Database = {
         competition_id: string;
         created_at: string;
         position_limits: Json;
+        scoring_rules: Json;
         squad_size: number;
         team_cap: number;
         transfers_per_gameweek: number;
@@ -80,6 +81,46 @@ export type Database = {
         price_at_pick: number;
         rule_version: number;
         team_id: string;
+      }>;
+      fantasy_leagues: ReadTable<{
+        competition_id: string;
+        created_at: string;
+        id: string;
+        invite_code_hash: string;
+        name: string;
+        owner_id: string;
+      }>;
+      fantasy_league_members: ReadTable<{
+        competition_id: string;
+        joined_at: string;
+        league_id: string;
+        role: string;
+        team_id: string;
+        user_id: string;
+      }>;
+      fantasy_gameweek_score_runs: ReadTable<{
+        calculated_at: string;
+        gameweek_id: string;
+        revision: number;
+        source_event_count: number;
+      }>;
+      fantasy_gameweek_player_scores: ReadTable<{
+        competition_id: string;
+        gameweek_id: string;
+        player_id: string;
+        points: number;
+        revision: number;
+        rule_version: number;
+      }>;
+      fantasy_team_gameweek_scores: ReadTable<{
+        base_points: number;
+        captain_bonus: number;
+        competition_id: string;
+        gameweek_id: string;
+        revision: number;
+        team_id: string;
+        total_points: number;
+        vice_captain_bonus: number;
       }>;
       comments: {
         Row: {
@@ -1358,6 +1399,32 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      create_fantasy_league: {
+        Args: {
+          p_competition_id: string;
+          p_invite_code: string;
+          p_name: string;
+        };
+        Returns: string;
+      };
+      join_fantasy_league: {
+        Args: { p_invite_code: string };
+        Returns: string;
+      };
+      recalculate_fantasy_gameweek_scores: {
+        Args: { p_gameweek_id: string };
+        Returns: number;
+      };
+      get_fantasy_league_leaderboard: {
+        Args: { p_league_id: string };
+        Returns: {
+          display_name: string;
+          gameweek_number: number;
+          rank: number;
+          team_name: string;
+          total_points: number;
+        }[];
+      };
       save_fantasy_squad: {
         Args: {
           p_captain_player_id: string;

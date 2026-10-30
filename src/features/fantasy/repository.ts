@@ -49,6 +49,27 @@ export type FantasyCompetitionDetail = {
   draft: FantasySquadDraft;
 };
 
+export type FantasyLeagueSummary = {
+  id: string;
+  name: string;
+  competitionId: string;
+  competitionName: string;
+  createdAt: string;
+};
+
+export type FantasyLeagueLeaderboardRow = {
+  gameweekNumber: number;
+  rank: number;
+  teamName: string;
+  displayName: string;
+  totalPoints: number;
+};
+
+export type FantasyLeagueDetail = FantasyLeagueSummary & {
+  isOwner: boolean;
+  leaderboard: FantasyLeagueLeaderboardRow[];
+};
+
 function fail(_error: unknown, fallback: string): never {
   throw new Error(fallback);
 }
@@ -233,5 +254,81 @@ export async function getFantasyCompetition(
       : null,
     players,
     draft,
+  };
+}
+
+export async function listFantasyLeagues(
+  client: Client,
+): Promise<FantasyLeagueSummary[]> {
+  const { data: leagues, error } = await client
+    .from('fantasy_leagues')
+    .select('id,name,competition_id,created_at')
+    .order('created_at', { ascending: false })
+    .limit(50);
+  if (error) fail(error, 'Your fantasy leagues are unavailable.');
+  if (!leagues.length) return [];
+  const competitionIds = [
+    ...new Set(leagues.map((league) => league.competition_id)),
+  ];
+  const { data: competitions, error: competitionsError } = await client
+    .from('fantasy_competitions')
+    .select('id,name')
+    .in('id', competitionIds)
+    .limit(50);
+  if (competitionsError)
+    fail(competitionsError, 'Your fantasy leagues are unavailable.');
+  const names = new Map(
+    competitions.map((competition) => [competition.id, competition.name]),
+  );
+  return leagues.map((league) => ({
+    id: league.id,
+    name: league.name,
+    competitionId: league.competition_id,
+    competitionName: names.get(league.competition_id) ?? 'Fantasy competition',
+    createdAt: league.created_at,
+  }));
+}
+
+export async function getFantasyLeague(
+  client: Client,
+  leagueId: string,
+  userId: string,
+): Promise<FantasyLeagueDetail | null> {
+  const parsedId = fantasyCompetitionIdSchema.safeParse(leagueId);
+  if (!parsedId.success) return null;
+  const { data: league, error } = await client
+    .from('fantasy_leagues')
+    .select('id,name,competition_id,owner_id,created_at')
+    .eq('id', parsedId.data)
+    .maybeSingle();
+  if (error) fail(error, 'Fantasy league is unavailable.');
+  if (!league) return null;
+  const { data: competition, error: competitionError } = await client
+    .from('fantasy_competitions')
+    .select('name')
+    .eq('id', league.competition_id)
+    .maybeSingle();
+  if (competitionError)
+    fail(competitionError, 'Fantasy league is unavailable.');
+  const { data: rows, error: leaderboardError } = await client.rpc(
+    'get_fantasy_league_leaderboard',
+    { p_league_id: league.id },
+  );
+  if (leaderboardError)
+    fail(leaderboardError, 'The league leaderboard is unavailable.');
+  return {
+    id: league.id,
+    name: league.name,
+    competitionId: league.competition_id,
+    competitionName: competition?.name ?? 'Fantasy competition',
+    createdAt: league.created_at,
+    isOwner: league.owner_id === userId,
+    leaderboard: rows.map((row) => ({
+      gameweekNumber: row.gameweek_number,
+      rank: row.rank,
+      teamName: row.team_name,
+      displayName: row.display_name,
+      totalPoints: row.total_points,
+    })),
   };
 }

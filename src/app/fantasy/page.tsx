@@ -1,7 +1,11 @@
 import Link from 'next/link';
 import { isAuthConfigured } from '@/lib/supabase/config';
 import { serverClient } from '@/lib/supabase/server';
-import { listFantasyCompetitions } from '@/features/fantasy/repository';
+import { FantasyLeagueManager } from '@/features/fantasy/league-forms';
+import {
+  listFantasyCompetitions,
+  listFantasyLeagues,
+} from '@/features/fantasy/repository';
 
 export const metadata = { title: 'Fantasy competitions' };
 
@@ -18,8 +22,14 @@ export default async function FantasyPage() {
       </main>
     );
   let competitions;
+  let signedIn = false;
+  let leagues: Awaited<ReturnType<typeof listFantasyLeagues>> = [];
   try {
-    competitions = await listFantasyCompetitions(await serverClient());
+    const client = await serverClient();
+    competitions = await listFantasyCompetitions(client);
+    const auth = await client.auth.getUser();
+    signedIn = Boolean(auth.data.user);
+    if (signedIn) leagues = await listFantasyLeagues(client);
   } catch {
     return (
       <main className="section-page fantasy-page">
@@ -33,11 +43,11 @@ export default async function FantasyPage() {
   }
   return (
     <main className="section-page fantasy-page">
-      <p className="eyebrow">PHASE 8 · RULES, GAMEWEEKS, SQUADS</p>
+      <p className="eyebrow">FANTASY COMPETITIONS</p>
       <h1>Fantasy competitions</h1>
       <p className="muted fantasy-intro">
-        Build a squad under each competition’s published rules. Picks lock at
-        the listed gameweek deadline.
+        Build a squad, join private leagues and follow your gameweek points.
+        Picks lock at the listed deadline.
       </p>
       {!competitions.length ? (
         <p className="muted" role="status">
@@ -59,9 +69,22 @@ export default async function FantasyPage() {
           ))}
         </div>
       )}
+      {signedIn ? (
+        <FantasyLeagueManager competitions={competitions} leagues={leagues} />
+      ) : (
+        <section className="fantasy-leagues">
+          <h2>Private leagues</h2>
+          <p className="muted">
+            Sign in and save a squad to create or join a private league.
+          </p>
+          <Link className="button secondary button-small" href="/login">
+            Sign in
+          </Link>
+        </section>
+      )}
       <p className="muted fantasy-demo-note">
-        Player prices and schedules are clearly labeled demo examples. This
-        milestone does not include scoring or money prizes.
+        Player prices, schedules and scoring rules are demo examples. There are
+        no prizes or real-money features.
       </p>
     </main>
   );

@@ -173,6 +173,7 @@ insert(
     captain_multiplier: competition.captainMultiplier,
     vice_captain_multiplier: competition.viceCaptainMultiplier,
     transfers_per_gameweek: competition.transfersPerGameweek,
+    scoring_rules: JSON.stringify(competition.scoringRules),
   })),
 );
 for (const competition of fantasyDemoCompetitions) {
