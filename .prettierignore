@@ -1,5 +1,6 @@
 node_modules
 .next
+.next-*
 legacy
 graphify-out
 dist

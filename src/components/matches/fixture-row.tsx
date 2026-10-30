@@ -35,6 +35,11 @@ export function FixtureRow({
           {match.state === 'live'
             ? `In progress${isDemo ? ' · Demo' : ''}`
             : match.state}
+          {isDemo && match.state !== 'live' ? (
+            <span>Demo data</span>
+          ) : !isDemo ? (
+            <span>SportScore</span>
+          ) : null}
           <span>{match.clock}</span>
           <span className="accent">Match details →</span>
         </div>

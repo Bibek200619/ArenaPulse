@@ -8,6 +8,7 @@ import {
 import { MatchFilters } from '@/components/matches/match-filters';
 import { FixtureRow } from '@/components/matches/fixture-row';
 import { LiveRefresh } from '@/components/matches/live-refresh';
+import { SportScoreAttribution } from '@/components/matches/sportscore-attribution';
 export const metadata = { title: 'Matches' };
 export default async function MatchesPage({
   searchParams,
@@ -41,14 +42,16 @@ export default async function MatchesPage({
           <h1>Matches</h1>
         </div>
         <LiveRefresh
-          enabled={
-            !fixtures.provenance.isDemo &&
-            (filters.view === 'live' ||
-              fixtures.data.items.some((m) => m.state === 'live'))
-          }
+          enabled={fixtures.data.items.some(
+            (match) =>
+              match.competitionName !== undefined && match.state === 'live',
+          )}
         />
       </div>
       <p className="data-notice">{fixtures.provenance.label}</p>
+      {fixtures.provenance.source.startsWith('sportscore-football-v1') && (
+        <SportScoreAttribution />
+      )}
       <MatchFilters
         key={matchesHref(filters)}
         filters={filters}
@@ -76,10 +79,11 @@ export default async function MatchesPage({
                     key={match.id}
                     match={match}
                     competition={
+                      match.competitionName ??
                       competitions.get(match.competitionId) ??
                       'Competition unavailable'
                     }
-                    isDemo={fixtures.provenance.isDemo}
+                    isDemo={match.competitionName === undefined}
                   />
                 ))}
               </ul>

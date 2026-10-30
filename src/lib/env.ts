@@ -14,7 +14,8 @@ const environmentSchema = z
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: optionalValue,
     PREDICTIONS_ENABLED: z.enum(['true', 'false']).default('false'),
     GOOGLE_OAUTH_ENABLED: z.enum(['true', 'false']).default('false'),
-    SPORTS_DATA_PROVIDER: z.enum(['demo']).default('demo'),
+    SPORTS_DATA_PROVIDER: z.enum(['demo', 'sportscore']).default('demo'),
+    SPORTSCORE_API_KEY: optionalValue,
   })
   .superRefine((env, ctx) => {
     if (

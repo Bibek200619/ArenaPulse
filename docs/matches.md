@@ -1,6 +1,6 @@
 # Match experience
 
-`/matches` provides server-rendered, shareable GET filters: Show (all/live/today/upcoming/finished), sport, competition and UTC date. Eight results per page; pagination preserves filters. Invalid values and repeated scalar parameters render an explicit invalid-filter state. Empty fields normalize to absent filters. Today uses actual current UTC and overrides Date; Upcoming requires scheduled state and a start at or after request time. A fixed fictional snapshot may have no Today results.
+`/matches` provides server-rendered, shareable GET filters: Show (all/live/today/upcoming/finished), sport, competition and UTC date. Eight results per page; pagination preserves filters. Invalid values and repeated scalar parameters render an explicit invalid-filter state. Empty fields normalize to absent filters. Today uses actual current UTC and overrides Date; Upcoming requires scheduled state and a start at or after request time. The default demo snapshot may have no Today results. With SportScore configured, football fixtures and scores are live/recent provider data; other sports remain demo data.
 
 Rows link to `/matches/{uuid}`. Detail pages include participant scores/state, time, venue, season, available event timeline, participant statistics, available lineups and competition standings. Individual participants and composite scores remain supported. Missing data is stated as unavailable; sample events and rosters are explicitly partial. Fan discussions and fantasy associations are deferred to their respective milestones.
 
