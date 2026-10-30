@@ -250,6 +250,17 @@ Security follow-up: `npm audit --omit=dev` reports four production dependency ad
 Validation cycle 1: local migration applied; database tests passed 64/64; security advisor found no issues; unit tests passed 65/65; integration tests passed 9/9; type-check, lint and production build passed; public desktop/mobile browser tests passed 18/18; authenticated match discussion tests passed on desktop and mobile. Targeted Prettier checks passed for changed source, tests, docs and configuration.
 
 Validation cycle 2: GitHub CI showed public match pages assumed Supabase auth was configured. Make anonymous discussion reads/session lookup optional and disable the browser subscription without auth configuration. Production build and both desktop public match journeys passed with `.env.local` temporarily absent; rerun the configured-auth discussion journey and complete CI after pushing this correction.
+## Completed GitHub issue #37 — integrate SportScore live football match data
+
+- [x] Add an optional server-side SportScore provider with validated responses, timeout handling, and safe error behavior.
+- [x] Map live football matches into the current match list/detail experience while preserving demo mode when not configured.
+- [x] Keep the optional credential server-only, add visible dofollow SportScore attribution, and update environment/docs.
+- [x] Add provider coverage and run relevant checks; record actual results.
+- [x] Commit `698918a` and push `codex/sportscore-live-scores-37`; open PR #38 linked to #37. Vercel deployment/preview checks passed and issue #37 is closed as completed.
+
+SportScore docs list the match endpoint as keyless; an optional server-side `SPORTSCORE_API_KEY` header will be supported for the user-provided credential. The endpoint was verified to return football match records. No key is stored in repository files.
+
+Validation cycle 1: 71 unit tests, 9 integration tests, lint and type-check passed. A production build with `SPORTS_DATA_PROVIDER=sportscore` passed using `NEXT_BUILD_OUTPUT_DIR=.next-live` to avoid a OneDrive reparse-point cleanup error in the default `.next` directory. Four desktop/mobile match E2E tests passed in demo mode. With the supplied credential loaded only from ignored `.env.local`, the live `/matches` page and a match detail page returned HTTP 200, showed SportScore data and attribution, and did not expose the credential in rendered HTML. A direct keyed provider request returned HTTP 200 with football matches.
 
 ## Completed GitHub issue #34 — verify Phase 6 community content migration and authenticated journeys
 

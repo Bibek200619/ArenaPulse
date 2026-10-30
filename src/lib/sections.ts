@@ -1,7 +1,7 @@
 export const sections: Record<string, [string, string]> = {
   matches: [
     'Your matchday starts here.',
-    'Match browsing is being built. No live data provider is connected yet.',
+    'Football scores use SportScore when configured; other sports use demo data.',
   ],
   competitions: [
     'Follow the competition.',

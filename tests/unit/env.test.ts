@@ -6,6 +6,11 @@ describe('environment validation', () => {
     expect(env.PREDICTIONS_ENABLED).toBe('false');
     expect(env.SPORTS_DATA_PROVIDER).toBe('demo');
   });
+  it('allows selecting SportScore without requiring a key', () => {
+    const env = parseEnvironment({ SPORTS_DATA_PROVIDER: 'sportscore' });
+    expect(env.SPORTS_DATA_PROVIDER).toBe('sportscore');
+    expect(env.SPORTSCORE_API_KEY).toBeUndefined();
+  });
   it('rejects partial Supabase configuration', () => {
     expect(() =>
       parseEnvironment({

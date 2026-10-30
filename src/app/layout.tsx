@@ -22,7 +22,9 @@ export default function RootLayout({
         <main id="main">{children}</main>
         <footer className="site-footer">
           <span>ArenaPulse · Made for the love of the game.</span>
-          <span>Foundation preview · No live sports data connected</span>
+          <span>
+            Foundation preview · Live football provider is configurable
+          </span>
         </footer>
       </body>
     </html>
