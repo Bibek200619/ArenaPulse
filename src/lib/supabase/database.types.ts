@@ -6,9 +6,81 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
+type ReadTable<Row> = {
+  Row: Row;
+  Insert: Partial<Row>;
+  Update: Partial<Row>;
+  Relationships: [];
+};
+
 export type Database = {
   public: {
     Tables: {
+      fantasy_competitions: ReadTable<{
+        created_at: string;
+        current_rule_version: number;
+        id: string;
+        name: string;
+        source_competition_id: string;
+        sport_id: string;
+        status: string;
+      }>;
+      fantasy_rules: ReadTable<{
+        budget: number;
+        captain_multiplier: number;
+        competition_id: string;
+        created_at: string;
+        position_limits: Json;
+        squad_size: number;
+        team_cap: number;
+        transfers_per_gameweek: number;
+        version: number;
+        vice_captain_multiplier: number;
+      }>;
+      fantasy_player_prices: ReadTable<{
+        competition_id: string;
+        player_id: string;
+        price: number;
+        rule_version: number;
+        sport_id: string;
+      }>;
+      fantasy_gameweeks: ReadTable<{
+        competition_id: string;
+        deadline_at: string;
+        ends_at: string;
+        id: string;
+        name: string;
+        number: number;
+        rule_version: number;
+        starts_at: string;
+        status: string;
+      }>;
+      fantasy_teams: ReadTable<{
+        competition_id: string;
+        created_at: string;
+        id: string;
+        name: string;
+        updated_at: string;
+        user_id: string;
+      }>;
+      fantasy_team_gameweeks: ReadTable<{
+        captain_player_id: string;
+        competition_id: string;
+        gameweek_id: string;
+        rule_version: number;
+        submitted_at: string;
+        team_id: string;
+        transfers_used: number;
+        vice_captain_player_id: string;
+      }>;
+      fantasy_team_selections: ReadTable<{
+        competition_id: string;
+        gameweek_id: string;
+        player_id: string;
+        price_at_pick: number;
+        rule_version: number;
+        team_id: string;
+      }>;
       comments: {
         Row: {
           author_id: string;
@@ -1286,6 +1358,17 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      save_fantasy_squad: {
+        Args: {
+          p_captain_player_id: string;
+          p_competition_id: string;
+          p_gameweek_id: string;
+          p_player_ids: string[];
+          p_rule_version: number;
+          p_vice_captain_player_id: string;
+        };
+        Returns: string;
+      };
       create_match_discussion_message: {
         Args: {
           p_match_id: string;
