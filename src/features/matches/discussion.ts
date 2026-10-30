@@ -1,9 +1,11 @@
 import 'server-only';
+import { isAuthConfigured } from '@/lib/supabase/config';
 import { serverClient } from '@/lib/supabase/server';
 
 export const DISCUSSION_PAGE_SIZE = 20;
 
 export async function getMatchDiscussion(matchId: string, page: number) {
+  if (!isAuthConfigured()) return { messages: [], hasMore: false };
   const client = await serverClient();
   const {
     data: { user },

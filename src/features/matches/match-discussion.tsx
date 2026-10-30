@@ -19,6 +19,7 @@ type Entry = {
 export function MatchDiscussion({
   matchId,
   userId,
+  realtimeEnabled,
   isModerator,
   messages,
   hasMore,
@@ -26,6 +27,7 @@ export function MatchDiscussion({
 }: {
   matchId: string;
   userId: string | null;
+  realtimeEnabled: boolean;
   isModerator: boolean;
   messages: Entry[];
   hasMore: boolean;
@@ -35,6 +37,7 @@ export function MatchDiscussion({
   const [pending, startTransition] = useTransition();
   const [fallback, setFallback] = useState(false);
   useEffect(() => {
+    if (!realtimeEnabled) return;
     const client = browserClient();
     let timer: ReturnType<typeof setInterval> | undefined;
     const channel = client
@@ -77,7 +80,7 @@ export function MatchDiscussion({
       if (timer) clearInterval(timer);
       void client.removeChannel(channel);
     };
-  }, [matchId, router]);
+  }, [matchId, realtimeEnabled, router]);
   const submit = (form: FormData) =>
     startTransition(async () => {
       const result = await changeMatchDiscussion(form);

@@ -13,6 +13,7 @@ import { LiveRefresh } from '@/components/matches/live-refresh';
 import { serverClient } from '@/lib/supabase/server';
 import { getMatchDiscussion } from '@/features/matches/discussion';
 import { MatchDiscussion } from '@/features/matches/match-discussion';
+import { isAuthConfigured } from '@/lib/supabase/config';
 export const metadata = { title: 'Match centre' };
 export const dynamic = 'force-dynamic';
 export default async function MatchPage({
@@ -36,10 +37,10 @@ export default async function MatchPage({
     0,
     Math.min(1000, Number.parseInt(query.discussionPage ?? '0', 10) || 0),
   );
-  const client = await serverClient();
+  const client = isAuthConfigured() ? await serverClient() : null;
   const {
     data: { user },
-  } = await client.auth.getUser();
+  } = client ? await client.auth.getUser() : { data: { user: null } };
   const discussion = await getMatchDiscussion(id, page);
   const [catalog, venue, standings] = await Promise.all([
     sportsService.getCatalog(),
@@ -119,6 +120,7 @@ export default async function MatchPage({
       <MatchDiscussion
         matchId={id}
         userId={user?.id ?? null}
+        realtimeEnabled={isAuthConfigured()}
         isModerator={['moderator', 'admin'].includes(
           String(user?.app_metadata.role ?? ''),
         )}
