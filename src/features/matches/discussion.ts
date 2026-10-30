@@ -10,6 +10,7 @@ export async function getMatchDiscussion(matchId: string, page: number) {
   const {
     data: { user },
   } = await client.auth.getUser();
+  if (!user) return { messages: [], hasMore: false };
   const start = page * DISCUSSION_PAGE_SIZE;
   const { data, error } = await client
     .from('match_discussion_messages')
