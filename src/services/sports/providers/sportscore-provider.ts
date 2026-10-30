@@ -277,7 +277,8 @@ export class SportScoreProvider extends DemoSportsProvider {
         ...live.provenance,
         source: 'sportscore-football-v1+arenapulse-demo-v1',
         isDemo: true,
-        label: 'Mixed sources · SportScore football (live/recent) and fictional demo fixtures for other sports',
+        label:
+          'Mixed sources · SportScore football (live/recent) and fictional demo fixtures for other sports',
       },
     };
   }
