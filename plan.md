@@ -275,7 +275,8 @@ Validation cycle 1: clean migration replay succeeded; database tests passed 68/6
 - [x] Build responsive league and leaderboard journeys with recoverable loading, join, authorization and error states.
 - [x] Add unit, database, integration and authenticated browser coverage; update fantasy/database docs and generated database types.
 - [x] Run clean migration replay, security advisors, unit/integration/database/browser, type, lint, format and production build checks; record actual results.
-- [ ] Commit and push `codex/phase-9-fantasy-26`, open a PR linked to #26, and close only after verified merge.
+- [x] Commit `e727293`, push `codex/phase-9-fantasy-26`, and open PR #42 linked to #26; reviewer `Bibek200619`, assignee `roushan-23`, and `area:fantasy`, `feature`, `testing` labels are set.
+- [ ] Close issue #26 only after verified merge of PR #42.
 
 Validation cycle 0: GitHub issue #26 is the next roadmap issue and its Phase 8 dependency (#25) is merged/closed through PR #40. The separate production dependency remediation remains open as issue #33 and is outside this issue's scope.
 
