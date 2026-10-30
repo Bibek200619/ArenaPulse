@@ -249,7 +249,7 @@ Security follow-up: `npm audit --omit=dev` reports four production dependency ad
 
 Validation cycle 1: local migration applied; database tests passed 64/64; security advisor found no issues; unit tests passed 65/65; integration tests passed 9/9; type-check, lint and production build passed; public desktop/mobile browser tests passed 18/18; authenticated match discussion tests passed on desktop and mobile. Targeted Prettier checks passed for changed source, tests, docs and configuration.
 
-Validation cycle 2: GitHub CI showed public match pages assumed Supabase auth was configured. Make anonymous discussion reads/session lookup optional and disable the browser subscription without auth configuration. Production build and both desktop public match journeys passed with `.env.local` temporarily absent; rerun the configured-auth discussion journey and complete CI after pushing this correction.
+Validation cycle 2: GitHub CI showed public match pages assumed Supabase auth was configured. Make anonymous discussion reads/session lookup optional and disable the browser subscription without auth configuration. Production build passed without `.env.local`; public match journeys passed 4/4 across desktop/mobile with no auth configuration, including an explicit guest discussion/sign-in assertion. Configured-auth discussion journey passed 2/2 across desktop/mobile. Identity CI passed database, security-advisor, build and authenticated E2E. A corrected Quality CI run is still pending.
 
 ## Completed GitHub issue #34 — verify Phase 6 community content migration and authenticated journeys
 

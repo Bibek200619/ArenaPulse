@@ -22,6 +22,12 @@ test('filter a sport, open match details and return to results', async ({
     'Harbour Athletic vs Summit United',
   );
   await expect(
+    page.getByRole('heading', { name: 'Fan discussion', exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'Sign in', exact: true }),
+  ).toBeVisible();
+  await expect(
     page.getByText('Casey Vale scores for Harbour Athletic.'),
   ).toBeVisible();
   await expect(page.getByRole('table').first()).toContainText('Possession');
