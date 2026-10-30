@@ -168,6 +168,7 @@ test('two fans create, request, approve, manage roles, ban and transfer a privat
       .getByRole('button', { name: 'Create community', exact: true })
       .click();
     await expect(page).toHaveURL(/\/communities\/[0-9a-f-]+$/);
+    const publicUrl = page.url();
     await bobPage.goto(`/communities?q=${encodeURIComponent(publicName)}`);
     await bobPage.getByRole('link', { name: new RegExp(publicName) }).click();
     await bobPage
@@ -186,7 +187,7 @@ test('two fans create, request, approve, manage roles, ban and transfer a privat
     await expect(
       bobPage.getByText(communityPost, { exact: true }),
     ).toBeVisible();
-    await page.goto(url);
+    await page.goto(publicUrl);
     const ownerPost = page
       .locator('article.social-post')
       .filter({ hasText: communityPost });
@@ -200,13 +201,13 @@ test('two fans create, request, approve, manage roles, ban and transfer a privat
       .fill('Please review this community post.');
     await ownerPost.getByRole('button', { name: 'Report post' }).click();
     await expect(ownerPost.getByRole('status')).toContainText('Saved.');
-    await page.goto(`${url}/members?tab=reports`);
+    await page.goto(`${publicUrl}/members?tab=reports`);
     await expect(
       page.getByText('Please review this community post.', { exact: true }),
     ).toBeVisible();
     await page.getByRole('button', { name: 'Resolve report' }).click();
     await expect(page.getByText('Report · resolved')).toBeVisible();
-    await page.goto(url);
+    await page.goto(publicUrl);
     const removablePost = page
       .locator('article.social-post')
       .filter({ hasText: communityPost });

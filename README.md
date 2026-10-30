@@ -2,7 +2,7 @@
 
 **Follow the game. Build your squad. Join the crowd. Predict what comes next.**
 
-ArenaPulse is being developed as a multi-sport discovery, community and fantasy platform. **Current milestone: Phase 6 community foundation.** Authentication, onboarding, demo sports discovery, match/entity pages, private sports follows and social feeds are implemented. Community membership, roles, access requests and bans now have a tested database boundary; community screens are implemented, while scoped posts and content moderation remain in progress. Fantasy and personalization follow later. The prediction model is intentionally deferred.
+ArenaPulse is being developed as a multi-sport discovery, community and fantasy platform. **Current milestone: Phase 6 community experience.** Authentication, onboarding, demo sports discovery, match/entity pages, private sports follows and social feeds are implemented. Community membership, roles, access requests, scoped posts and moderation are implemented with database-enforced visibility and permissions. Fantasy and personalization follow later. The prediction model is intentionally deferred.
 
 ## Run locally
 
@@ -45,6 +45,6 @@ Sports entities: browse teams, players and competitions, then follow them from d
 
 Social experience: `/feed` offers latest/following activity; `/people` finds public fans; `/users/{username}` and `/posts/{id}` provide following, comments, replies and likes with profile-derived privacy. See [social behavior](docs/social.md). No notification delivery or realtime discussion is claimed yet.
 
-Communities: `/communities` supports discovery, creation, public joins and private access requests. Members and staff can manage requests, roles, bans and ownership with database-enforced authority. See [community permissions](docs/communities.md). Community posts and content moderation remain in progress.
+Communities: `/communities` supports discovery, creation, public joins and private access requests. Members can publish scoped posts, report content and block users; authorized staff can pin posts, resolve reports and remove content with audited database-enforced authority. See [community permissions](docs/communities.md).
 
 contributers - bibek200619, roushan-23

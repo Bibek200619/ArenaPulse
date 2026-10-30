@@ -609,6 +609,12 @@ it('scopes community posts, reports, pins and moderation to members and staff', 
       })
     ).error,
   ).toBeNull();
+  const memberPin = await owner.client.rpc('moderate_community_post', {
+    p_post: memberPost.data!.id,
+    p_action: 'pin',
+  });
+  expect(memberPin.error).toBeNull();
+  expect(memberPin.data).toBe('pinned');
   expect(
     (
       await bob.client.rpc('moderate_community_post', {
@@ -623,6 +629,14 @@ it('scopes community posts, reports, pins and moderation to members and staff', 
         .from('posts')
         .select('is_pinned')
         .eq('id', ownerPost.data!.id)
+    ).data,
+  ).toEqual([{ is_pinned: false }]);
+  expect(
+    (
+      await owner.client
+        .from('posts')
+        .select('is_pinned')
+        .eq('id', memberPost.data!.id)
     ).data,
   ).toEqual([{ is_pinned: true }]);
   expect(
@@ -647,14 +661,12 @@ it('scopes community posts, reports, pins and moderation to members and staff', 
       })
     ).data,
   ).toBe('resolve');
-  expect(
-    (
-      await owner.client.rpc('moderate_community_post', {
-        p_post: memberPost.data!.id,
-        p_action: 'remove',
-      })
-    ).data,
-  ).toBe('removed');
+  const removal = await owner.client.rpc('moderate_community_post', {
+    p_post: memberPost.data!.id,
+    p_action: 'remove',
+  });
+  expect(removal.error).toBeNull();
+  expect(removal.data).toBe('removed');
   expect(
     (await bob.client.from('posts').select('id').eq('id', memberPost.data!.id))
       .data,

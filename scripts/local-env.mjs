@@ -1,9 +1,11 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, writeFileSync } from 'node:fs';
+const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 const status = JSON.parse(
-  execFileSync('npx', ['supabase', 'status', '--output', 'json'], {
+  execFileSync(npx, ['supabase', 'status', '--output', 'json'], {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
+    shell: process.platform === 'win32',
   }),
 );
 if (status.API_URL !== 'http://127.0.0.1:55431')
