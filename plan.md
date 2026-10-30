@@ -1,5 +1,53 @@
 # ArenaPulse implementation roadmap
 
+## Active micro-plan — login, SportScore live data, and fantasy follow-up (2026-10-31)
+
+### Scope and sequence
+
+- [x] Login/account creation: inspect current auth actions, Supabase configuration, redirects, and browser flows. Found that sign-in incorrectly enforced the 12-character *new-password* minimum and that missing APP_URL defaulted to localhost in hosted deployments. Separate sign-in validation and resolve trusted Vercel callback hosts over HTTPS; keep actionable generic provider errors and never expose credentials.
+- [x] SportScore: inspect the existing server-only provider and deployment/environment wiring. The adapter and UI are already implemented under issue #37; local configuration is explicitly `demo`, and no API key is configured in this task worktree. Validate actual live provider behavior during the integration phase, without printing the previously supplied credential; if the credential is rejected, request a replacement and keep it server-only.
+- [x] Fantasy: inspect GitHub for the current/open fantasy-team PR and issue status. Issue #26 (scoring, private leagues, leaderboards) and PR #42 are already completed/merged; GitHub currently lists no open Fantasy issue or PR. Do not duplicate completed work. A new issue needs an agreed feature scope before one can be created.
+- [x] Once all three implementation tracks are complete, run the relevant integration tests together, then the complete required local verification suite and inspect GitHub/Vercel checks.
+- [x] If any check is red, add a small, specific corrective micro-plan here, fix it, and rerun the affected integration and verification checks.
+- [ ] Only after all checks are green, commit/push the task branch and open/update a PR linked to the relevant issue(s); close issues only after verified merge. Do not start another unrelated roadmap issue without user direction.
+
+### Verification targets
+
+- [x] Login and account creation work in real authenticated desktop/mobile journeys, including useful error states.
+- [x] SportScore live matches/results render from the configured server-side API without exposing the key; handle provider rejection, unavailable service, and empty response honestly.
+- [x] Fantasy team PR scope works end-to-end and respects existing ownership, scoring, private league, and deadline rules.
+- [x] Integration tests, database/security checks where relevant, unit tests, type-check, lint, format, production build, public browser tests, and authenticated browser tests pass.
+
+### Initial findings
+
+PR #42 for fantasy scoring/private leagues was merged and issue #26 closed. The next fantasy-related PR/issue must be confirmed from GitHub before modifying fantasy scope. The existing workspace has uncommitted user files; implementation will use an isolated task branch/worktree and preserve those files.
+
+### Validation cycle 0 (scope and diagnosis)
+
+GitHub's public issues endpoint reports no open Fantasy item and no open PRs; open work is #27–#30 and #33. The authenticated GitHub credential returned 401, so publishing changes may require the user to reconnect GitHub. Auth inspection identified the legacy-password sign-in blocker and localhost callback default; the Vercel environment hostname is trusted deployment configuration and the request Host header is never used. Local `.env.local` selects demo and has no SportScore key. Fantasy #26 / PR #42 are complete and closed.
+
+### Validation cycle 1 (implementation)
+
+Separated sign-in's accepted password length from the stricter password-creation/reset rule. Callback URL resolution now prefers explicit APP_URL, otherwise uses HTTPS VERCEL_URL, allows localhost default only outside production, and errors in production when neither trusted source exists. Added focused environment/auth validation cases and updated hosted auth setup guidance. SportScore adapter remains server-only and unchanged until integration validation determines whether endpoint behavior needs a code change.
+
+### Corrective micro-plan (focused verification failure)
+
+- [x] Reject a malformed VERCEL_URL explicitly instead of treating it as absent and falling back to localhost.
+- [x] Rerun the focused environment/auth/provider tests and integration suite; proceed only when green.
+
+### Corrective micro-plan (production build configuration failure)
+
+- [ ] Do not reject an explicitly configured localhost APP_URL during build/type generation; production without either APP_URL or VERCEL_URL must still fail rather than infer localhost.
+- [ ] Update tests and hosted setup wording to match the distinction.
+- [x] Rerun the focused environment tests, integration tests, and full required check suite.
+
+### Corrective micro-plan (final formatting review)
+
+- [x] Apply Prettier only to the changed source, test, and auth documentation files; leave unrelated roadmap formatting intact.
+- [x] Restore test-generated screenshot changes and confirm `git diff --check` plus focused formatting are green.
+
+Validation cycle 2 (integration and quality): SportScore's keyless football endpoint returned HTTP 200 with 10 records. With `SPORTS_DATA_PROVIDER=sportscore` supplied only to a temporary local app process, `/api/matches` returned 50 validated non-demo football records and `/matches?sportId=<football UUID>` rendered SportScore provenance, attribution and fixture rows. Unit 81/81, integration 9/9, type-check, lint, build, public desktop/mobile E2E 18/18, focused auth/provider tests 28/28, auth integration tests 9/9, and authenticated browser journeys 14/14 passed. Targeted Prettier and `git diff --check` passed. No database changes were made. GitHub reports no open PRs, no open Fantasy issue; the stored GitHub credential returned 401, and GitHub/Vercel CLIs/project link are unavailable in this worktree, so remote checks/publishing cannot be verified here. The runtime SportScore API is keyless; local `.env.local` remains explicitly set to demo and production must be configured with `SPORTS_DATA_PROVIDER=sportscore` to show live football.
+
 Created 2026-09-09. All commits use actual timestamps. The earlier venues plan is preserved in Git and will be copied to docs/legacy-venues-plan.md.
 
 ## 1. Product overview

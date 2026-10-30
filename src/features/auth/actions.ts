@@ -7,6 +7,7 @@ import { parseEnvironment } from '@/lib/env';
 import {
   credentialsSchema,
   emailSchema,
+  loginCredentialsSchema,
   passwordSchema,
   profileSchema,
 } from './validation';
@@ -48,7 +49,7 @@ export async function login(
   _state: FormState,
   form: FormData,
 ): Promise<FormState> {
-  const parsed = credentialsSchema.safeParse(Object.fromEntries(form));
+  const parsed = loginCredentialsSchema.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   try {
     const client = await serverClient();

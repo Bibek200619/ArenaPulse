@@ -1,10 +1,16 @@
 import { z } from 'zod';
+const normalizedEmailSchema = z
+  .email()
+  .max(254)
+  .transform((value) => value.toLowerCase());
 export const credentialsSchema = z.object({
-  email: z
-    .email()
-    .max(254)
-    .transform((value) => value.toLowerCase()),
+  email: normalizedEmailSchema,
   password: z.string().min(12, 'Use at least 12 characters.').max(128),
+});
+export const loginCredentialsSchema = z.object({
+  email: normalizedEmailSchema,
+  // Existing accounts may predate the current 12-character creation policy.
+  password: z.string().min(1).max(128),
 });
 export const emailSchema = credentialsSchema.pick({ email: true });
 export const passwordSchema = credentialsSchema.pick({ password: true });

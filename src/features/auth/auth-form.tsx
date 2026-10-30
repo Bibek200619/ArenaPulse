@@ -77,12 +77,16 @@ export function AuthForm({
               autoComplete={
                 mode === 'login' ? 'current-password' : 'new-password'
               }
-              minLength={12}
+              minLength={mode === 'login' ? 1 : 12}
               maxLength={128}
               required
               disabled={!configured}
             />
-            <small id="password-help">Use at least 12 characters.</small>
+            <small id="password-help">
+              {mode === 'login'
+                ? 'Enter the password for your account.'
+                : 'Use at least 12 characters.'}
+            </small>
           </div>
         ) : null}
         {state.error ? (

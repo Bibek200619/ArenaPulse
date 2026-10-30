@@ -1,6 +1,7 @@
 import { expect, it } from 'vitest';
 import {
   credentialsSchema,
+  loginCredentialsSchema,
   profileSchema,
   callbackDestination,
 } from '@/features/auth/validation';
@@ -17,6 +18,14 @@ it('canonicalizes username and email', () => {
       password: 'a-long-test-password',
     }).email,
   ).toBe('fan@example.com');
+});
+it('accepts existing shorter passwords at sign-in while keeping creation strict', () => {
+  const credentials = { email: 'Fan@example.com', password: 'legacy1' };
+  expect(loginCredentialsSchema.parse(credentials)).toEqual({
+    email: 'fan@example.com',
+    password: 'legacy1',
+  });
+  expect(credentialsSchema.safeParse(credentials).success).toBe(false);
 });
 it.each(['ab', '3invalid', 'name with spaces', '<script>', 'a'.repeat(25)])(
   'rejects username %s',
