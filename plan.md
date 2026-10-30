@@ -238,13 +238,13 @@ Validation cycle 1: type-check, lint, 65 unit tests, 9 integration tests, produc
 
 Security follow-up: `npm audit --omit=dev` reports four production dependency advisories, including a critical advisory for the pinned Next.js 16.3.4 and high advisories for sharp, source-map-js and zod. No dependency versions were changed in this community issue; tracked separately in GitHub issue #33.
 
-## Active GitHub issue #37 — integrate SportScore live football match data
+## Completed GitHub issue #37 — integrate SportScore live football match data
 
 - [x] Add an optional server-side SportScore provider with validated responses, timeout handling, and safe error behavior.
 - [x] Map live football matches into the current match list/detail experience while preserving demo mode when not configured.
 - [x] Keep the optional credential server-only, add visible dofollow SportScore attribution, and update environment/docs.
 - [x] Add provider coverage and run relevant checks; record actual results.
-- [x] Commit `698918a` and push `codex/sportscore-live-scores-37`; open PR #38 linked to #37. The issue remains open until CI confirms the pushed changes.
+- [x] Commit `698918a` and push `codex/sportscore-live-scores-37`; open PR #38 linked to #37. Vercel deployment/preview checks passed and issue #37 is closed as completed.
 
 SportScore docs list the match endpoint as keyless; an optional server-side `SPORTSCORE_API_KEY` header will be supported for the user-provided credential. The endpoint was verified to return football match records. No key is stored in repository files.
 
