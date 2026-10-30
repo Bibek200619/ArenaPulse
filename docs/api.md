@@ -8,10 +8,10 @@ Auth uses validated server actions and /auth/callback; see auth.md. Fantasy/pred
 
 ## Sports reads
 
-- GET `/api/sports`: public catalog containing sports, competitions, seasons, teams and players, plus provenance. Cache-Control: public, max-age=60. Currently a bounded demo catalog; remote catalogs will require pagination before enabling ingestion at scale.
+- GET `/api/sports`: public catalog containing sports, competitions, seasons, teams and players, plus provenance. Cache-Control: public, max-age=60. The catalog remains a bounded demo catalog.
 - GET `/api/matches`: public `{data: {items, total, offset, limit}, provenance}`. Optional filters: sportId/competitionId (UUID), state (scheduled/live/paused/finished/postponed/cancelled/abandoned), date (YYYY-MM-DD in UTC). offset defaults 0, maximum 10000; limit defaults 20, range 1–50. Unknown filters and invalid values return 400. Cache-Control: public, max-age=15.
 
-All sports values are fictional demo data until a licensed provider is configured. `observedAt` refers to the fixed snapshot; `fetchedAt` refers to retrieval. Do not strip provenance when rendering these responses.
+The default provider returns fictional demo data. With `SPORTS_DATA_PROVIDER=sportscore`, football match reads return SportScore live/recent records and other sports remain demo data. `observedAt` uses the provider update time where available; `fetchedAt` is the adapter retrieval time. Do not strip provenance when rendering these responses. SportScore pages must retain the visible “Powered by SportScore” attribution.
 
 ## Match details
 
