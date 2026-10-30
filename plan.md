@@ -249,6 +249,7 @@ Security follow-up: `npm audit --omit=dev` reports four production dependency ad
 SportScore docs list the match endpoint as keyless; an optional server-side `SPORTSCORE_API_KEY` header will be supported for the user-provided credential. The endpoint was verified to return football match records. No key is stored in repository files.
 
 Validation cycle 1: 71 unit tests, 9 integration tests, lint and type-check passed. A production build with `SPORTS_DATA_PROVIDER=sportscore` passed using `NEXT_BUILD_OUTPUT_DIR=.next-live` to avoid a OneDrive reparse-point cleanup error in the default `.next` directory. Four desktop/mobile match E2E tests passed in demo mode. With the supplied credential loaded only from ignored `.env.local`, the live `/matches` page and a match detail page returned HTTP 200, showed SportScore data and attribution, and did not expose the credential in rendered HTML. A direct keyed provider request returned HTTP 200 with football matches.
+
 ## Completed GitHub issue #34 — verify Phase 6 community content migration and authenticated journeys
 
 - [x] Fix merged PR #35 CI failures: global post inserts under RLS, staff moderation writes blocked by the social write-limit trigger, private interaction author deletion, and the following-feed nested join.
