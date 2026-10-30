@@ -232,7 +232,25 @@ export class SportScoreProvider extends DemoSportsProvider {
     )
       return super.getFixtures(query);
 
-    const live = await this.fetchMatches();
+    // A remote outage must not take down the fictional non-football catalog.
+    let live: Awaited<ReturnType<SportScoreProvider['fetchMatches']>>;
+    try {
+      live = await this.fetchMatches();
+    } catch (error) {
+      if (query.sportId === FOOTBALL_ID || query.competitionId) throw error;
+      const demo = await super.getFixtures(query);
+      return {
+        ...demo,
+        data: {
+          ...demo.data,
+          items: demo.data.items.filter((match) => match.sportId !== FOOTBALL_ID),
+        },
+        provenance: {
+          ...demo.provenance,
+          label: 'SportScore unavailable · Showing fictional demo fixtures only',
+        },
+      };
+    }
     const realFootball = live.matches
       .filter((match) => matchesQuery(match, query))
       .sort(compareMatches);
@@ -251,11 +269,20 @@ export class SportScoreProvider extends DemoSportsProvider {
     const combined = [...realFootball, ...otherSports].sort(compareMatches);
     return {
       data: page(combined, query),
-      provenance: live.provenance,
+      provenance: {
+        ...live.provenance,
+        source: 'sportscore-football-v1+arenapulse-demo-v1',
+        isDemo: true,
+        label: 'Mixed sources · SportScore football (live/recent) and fictional demo fixtures for other sports',
+      },
     };
   }
 
   override async getMatch(id: string): Promise<SportsResult<Match>> {
+    // Preserve navigation from demo fixtures displayed alongside live football.
+    if (catalog.matches.some((match) => match.id === id && match.sportId !== FOOTBALL_ID)) {
+      return super.getMatch(id);
+    }
     const result = await this.getFixtures({
       sportId: FOOTBALL_ID,
       offset: 0,
