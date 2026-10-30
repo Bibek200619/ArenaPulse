@@ -4,7 +4,7 @@ Use separate Supabase projects and environment values for test/staging/productio
 
 ## Node hosting
 
-Use Node 22. Run npm ci then npm run check and npm run format:check. Start the built app with npm run start. For a compatible managed Next.js host, configure install npm ci and build npm run build. Do not use static export for the future authenticated application. Exclude legacy from deployment source if packaging manually; it is not part of the Next build.
+Use Node 22 (the repository's `.nvmrc` target). The project engine range is `>=22.13 <25`; Next.js 16.4.3 requires Node `>=20.9`, and Vitest 5.0.5 supports the Node 22 line (`^22.12`) used by CI. The upgraded runtime and test dependencies therefore remain compatible with the supported CI/deployment runtime. Run npm ci then npm run check and npm run format:check. Start the built app with npm run start. For a compatible managed Next.js host, configure install npm ci and build npm run build. Do not use static export for the future authenticated application. Exclude legacy from deployment source if packaging manually; it is not part of the Next build.
 
 ## Variables
 

@@ -28,7 +28,7 @@ Delivery: PR #44 merged and issue #43 closed. Follow-up issue #45 and PR #46 tra
 
 ### Scope and sequence
 
-- [x] Login/account creation: inspect current auth actions, Supabase configuration, redirects, and browser flows. Found that sign-in incorrectly enforced the 12-character *new-password* minimum and that missing APP_URL defaulted to localhost in hosted deployments. Separate sign-in validation and resolve trusted Vercel callback hosts over HTTPS; keep actionable generic provider errors and never expose credentials.
+- [x] Login/account creation: inspect current auth actions, Supabase configuration, redirects, and browser flows. Found that sign-in incorrectly enforced the 12-character _new-password_ minimum and that missing APP_URL defaulted to localhost in hosted deployments. Separate sign-in validation and resolve trusted Vercel callback hosts over HTTPS; keep actionable generic provider errors and never expose credentials.
 - [x] SportScore: inspect the existing server-only provider and deployment/environment wiring. The adapter and UI are already implemented under issue #37; local configuration is explicitly `demo`, and no API key is configured in this task worktree. Validate actual live provider behavior during the integration phase, without printing the previously supplied credential; if the credential is rejected, request a replacement and keep it server-only.
 - [x] Fantasy: inspect GitHub for the current/open fantasy-team PR and issue status. Issue #26 (scoring, private leagues, leaderboards) and PR #42 are already completed/merged; GitHub currently lists no open Fantasy issue or PR. Do not duplicate completed work. A new issue needs an agreed feature scope before one can be created.
 - [x] Once all three implementation tracks are complete, run the relevant integration tests together, then the complete required local verification suite and inspect GitHub/Vercel checks.
@@ -382,3 +382,37 @@ Validation cycle 1: 71 unit tests, 9 integration tests, lint and type-check pass
 Validation cycle 1: clean migration replay succeeded. `npm run test:db` passed 61/61; `npx supabase db advisors --local --type security --fail-on error` found no issues. `npm run test:e2e:auth` passed all desktop/mobile authentication, community and social journeys. `npm run check` passed 65 unit tests, 9 integration tests, type-check, lint, build and all 18 public desktop/mobile E2E tests. `npm run db:start` and `npm run db:env` now work on Windows. The generated sports seed was reconciled and `npm run db:seed:check` passes.
 
 PR #36: https://github.com/Bibek200619/ArenaPulse/pull/36. GitHub preview feedback and Vercel deployment checks passed; issue #34 is closed as completed and linked to PR #36.
+
+## Active GitHub issue #33 — remediate production dependency advisories
+
+Micro plan:
+
+- [x] Capture the current production audit, dependency tree, Node/npm versions and supported framework ranges; identify each advisory's exact dependency path.
+- [x] Update only affected dependencies to compatible patched versions and refresh the npm lockfile without broad unrelated upgrades.
+- [x] Also address the two moderate Vitest-only findings surfaced by the full audit with a compatible patch release.
+- [x] Review compatibility changes and document supported Node/Next.js versions.
+- [x] Run production audit, unit/integration tests, type-check, lint, formatting, production build, browser tests, and local database/security checks; fix failures and rerun affected gates.
+- [x] Commit `d2e59d8`, push `codex/security-dependencies-33`, and open PR #47 linked to #33; request review from `Bibek200619`, assign `roushan-23`, and apply `bug`, `backend`, `testing`, and `documentation` labels.
+- [ ] Close issue #33 after verified merge of PR #47.
+
+Baseline: Node v24.19.0 / npm 12.1.0 satisfy the repository's Node >=22.13 <25 requirement. `npm audit --omit=dev` reports Next.js 16.3.4 (critical; audit fix 16.4.3), Zod 4.5.4 (high; fix 4.6.7), Sharp below 0.35.5 (high; patched 0.35.5) and source-map-js through 1.2.1 (high; patched 1.2.2). Next.js 16.4.3 declares Node >=20.9, so it remains compatible with this repository's Node range.
+
+Validation cycle 1: unit (81/81) and integration (9/9) passed after the upgrades. The first type-generation attempt stopped because this clean worktree had no `APP_URL`; the app requires it at build time. Fix plan: rerun the verification suite with the documented local URL `http://127.0.0.1:3000` set for the process, without changing tracked application configuration.
+
+Validation cycle 2: the full production/browser/unit/integration/type/lint/build/database/security checks passed. The optional authenticated E2E suite could not find confirmation emails because this machine's shared local Auth stack is in auto-confirm mode; it is shared across worktrees and was left untouched. Targeted formatting flagged the edited package/plan/deployment files, and the seed-consistency check exposed existing generated-seed drift. Fix plan: format only task-touched docs/config, regenerate the demo seed from its typed source, inspect the exact seed diff, and rerun those gates.
+
+Validation cycle 3: `npm run check` passed (81 unit, 9 integration, type-check, lint, build, 18 public E2E); `npm run test:db` passed 69/69; the local Supabase security advisor found no issues. Full `npm audit` reports zero vulnerabilities. Targeted Prettier, seed consistency and `git diff --check` pass after formatting and regeneration. The extra authenticated E2E suite remains an environment-only exception: its confirmation-email expectation conflicts with the already-running shared local Auth stack's auto-confirm setting; no shared local data/config was reset or changed.
+
+Resolved versions: Next.js and `eslint-config-next` 16.4.3; Zod 4.6.7; Sharp 0.35.5; source-map-js 1.2.2; Vitest 5.0.5. The lockfile resolves all five patched versions. No application code changes were needed.
+
+### CI failure follow-up microplan
+
+- [x] Set an explicit local-only `APP_URL` for the Quality workflow so Next route type generation receives the required environment without weakening production validation.
+- [x] Rerun type-check and the full local quality suite with the same value; `npm run check` passed again.
+- [x] Commit and push the CI fix to PR #47, then verify Quality, Identity, and Vercel checks.
+
+Failure evidence: GitHub Quality run #66 stopped at `npm run type-check` with `Invalid environment configuration: APP_URL`; unit, integration, format and seed checks passed before it. The local full suite passed when run with `APP_URL=http://127.0.0.1:3000`.
+
+Validation cycle 4: added `APP_URL=http://127.0.0.1:3000` to the Quality job only. With that value, `npm run check` passed again: 81 unit, 9 integration, type-check, lint, production build, and 18 public E2E tests.
+
+Validation cycle 5: CI follow-up commit 65cddbe passed both Quality and Identity workflows; Vercel deployment succeeded.
