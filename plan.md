@@ -244,7 +244,7 @@ Security follow-up: `npm audit --omit=dev` reports four production dependency ad
 - [x] Map live football matches into the current match list/detail experience while preserving demo mode when not configured.
 - [x] Keep the optional credential server-only, add visible dofollow SportScore attribution, and update environment/docs.
 - [x] Add provider coverage and run relevant checks; record actual results.
-- [ ] Commit and push `codex/sportscore-live-scores-37`, open a PR linked to #37, and close the issue after verification.
+- [x] Commit `698918a` and push `codex/sportscore-live-scores-37`; open PR #38 linked to #37. The issue remains open until CI confirms the pushed changes.
 
 SportScore docs list the match endpoint as keyless; an optional server-side `SPORTSCORE_API_KEY` header will be supported for the user-provided credential. The endpoint was verified to return football match records. No key is stored in repository files.
 
