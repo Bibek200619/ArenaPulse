@@ -1,17 +1,20 @@
 import { execFileSync, spawnSync } from 'node:child_process';
+const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 const status = JSON.parse(
-  execFileSync('npx', ['supabase', 'status', '--output', 'json'], {
+  execFileSync(npx, ['supabase', 'status', '--output', 'json'], {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
+    shell: process.platform === 'win32',
   }),
 );
 if (status.API_URL !== 'http://127.0.0.1:55431')
   throw new Error('Refusing a non-ArenaPulse local stack.');
 const result = spawnSync(
-  'npx',
+  npx,
   ['vitest', 'run', '--config', 'vitest.db.config.ts'],
   {
     stdio: 'inherit',
+    shell: process.platform === 'win32',
     env: {
       ...process.env,
       NEXT_PUBLIC_SUPABASE_URL: status.API_URL,

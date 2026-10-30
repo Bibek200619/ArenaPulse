@@ -391,18 +391,22 @@ it('hides previous activity on privacy change while owners can remove their inte
     (await anon.from('reactions').select('*').eq('post_id', id)).data,
   ).toEqual([]);
   expect(
-    (
-      await bob.client
-        .from('comments')
-        .delete()
-        .eq('id', comment.data!.id)
-        .select()
-    ).data,
-  ).toHaveLength(1);
+    (await bob.client.from('comments').delete().eq('id', comment.data!.id))
+      .error,
+  ).toBeNull();
   expect(
-    (await bob.client.from('reactions').delete().eq('post_id', id).select())
-      .data,
-  ).toHaveLength(1);
+    (await admin.from('comments').select('id').eq('id', comment.data!.id)).data,
+  ).toEqual([]);
+  expect(
+    (await bob.client.from('reactions').delete().eq('post_id', id)).error,
+  ).toBeNull();
+  const remainingReactions = await admin
+    .from('reactions')
+    .select('post_id,user_id')
+    .eq('post_id', id)
+    .eq('user_id', bob.id);
+  expect(remainingReactions.error).toBeNull();
+  expect(remainingReactions.data).toEqual([]);
   expect(
     (
       await bob.client

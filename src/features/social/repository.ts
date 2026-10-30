@@ -26,7 +26,7 @@ export async function readPosts(
     const { data, error } = await client
       .from('posts')
       .select(
-        'id,body,author_id,community_id,is_pinned,is_removed,created_at,author:profiles!posts_author_id_fkey(username,display_name,user_follows!user_follows_followed_id_fkey!inner(follower_id)),comments(count),reactions(count)',
+        'id,body,author_id,community_id,is_pinned,is_removed,created_at,author:profiles!posts_author_id_fkey!inner(username,display_name,user_follows!user_follows_followed_id_fkey!inner(follower_id)),comments(count),reactions(count)',
       )
       .is('community_id', null)
       .eq('author.user_follows.follower_id', options.following)
