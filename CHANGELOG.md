@@ -1,5 +1,11 @@
 # Changelog
 
+### Added — Match discussions
+
+- Match-scoped fan messages, one-level replies, likes, reports, owner deletion and moderator removal.
+- Authenticated RLS and RPC-only writes, bounded history, match-filtered realtime updates with polling fallback.
+- Desktop/mobile two-user discussion coverage.
+
 ### Added — Community membership experience
 
 - Community discovery/search, creation, private request/approval, member directory and staff management screens.

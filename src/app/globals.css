@@ -1014,6 +1014,47 @@ a.fixture-row:hover {
 .match-section p {
   font-size: 14px;
 }
+.match-discussion .discussion-form {
+  display: grid;
+  gap: 10px;
+  max-width: 720px;
+  margin: 18px 0;
+}
+.discussion-form textarea {
+  min-height: 84px;
+  width: 100%;
+  resize: vertical;
+}
+.discussion-message {
+  border-top: 1px solid var(--line);
+  padding: 16px 0;
+}
+.discussion-message .discussion-message {
+  margin-left: clamp(12px, 4vw, 40px);
+  padding-left: 14px;
+  border-left: 2px solid var(--line);
+}
+.discussion-byline {
+  font-size: 13px;
+}
+.discussion-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 13px;
+}
+.discussion-actions details summary,
+.text-button {
+  cursor: pointer;
+  min-height: 40px;
+  padding: 8px 0;
+}
+.text-button {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+}
 .match-timeline {
   list-style: none;
   padding: 0;

@@ -592,6 +592,135 @@ export type Database = {
           },
         ];
       };
+      match_discussion_messages: {
+        Row: {
+          id: string;
+          match_id: string;
+          author_id: string;
+          parent_id: string | null;
+          body: string;
+          created_at: string;
+          is_removed: boolean;
+          removal_reason: string | null;
+          removed_at: string | null;
+          removed_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          match_id: string;
+          author_id?: string;
+          parent_id?: string | null;
+          body: string;
+          created_at?: string;
+          is_removed?: boolean;
+          removal_reason?: string | null;
+          removed_at?: string | null;
+          removed_by?: string | null;
+        };
+        Update: {
+          id?: string;
+          match_id?: string;
+          author_id?: string;
+          parent_id?: string | null;
+          body?: string;
+          created_at?: string;
+          is_removed?: boolean;
+          removal_reason?: string | null;
+          removed_at?: string | null;
+          removed_by?: string | null;
+        };
+        Relationships: [];
+      };
+      match_discussion_reactions: {
+        Row: {
+          match_id: string;
+          message_id: string;
+          user_id: string;
+          kind: string;
+          created_at: string;
+        };
+        Insert: {
+          match_id: string;
+          message_id: string;
+          user_id?: string;
+          kind?: string;
+          created_at?: string;
+        };
+        Update: {
+          match_id?: string;
+          message_id?: string;
+          user_id?: string;
+          kind?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      match_discussion_reports: {
+        Row: {
+          id: string;
+          match_id: string;
+          message_id: string;
+          reporter_id: string;
+          reason: string;
+          status: string;
+          created_at: string;
+          resolved_at: string | null;
+          resolved_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          match_id: string;
+          message_id: string;
+          reporter_id?: string;
+          reason: string;
+          status?: string;
+          created_at?: string;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+        };
+        Update: {
+          id?: string;
+          match_id?: string;
+          message_id?: string;
+          reporter_id?: string;
+          reason?: string;
+          status?: string;
+          created_at?: string;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+        };
+        Relationships: [];
+      };
+      match_discussion_moderation_log: {
+        Row: {
+          id: string;
+          match_id: string;
+          message_id: string | null;
+          actor_id: string | null;
+          action: string;
+          detail: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          match_id: string;
+          message_id?: string | null;
+          actor_id?: string | null;
+          action: string;
+          detail?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          match_id?: string;
+          message_id?: string | null;
+          actor_id?: string | null;
+          action?: string;
+          detail?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       matches: {
         Row: {
           clock: string | null;
@@ -1157,6 +1286,34 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      create_match_discussion_message: {
+        Args: {
+          p_match_id: string;
+          p_body: string;
+          p_parent_id?: string | null;
+        };
+        Returns: string;
+      };
+      set_match_discussion_reaction: {
+        Args: { p_match_id: string; p_message_id: string; p_active: boolean };
+        Returns: boolean;
+      };
+      delete_match_discussion_message: {
+        Args: { p_match_id: string; p_message_id: string };
+        Returns: boolean;
+      };
+      report_match_discussion_message: {
+        Args: { p_match_id: string; p_message_id: string; p_reason: string };
+        Returns: string;
+      };
+      moderate_match_discussion_message: {
+        Args: { p_match_id: string; p_message_id: string };
+        Returns: boolean;
+      };
+      resolve_match_discussion_report: {
+        Args: { p_report_id: string; p_action: string };
+        Returns: boolean;
+      };
       community_transition: {
         Args: {
           p_action: string;

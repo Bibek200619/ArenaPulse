@@ -9,7 +9,9 @@ test('home is responsive, accessible, honest and navigable', async ({
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
     'Sport is better',
   );
-  await expect(page.getByText('No live sports data connected')).toBeVisible();
+  await expect(
+    page.getByText('Live football provider is configurable'),
+  ).toBeVisible();
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth,

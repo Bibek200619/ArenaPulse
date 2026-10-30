@@ -22,6 +22,12 @@ The generated migration receives a reviewed final ACL baseline because pg-delta'
 
 The entity milestone connects these tables through verified follow actions and optional onboarding/preferences UI; see entities.md.
 
+## Match discussions (Phase 7)
+
+Migration `20261030160000_phase7_match_discussions.sql` adds match-scoped messages, one-level replies, likes, reports and an immutable moderation log. Reads require an authenticated account; private-profile and block visibility follows the existing social rules. Direct writes are revoked. Authenticated writes use bounded RPCs with ownership checks and per-user write limits. Composite keys bind replies and reactions to the same match. The server verifies that a match exists before accepting a write; provider match IDs are not foreign-keyed because live providers may not persist fixtures in the local catalog.
+
+Moderators are identified only by the trusted `app_metadata.role` claim (`moderator` or `admin`). They can remove messages and resolve/dismiss reports through RPCs; every moderation change is logged. Match pages fetch 20 root messages at a time and cap replies per page. Realtime subscriptions filter both messages and reactions to the active match and switch to 15-second polling after channel failures.
+
 Security reference: [Supabase RLS and grants](https://supabase.com/docs/guides/database/postgres/row-level-security). The [April 2026 API exposure change](https://supabase.com/changelog/45329-breaking-change-tables-not-exposed-to-data-and-graphql-api-automatically) is handled through explicit grants.
 
 ## Social persistence (Phase 5 schema milestone)

@@ -238,6 +238,19 @@ Validation cycle 1 (implementation PR): type-check, lint, 65 unit tests, 9 integ
 
 Security follow-up: `npm audit --omit=dev` reports four production dependency advisories, including a critical advisory for the pinned Next.js 16.3.4 and high advisories for sharp, source-map-js and zod. No dependency versions were changed in this community issue; tracked separately in GitHub issue #33.
 
+## Active GitHub issue #24 — Phase 7 realtime match discussions and moderation
+
+- [x] Inspect existing social schema, match routes and auth patterns; choose a match-scoped data model with RLS.
+- [x] Add validated authenticated discussion/reply/reaction writes, bounded history, and owner/moderator controls.
+- [x] Add scoped realtime subscriptions with polling fallback/reconnect behavior on desktop and mobile match pages.
+- [x] Add two-user database/authenticated browser coverage and document actual verification results.
+- [x] Run relevant database, security, unit/integration, browser, type, lint and build checks.
+- [ ] Commit and push `codex/phase-7-match-discussions-24`, open a PR linked to #24, and close after verification.
+
+Validation cycle 1: local migration applied; database tests passed 64/64; security advisor found no issues; unit tests passed 65/65; integration tests passed 9/9; type-check, lint and production build passed; public desktop/mobile browser tests passed 18/18; authenticated match discussion tests passed on desktop and mobile. Targeted Prettier checks passed for changed source, tests, docs and configuration.
+
+Validation cycle 2: GitHub CI showed public match pages assumed Supabase auth was configured. Make anonymous discussion reads/session lookup optional and disable the browser subscription without auth configuration. Production build passed without `.env.local`; public match journeys passed 4/4 across desktop/mobile with no auth configuration, including an explicit guest discussion/sign-in assertion. Configured-auth discussion journey passed 2/2 across desktop/mobile. Identity CI passed database, security-advisor, build and authenticated E2E. A subsequent merge of PR #38 exposed duplicate match-page declarations and a stale homepage E2E expectation; both were corrected. After the merge, database tests passed 64/64, unit tests 71/71, integration tests 9/9, lint and type-check passed, production build passed, and public E2E passed 18/18 without `.env.local`. Waiting for fresh GitHub and Vercel checks on the corrected head.
+
 ## Completed GitHub issue #37 — integrate SportScore live football match data
 
 - [x] Add an optional server-side SportScore provider with validated responses, timeout handling, and safe error behavior.
