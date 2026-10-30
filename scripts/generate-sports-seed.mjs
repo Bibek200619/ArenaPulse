@@ -1,5 +1,6 @@
 import { writeFileSync, readFileSync } from 'node:fs';
 import catalog from '../src/features/sports/demo-catalog.ts';
+import { fantasyDemoCompetitions } from '../src/features/fantasy/demo-config.ts';
 // Pure file generation. Never connects to a database or reads credentials.
 const lines = [
   '-- GENERATED fictional demo data. Not live sports. Regenerate: npm run db:seed:generate',
@@ -149,6 +150,67 @@ insert(
     points: s.points,
   })),
 );
+insert(
+  'fantasy_competitions',
+  fantasyDemoCompetitions.map((competition) => ({
+    id: competition.id,
+    source_competition_id: competition.sourceCompetitionId,
+    sport_id: competition.sportId,
+    name: competition.name,
+    status: 'open',
+    current_rule_version: 1,
+  })),
+);
+insert(
+  'fantasy_rules',
+  fantasyDemoCompetitions.map((competition) => ({
+    competition_id: competition.id,
+    version: 1,
+    squad_size: competition.squadSize,
+    budget: competition.budget,
+    position_limits: JSON.stringify(competition.positionLimits),
+    team_cap: competition.teamCap,
+    captain_multiplier: competition.captainMultiplier,
+    vice_captain_multiplier: competition.viceCaptainMultiplier,
+    transfers_per_gameweek: competition.transfersPerGameweek,
+  })),
+);
+for (const competition of fantasyDemoCompetitions) {
+  insert(
+    'fantasy_player_prices',
+    catalog.players
+      .filter((player) => player.sportId === competition.sportId)
+      .map((player) => ({
+        competition_id: competition.id,
+        rule_version: 1,
+        sport_id: competition.sportId,
+        player_id: player.id,
+        price: competition.prices[player.position],
+      })),
+  );
+  for (const gameweek of competition.gameweeks) {
+    const offsetDays = 7 + (gameweek.number - 1) * 14;
+    const sql = (value) =>
+      value === null || typeof value === 'number'
+        ? String(value)
+        : typeof value === 'boolean'
+          ? String(value)
+          : "'" + String(value).replaceAll("'", "''") + "'";
+    lines.push(
+      `insert into public.fantasy_gameweeks (id,competition_id,number,name,rule_version,deadline_at,starts_at,ends_at,status) values (${[
+        sql(gameweek.id),
+        sql(competition.id),
+        sql(gameweek.number),
+        sql(`Gameweek ${gameweek.number}`),
+        '1',
+        `now() + interval '${offsetDays} days'`,
+        `now() + interval '${offsetDays + 1} days'`,
+        `now() + interval '${offsetDays + 7} days'`,
+        sql('open'),
+      ].join(',')}) on conflict do nothing;`,
+    );
+  }
+}
 lines.push('commit;', '');
 const output = lines.join('\n');
 const path = new URL('../supabase/seed.sql', import.meta.url);
