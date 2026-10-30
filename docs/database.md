@@ -8,7 +8,7 @@ profile_preferences references profiles and is owner-only under RLS. It stores b
 
 Run npm run test:db against isolated local port 55431. The test runner uses local admin credentials only to provision/delete test users; all assertions use anonymous/user clients. It refuses a hosted target. Run npx supabase db reset --local --yes only on this disposable ArenaPulse development stack to verify replay, then run tests again. Never use a hosted database for destructive tests.
 
-Community, fantasy, notification and prediction schemas remain tracked in plan.md for later phases.
+Notification and prediction schemas remain tracked in plan.md for later phases.
 
 ## Sports catalog and follows (Phase 4 schema milestone)
 
@@ -47,3 +47,7 @@ See [social.md](social.md) for the next application milestone. The subsequent so
 Migration `20260913162757_community_foundation.sql` introduces communities, community_members, community_join_requests, community_bans and community_audit. All are indexed with explicit RLS/grants. Clients have no direct writes, including the service role. Public SECURITY INVOKER wrappers call narrowly scoped private transition functions that verify auth.uid(), check the current role and lock the community row before mutation. Creation/approval/ban/role/ownership changes and audit entries are atomic. A partial unique index prevents multiple owner memberships, while RPC-only writes preserve owner_id consistency.
 
 Private communities are unlisted; UUID-link access requests do not reveal their metadata. Public metadata remains public even for banned accounts. Member directories require membership; audit records require staff status. See communities.md for the complete matrix, ban authority rules, budgets and account-deletion semantics. The underlying private role helper returns only the current caller's role and avoids recursive membership RLS; anonymous callers receive no membership. Generated migration ACLs are reasserted explicitly to avoid environment/default-grant differences.
+
+## Fantasy squads (Phase 8)
+
+Migration `20261030180000_phase8_fantasy_squads.sql` adds sport-scoped fantasy competitions, versioned rules and price pools, scheduled gameweeks, owner-private teams and roster snapshots. Public rules, player prices and gameweeks are readable; teams, gameweek entries and selected players use owner-only RLS. Direct client writes are revoked. `save_fantasy_squad` is the only authenticated write path and atomically validates the gameweek deadline, rule version, roster size, position limits, same-sport player pool, budget, team cap, distinct captain/vice-captain selections and transfer allowance. The caller identity comes from `auth.uid()`. Demo competitions and prices are generated from `src/features/fantasy/demo-config.ts` with the fictional sports seed.
