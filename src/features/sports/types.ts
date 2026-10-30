@@ -76,6 +76,7 @@ export type Match = {
   sportId: string;
   competitionId: string;
   seasonId: string;
+  competitionName?: string;
   venueId: string | null;
   startsAt: string;
   state: MatchState;

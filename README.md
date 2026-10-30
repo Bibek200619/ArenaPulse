@@ -37,15 +37,14 @@ The check script runs unit, integration, types, lint, production build, then des
 
 See [plan.md](plan.md), [ARCHITECTURE.md](ARCHITECTURE.md), [deployment](docs/deployment.md), and [contribution guide](CONTRIBUTING.md). Existing GitHub origin redirects from fifa to ArenaPulse; the integration branch remains development.
 
-Sports foundation: `/matches` displays a fixed fictional multi-sport snapshot through the provider service. `/api/sports` and `/api/matches` include mandatory demo provenance. See [sports data](docs/sports-data.md) and [API contracts](docs/api.md).
+Sports foundation: `/matches` uses a fixed fictional multi-sport snapshot by default. Set `SPORTS_DATA_PROVIDER=sportscore` to show current football scores and recent fixtures from SportScore; cricket, basketball and tennis remain demo data. See [sports data](docs/sports-data.md) and [API contracts](docs/api.md).
 
-Match experience: shareable filters and paginated fixtures lead to `/matches/{id}` with available scores, events, statistics, lineups and standings. See [match behavior](docs/matches.md). No live provider or predictions are configured.
+Match experience: shareable filters and paginated fixtures lead to `/matches/{id}` with available scores, events, statistics, lineups and standings. SportScore football records currently provide scores and status; detailed events, lineups, statistics and standings are not available through the integrated match-list endpoint. See [match behavior](docs/matches.md). Predictions are not configured.
 
 Sports entities: browse teams, players and competitions, then follow them from detail pages or `/settings/sports`. New profiles get an optional sports-picks step. Follow lists are private and stored in Supabase with RLS. See [entity behavior](docs/entities.md).
 
 Social experience: `/feed` offers latest/following activity; `/people` finds public fans; `/users/{username}` and `/posts/{id}` provide following, comments, replies and likes with profile-derived privacy. See [social behavior](docs/social.md). No notification delivery or realtime discussion is claimed yet.
 
 Communities: `/communities` supports discovery, creation, public joins and private access requests. Members and staff can manage requests, roles, bans and ownership with database-enforced authority. See [community permissions](docs/communities.md). Community posts and content moderation remain in progress.
-
 
 contributers - bibek200619, roushan-23

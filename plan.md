@@ -237,3 +237,15 @@ Next Phase: community content and moderation, then Phase 7 realtime match discus
 Validation cycle 1: type-check, lint, 65 unit tests, 9 integration tests, production build and all 18 public desktop/mobile browser tests passed. Prettier passed for every changed Markdown/TypeScript/test file. Repository-wide `format:check` warns on 192 files in this Windows checkout because unchanged Git files use CRLF; the Linux CI checkout uses LF. `npm run db:start` could not start because Docker/Podman and the isolated local database are absent, so migration replay, security advisors, database tests and new authenticated browser journeys remain unverified. See `docs/engineering/phase-6-content-verification.md` and follow-up issue #34 for the targeted rerun plan. PR #35 is open and its Quality workflow is running; Vercel status passed. Keep issue #21 open until PR #35 merges and outstanding verification is complete.
 
 Security follow-up: `npm audit --omit=dev` reports four production dependency advisories, including a critical advisory for the pinned Next.js 16.3.4 and high advisories for sharp, source-map-js and zod. No dependency versions were changed in this community issue; tracked separately in GitHub issue #33.
+
+## Active GitHub issue #37 — integrate SportScore live football match data
+
+- [x] Add an optional server-side SportScore provider with validated responses, timeout handling, and safe error behavior.
+- [x] Map live football matches into the current match list/detail experience while preserving demo mode when not configured.
+- [x] Keep the optional credential server-only, add visible dofollow SportScore attribution, and update environment/docs.
+- [x] Add provider coverage and run relevant checks; record actual results.
+- [ ] Commit and push `codex/sportscore-live-scores-37`, open a PR linked to #37, and close the issue after verification.
+
+SportScore docs list the match endpoint as keyless; an optional server-side `SPORTSCORE_API_KEY` header will be supported for the user-provided credential. The endpoint was verified to return football match records. No key is stored in repository files.
+
+Validation cycle 1: 71 unit tests, 9 integration tests, lint and type-check passed. A production build with `SPORTS_DATA_PROVIDER=sportscore` passed using `NEXT_BUILD_OUTPUT_DIR=.next-live` to avoid a OneDrive reparse-point cleanup error in the default `.next` directory. Four desktop/mobile match E2E tests passed in demo mode. With the supplied credential loaded only from ignored `.env.local`, the live `/matches` page and a match detail page returned HTTP 200, showed SportScore data and attribution, and did not expose the credential in rendered HTML. A direct keyed provider request returned HTTP 200 with football matches.

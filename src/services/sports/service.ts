@@ -2,8 +2,10 @@ import type { SportsDataProvider } from './providers/sports-provider';
 import type { MatchQuery } from '@/features/sports/types';
 import { ProviderCache } from './cache';
 import { DemoSportsProvider } from './providers/demo-provider';
+import { SportScoreProvider } from './providers/sportscore-provider';
 import { AppError } from '@/lib/errors';
 import { entityIdSchema, matchQuerySchema } from '@/features/sports/validation';
+import { parseEnvironment } from '@/lib/env';
 
 export class SportsService {
   constructor(
@@ -49,7 +51,9 @@ export class SportsService {
     const query = matchQuerySchema.parse(input);
     return this.read(
       `fixtures:${JSON.stringify(query)}`,
-      query.state === 'live' ? 30_000 : 60_000,
+      this.provider.id === 'sportscore-football-v1' || query.state === 'live'
+        ? 30_000
+        : 60_000,
       () => this.provider.getFixtures(query),
     );
   }
@@ -79,4 +83,9 @@ export class SportsService {
     return this.read(`match:${id}`, 30_000, () => this.provider.getMatch(id));
   }
 }
-export const sportsService = new SportsService(new DemoSportsProvider());
+const environment = parseEnvironment(process.env);
+export const sportsService = new SportsService(
+  environment.SPORTS_DATA_PROVIDER === 'sportscore'
+    ? new SportScoreProvider(environment.SPORTSCORE_API_KEY)
+    : new DemoSportsProvider(),
+);

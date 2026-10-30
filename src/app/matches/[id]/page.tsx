@@ -10,6 +10,7 @@ import {
   MatchStandings,
 } from '@/components/matches/match-detail';
 import { LiveRefresh } from '@/components/matches/live-refresh';
+import { SportScoreAttribution } from '@/components/matches/sportscore-attribution';
 export const metadata = { title: 'Match centre' };
 export const dynamic = 'force-dynamic';
 export default async function MatchPage({
@@ -27,11 +28,13 @@ export default async function MatchPage({
     throw error;
   });
   const match = result.data;
-  const [catalog, venue, standings] = await Promise.all([
+  const [catalog, venue] = await Promise.all([
     sportsService.getCatalog(),
     match.venueId ? sportsService.getVenue(match.venueId) : null,
-    sportsService.getStandings(match.competitionId),
   ]);
+  const standings = match.competitionName
+    ? null
+    : await sportsService.getStandings(match.competitionId);
   const competition = catalog.data.competitions.find(
     (c) => c.id === match.competitionId,
   );
@@ -41,12 +44,17 @@ export default async function MatchPage({
         ← All matches
       </Link>
       <p className="eyebrow accent match-competition">
-        {competition?.name ?? 'Competition unavailable'}
+        {match.competitionName ??
+          competition?.name ??
+          'Competition unavailable'}
       </p>
       <h1>
         {match.participants.map((participant) => participant.name).join(' vs ')}
       </h1>
       <p className="data-notice">{result.provenance.label}</p>
+      {result.provenance.source === 'sportscore-football-v1' && (
+        <SportScoreAttribution />
+      )}
       <section className="match-scoreboard" aria-label="Scoreboard">
         {match.participants.map((participant) => (
           <div key={participant.id}>
@@ -87,8 +95,11 @@ export default async function MatchPage({
         <div>
           <dt>Season</dt>
           <dd>
-            {catalog.data.seasons.find((season) => season.id === match.seasonId)
-              ?.name ?? 'Season unavailable'}
+            {match.competitionName
+              ? 'Not provided by SportScore'
+              : (catalog.data.seasons.find(
+                  (season) => season.id === match.seasonId,
+                )?.name ?? 'Season unavailable')}
           </dd>
         </div>
       </dl>
@@ -101,7 +112,9 @@ export default async function MatchPage({
       <MatchTimeline match={match} />
       <MatchStatistics match={match} />
       <MatchLineups match={match} players={catalog.data.players} />
-      <MatchStandings standings={standings.data} teams={catalog.data.teams} />
+      {standings && (
+        <MatchStandings standings={standings.data} teams={catalog.data.teams} />
+      )}
       <section className="match-section">
         <h2>Fan discussion</h2>
         <p className="muted">

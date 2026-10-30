@@ -10,7 +10,7 @@ import { matchQuerySchema } from '@/features/sports/validation';
 const data: SportsCatalog = catalog;
 export const DEMO_OBSERVED_AT = '2026-09-09T18:00:00Z';
 export class DemoSportsProvider implements SportsDataProvider {
-  readonly id = 'arenapulse-demo-v1';
+  readonly id: string = 'arenapulse-demo-v1';
   constructor(private readonly now: () => Date = () => new Date()) {}
   private result<T>(value: T): SportsResult<T> {
     return {
