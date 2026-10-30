@@ -3,6 +3,7 @@ import { parseEnvironment } from '@/lib/env';
 describe('environment validation', () => {
   it('boots the public shell without credentials and keeps predictions off', () => {
     const env = parseEnvironment({});
+    expect(env.APP_URL).toBe('http://localhost:3000');
     expect(env.PREDICTIONS_ENABLED).toBe('false');
     expect(env.SPORTS_DATA_PROVIDER).toBe('demo');
   });
@@ -50,5 +51,35 @@ describe('environment validation', () => {
     expect(() =>
       parseEnvironment({ APP_URL: 'javascript:alert(1)' }),
     ).toThrow();
+  });
+  it('uses the HTTPS Vercel deployment hostname for hosted callbacks', () => {
+    expect(
+      parseEnvironment({ VERCEL_URL: 'arena-pulse-preview.vercel.app' })
+        .APP_URL,
+    ).toBe('https://arena-pulse-preview.vercel.app');
+  });
+  it('prefers the configured public origin over the Vercel deployment hostname', () => {
+    expect(
+      parseEnvironment({
+        APP_URL: 'https://arenapulse.example',
+        VERCEL_URL: 'arena-pulse-preview.vercel.app',
+      }).APP_URL,
+    ).toBe('https://arenapulse.example');
+  });
+  it('requires a configured callback origin for production deployments without Vercel', () => {
+    expect(() => parseEnvironment({ NODE_ENV: 'production' })).toThrow(
+      'Invalid environment configuration: APP_URL',
+    );
+    expect(() =>
+      parseEnvironment({
+        NODE_ENV: 'production',
+        APP_URL: 'https://arenapulse.example',
+      }),
+    ).not.toThrow();
+  });
+  it('rejects an unsafe Vercel deployment hostname', () => {
+    expect(() =>
+      parseEnvironment({ VERCEL_URL: 'attacker.test/path' }),
+    ).toThrow('Invalid environment configuration: VERCEL_URL');
   });
 });

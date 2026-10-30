@@ -6,7 +6,7 @@ const optionalValue = z.preprocess(
 );
 const environmentSchema = z
   .object({
-    APP_URL: z.url().default('http://localhost:3000'),
+    APP_URL: z.url(),
     NEXT_PUBLIC_SUPABASE_URL: z.preprocess(
       (value) => (value === '' ? undefined : value),
       z.url().optional(),
@@ -46,7 +46,20 @@ const environmentSchema = z
   });
 
 export function parseEnvironment(input: Record<string, string | undefined>) {
-  const result = environmentSchema.safeParse(input);
+  const configuredUrl = input.APP_URL?.trim();
+  const deploymentHost = input.VERCEL_URL?.trim();
+  if (deploymentHost && !/^[a-z\d.-]+(?::\d+)?$/i.test(deploymentHost)) {
+    throw new Error('Invalid environment configuration: VERCEL_URL');
+  }
+  const deploymentUrl = deploymentHost
+    ? `https://${deploymentHost}`
+    : undefined;
+  const appUrl =
+    configuredUrl ??
+    deploymentUrl ??
+    (input.NODE_ENV === 'production' ? undefined : 'http://localhost:3000');
+
+  const result = environmentSchema.safeParse({ ...input, APP_URL: appUrl });
   if (!result.success) {
     // Field paths are safe to log; never include submitted values or credentials.
     throw new Error(
