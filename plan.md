@@ -368,7 +368,8 @@ Micro plan:
 - [x] Also address the two moderate Vitest-only findings surfaced by the full audit with a compatible patch release.
 - [x] Review compatibility changes and document supported Node/Next.js versions.
 - [x] Run production audit, unit/integration tests, type-check, lint, formatting, production build, browser tests, and local database/security checks; fix failures and rerun affected gates.
-- [ ] Commit only issue #33 changes on a task branch, push, open a PR linked to #33, and complete the issue after verified merge.
+- [x] Commit `d2e59d8`, push `codex/security-dependencies-33`, and open PR #47 linked to #33; request review from `Bibek200619`, assign `roushan-23`, and apply `bug`, `backend`, `testing`, and `documentation` labels.
+- [ ] Close issue #33 after verified merge of PR #47.
 
 Baseline: Node v24.19.0 / npm 12.1.0 satisfy the repository's Node >=22.13 <25 requirement. `npm audit --omit=dev` reports Next.js 16.3.4 (critical; audit fix 16.4.3), Zod 4.5.4 (high; fix 4.6.7), Sharp below 0.35.5 (high; patched 0.35.5) and source-map-js through 1.2.1 (high; patched 1.2.2). Next.js 16.4.3 declares Node >=20.9, so it remains compatible with this repository's Node range.
 
