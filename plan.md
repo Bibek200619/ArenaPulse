@@ -9,7 +9,8 @@
 - [x] Fantasy: inspect GitHub for the current/open fantasy-team PR and issue status. Issue #26 (scoring, private leagues, leaderboards) and PR #42 are already completed/merged; GitHub currently lists no open Fantasy issue or PR. Do not duplicate completed work. A new issue needs an agreed feature scope before one can be created.
 - [x] Once all three implementation tracks are complete, run the relevant integration tests together, then the complete required local verification suite and inspect GitHub/Vercel checks.
 - [x] If any check is red, add a small, specific corrective micro-plan here, fix it, and rerun the affected integration and verification checks.
-- [ ] Only after all checks are green, commit/push the task branch and open/update a PR linked to the relevant issue(s); close issues only after verified merge. Do not start another unrelated roadmap issue without user direction.
+- [x] After local checks were green, commit and push the task branch; do not start another unrelated roadmap issue without user direction.
+- [ ] Open a PR linked to an issue, set reviewer/assignee/labels, and inspect remote checks; GitHub API access currently returns 401. Close issues only after verified merge.
 
 ### Verification targets
 
@@ -46,7 +47,9 @@ Separated sign-in's accepted password length from the stricter password-creation
 - [x] Apply Prettier only to the changed source, test, and auth documentation files; leave unrelated roadmap formatting intact.
 - [x] Restore test-generated screenshot changes and confirm `git diff --check` plus focused formatting are green.
 
-Validation cycle 2 (integration and quality): SportScore's keyless football endpoint returned HTTP 200 with 10 records. With `SPORTS_DATA_PROVIDER=sportscore` supplied only to a temporary local app process, `/api/matches` returned 50 validated non-demo football records and `/matches?sportId=<football UUID>` rendered SportScore provenance, attribution and fixture rows. Unit 81/81, integration 9/9, type-check, lint, build, public desktop/mobile E2E 18/18, focused auth/provider tests 28/28, auth integration tests 9/9, and authenticated browser journeys 14/14 passed. Targeted Prettier and `git diff --check` passed. No database changes were made. GitHub reports no open PRs, no open Fantasy issue; the stored GitHub credential returned 401, and GitHub/Vercel CLIs/project link are unavailable in this worktree, so remote checks/publishing cannot be verified here. The runtime SportScore API is keyless; local `.env.local` remains explicitly set to demo and production must be configured with `SPORTS_DATA_PROVIDER=sportscore` to show live football.
+Validation cycle 2 (integration and quality): SportScore's keyless football endpoint returned HTTP 200 with 10 records. With `SPORTS_DATA_PROVIDER=sportscore` supplied only to a temporary local app process, `/api/matches` returned 50 validated non-demo football records and `/matches?sportId=<football UUID>` rendered SportScore provenance, attribution and fixture rows. Unit 81/81, integration 9/9, type-check, lint, build, public desktop/mobile E2E 18/18, focused auth/provider tests 28/28, auth integration tests 9/9, and authenticated browser journeys 14/14 passed. Targeted Prettier and `git diff --check` passed. No database changes were made. GitHub reports no open PRs and no open Fantasy issue; the stored GitHub API credential returned 401, so remote checks cannot be inspected. The runtime SportScore API is keyless; local `.env.local` remains explicitly set to demo and production must be configured with `SPORTS_DATA_PROVIDER=sportscore` to show live football.
+
+Delivery: commit `b23b138` is pushed to `codex/login-live-fantasy-followup`. Git push succeeded, but GitHub REST API calls return 401, so the PR, reviewer/assignee, labels and remote check inspection remain pending GitHub API reconnection. No issue was created because the Fantasy issue is already completed and there is no additional Fantasy scope to track.
 
 Created 2026-09-09. All commits use actual timestamps. The earlier venues plan is preserved in Git and will be copied to docs/legacy-venues-plan.md.
 
