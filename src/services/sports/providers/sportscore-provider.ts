@@ -238,12 +238,16 @@ export class SportScoreProvider extends DemoSportsProvider {
       live = await this.fetchMatches();
     } catch (error) {
       if (query.sportId === FOOTBALL_ID || query.competitionId) throw error;
-      const demo = await super.getFixtures(query);
+      const demo = await super.getFixtures({ ...query, offset: 0, limit: 50 });
+      const otherSports = demo.data.items.filter(
+        (match) => match.sportId !== FOOTBALL_ID,
+      );
       return {
         ...demo,
         data: {
           ...demo.data,
-          items: demo.data.items.filter((match) => match.sportId !== FOOTBALL_ID),
+          items: otherSports.slice(query.offset, query.offset + query.limit),
+          total: otherSports.length,
         },
         provenance: {
           ...demo.provenance,
@@ -280,7 +284,11 @@ export class SportScoreProvider extends DemoSportsProvider {
 
   override async getMatch(id: string): Promise<SportsResult<Match>> {
     // Preserve navigation from demo fixtures displayed alongside live football.
-    if (catalog.matches.some((match) => match.id === id && match.sportId !== FOOTBALL_ID)) {
+    if (
+      catalog.matches.some(
+        (match) => match.id === id && match.sportId !== FOOTBALL_ID,
+      )
+    ) {
       return super.getMatch(id);
     }
     const result = await this.getFixtures({
