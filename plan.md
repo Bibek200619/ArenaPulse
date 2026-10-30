@@ -238,12 +238,14 @@ Validation cycle 1 (implementation PR): type-check, lint, 65 unit tests, 9 integ
 
 Security follow-up: `npm audit --omit=dev` reports four production dependency advisories, including a critical advisory for the pinned Next.js 16.3.4 and high advisories for sharp, source-map-js and zod. No dependency versions were changed in this community issue; tracked separately in GitHub issue #33.
 
-## Active GitHub issue #34 — verify Phase 6 community content migration and authenticated journeys
+## Completed GitHub issue #34 — verify Phase 6 community content migration and authenticated journeys
 
 - [x] Fix merged PR #35 CI failures: global post inserts under RLS, staff moderation writes blocked by the social write-limit trigger, private interaction author deletion, and the following-feed nested join.
 - [x] Replay all migrations on a clean local Supabase stack; run all 61 database tests and security advisors.
 - [x] Run authenticated community content journeys on desktop and mobile; all 8 authenticated runs passed.
 - [x] Run type-check, lint, 65 unit, 9 integration, 18 public browser and production build checks. The changed Markdown/TypeScript/MJS files pass targeted Prettier checks; repository-wide Prettier reports 163 files on this Windows checkout because of line-ending differences.
-- [ ] Commit issue-specific changes, push a task branch, and open/update a PR linked to #34.
+- [x] Commit issue-specific changes, push `codex/verify-phase6-34`, and open PR #36 targeting `development`, linked to #34.
 
 Validation cycle 1: clean migration replay succeeded. `npm run test:db` passed 61/61; `npx supabase db advisors --local --type security --fail-on error` found no issues. `npm run test:e2e:auth` passed all desktop/mobile authentication, community and social journeys. `npm run check` passed 65 unit tests, 9 integration tests, type-check, lint, build and all 18 public desktop/mobile E2E tests. `npm run db:start` and `npm run db:env` now work on Windows. The generated sports seed was reconciled and `npm run db:seed:check` passes.
+
+PR #36: https://github.com/Bibek200619/ArenaPulse/pull/36. Issue #34 will be closed after the PR's GitHub checks confirm the pushed commit.
