@@ -6,12 +6,11 @@ import { expectNoIndex } from '../helpers/browser';
 test('two fans create, request, approve, manage roles, ban and transfer a private community', async ({
   page,
   browser,
-  request,
 }, testInfo) => {
   test.setTimeout(120_000);
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  const alice = await registerFan(page, request);
+  const alice = await registerFan(page);
   const name = `Matchday ${randomUUID().slice(0, 8)}`;
   await page.goto('/communities/new');
   await page.getByLabel('Community name', { exact: true }).fill(name);
@@ -42,7 +41,7 @@ test('two fans create, request, approve, manage roles, ban and transfer a privat
   const bobPage = await other.newPage();
   bobPage.on('pageerror', (error) => errors.push(error.message));
   try {
-    const bob = await registerFan(bobPage, request);
+    const bob = await registerFan(bobPage);
     await bobPage.goto(`/communities?q=${encodeURIComponent(name)}`);
     await expect(
       bobPage.getByText('No communities found.', { exact: false }),

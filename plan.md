@@ -1,5 +1,27 @@
 # ArenaPulse implementation roadmap
 
+## Active micro-plan — temporarily remove email confirmation (2026-10-31)
+
+- [x] Inspect Supabase local/hosted auth settings and the signup action/session flow; identify why Gmail confirmation mail is not arriving.
+- [x] Implement immediate signup when email confirmation is disabled: configure local Supabase, route a returned session into onboarding, and keep confirmation messaging only when Supabase still requires it.
+- [x] Update auth documentation and add coverage for the immediate-session signup mode while preserving recovery emails.
+- [x] Run auth integration/browser flows, then the required quality checks. If any check is red, write a corrective micro-plan and rerun.
+- [x] Update the PR after local checks are green. The hosted Supabase project is not linked and no Supabase access token is available, so the hosted Confirm email dashboard setting could not be changed; exact manual steps and the temporary verification risk are documented.
+
+### Initial findings
+
+User reports signup says to verify Gmail but no email arrived, and explicitly requests temporarily removing that step. Keep the change reversible and avoid claiming the hosted provider setting is updated unless it is actually changed.
+
+### Corrective micro-plan (immediate-signup E2E failure)
+
+- [x] Reproduce signup failure in the focused desktop auth journey; inspect the signup response and local Supabase auth configuration/log without exposing credentials.
+- [x] Identify the cause: authenticated E2E launched a stale `.next` production build from before the current source change. Local Supabase reports email autoconfirm enabled; no extra code workaround is needed.
+- [x] Rebuild from current source so confirmation-disabled signup returns a usable session and proceeds to onboarding.
+- [x] Rerun authenticated desktop/mobile journeys; 14/14 passed.
+- [x] Rerun focused integration tests and the complete required quality suite; unit 81/81, integration 9/9, type-check, lint, build, and public E2E 18/18 passed.
+
+Validation (temporary no-confirmation signup): after rebuilding the updated app, the authenticated registration → onboarding → profile → login → recovery journey passed on desktop/mobile, and the full authenticated suite passed 14/14. Supabase local `auth.email.enable_confirmations` is false; Mailpit is still used for recovery emails. Hosted Supabase Auth remains unchanged because the project is not connected. Disable Confirm email in the hosted Auth settings to affect the live deployment; re-enable before public production use.
+
 ## Active micro-plan — login, SportScore live data, and fantasy follow-up (2026-10-31)
 
 ### Scope and sequence
