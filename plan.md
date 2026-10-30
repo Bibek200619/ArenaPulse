@@ -215,25 +215,35 @@ Community decision: owner/admin/moderator/member roles are stored in PostgreSQL.
 ## Phase 6 — community application milestone
 
 Phase: 6
-Status: IN_PROGRESS
-Completed: community foundation PR #23 merged with green CI. Discovery and membership-filtered pagination, creation, public joins/private requests, member/staff views, role changes, bans, transfer and leave are implemented. SSR sessions and no-store responses protect account-specific pages. Desktop/mobile screenshots reviewed.
-Tests: 73 unit/component/API tests, 59 real database tests and 18 public browser tests passed. All eight authenticated community/account/social browser journeys passed on desktop/mobile. Type-check, lint, format and production build passed.
+Status: COMPLETE
+Completed: community foundation PR #23 and community content PR #35 merged. Discovery, membership, role management, bans/transfers, scoped posts, reports, pinning, audited moderation, and blocks are implemented with database-enforced visibility and authority. SSR sessions and no-store responses protect account-specific pages.
+Tests: 65 unit/component, 9 integration, 61 real database and 18 public desktop/mobile browser tests passed. All 8 authenticated desktop/mobile test runs passed. Migration replay and security advisors passed; type-check, lint and production build passed.
 Known Issues: browser robots helper corrected to recognize noindex alongside nofollow without accepting index. Recurring Next.js destination-stream-closed log observed during navigation; privacy/runtime assertions remain enabled.
-Deferred: scoped posts, reports, pinning, moderator removal and blocks are the remaining Phase 6 milestone. No community images/uploads yet.
-Next Phase: community content and moderation, then Phase 7 realtime match discussions.
+Deferred: no community images/uploads. Phase 7 realtime match discussions follow.
+Next Phase: two-user realtime match discussions and moderation (#24).
 
-## Active GitHub issue #21 — community content and moderation
+## Completed GitHub issue #21 — community content and moderation
 
 - [x] Extend posts with optional community scope while preserving the existing global feed; enforce membership, community visibility and block rules in database policies for posts, comments and reactions.
 - [x] Add community post creation/listing, pin/unpin controls, member reports, staff content removal, and audited moderation actions. Keep moderation authority in the database.
 - [x] Add user blocks and ensure blocked relationships do not reveal or enable interaction with protected content.
 - [x] Add real database and authenticated browser coverage for members, outsiders, public/private communities, bans, blocks, reporting, pinning and moderation.
-- [ ] Replay migrations, run the database suite/security advisor and authenticated desktop/mobile journeys; the local Supabase runtime is unavailable without Docker.
+- [x] Replay migrations, run the database suite/security advisor and authenticated desktop/mobile journeys.
 - [x] Update community docs, this plan and changelog; run available type, lint, unit, integration, formatting, build and public browser gates; record actual results.
 - [x] Commit only issue-specific changes on the task branch.
-- [x] Push `codex/phase-6-community-content-21` and open PR #35 targeting `development`; issue #21 remains open until the PR merges and its outstanding verification is complete.
+- [x] Push `codex/phase-6-community-content-21` and merge PR #35 targeting `development`; issue #21 is closed.
 - [x] Track the environment-dependent migration/database/security/authenticated-browser verification in follow-up issue #34, linked from PR #35 and issue #21.
 
-Validation cycle 1: type-check, lint, 65 unit tests, 9 integration tests, production build and all 18 public desktop/mobile browser tests passed. Prettier passed for every changed Markdown/TypeScript/test file. Repository-wide `format:check` warns on 192 files in this Windows checkout because unchanged Git files use CRLF; the Linux CI checkout uses LF. `npm run db:start` could not start because Docker/Podman and the isolated local database are absent, so migration replay, security advisors, database tests and new authenticated browser journeys remain unverified. See `docs/engineering/phase-6-content-verification.md` and follow-up issue #34 for the targeted rerun plan. PR #35 is open and its Quality workflow is running; Vercel status passed. Keep issue #21 open until PR #35 merges and outstanding verification is complete.
+Validation cycle 1 (implementation PR): type-check, lint, 65 unit tests, 9 integration tests, production build and 18 public desktop/mobile browser tests passed. The initial PR's CI exposed database RLS and formatting failures; issue #34 tracks their fixes and final verification.
 
 Security follow-up: `npm audit --omit=dev` reports four production dependency advisories, including a critical advisory for the pinned Next.js 16.3.4 and high advisories for sharp, source-map-js and zod. No dependency versions were changed in this community issue; tracked separately in GitHub issue #33.
+
+## Active GitHub issue #34 — verify Phase 6 community content migration and authenticated journeys
+
+- [x] Fix merged PR #35 CI failures: global post inserts under RLS, staff moderation writes blocked by the social write-limit trigger, private interaction author deletion, and the following-feed nested join.
+- [x] Replay all migrations on a clean local Supabase stack; run all 61 database tests and security advisors.
+- [x] Run authenticated community content journeys on desktop and mobile; all 8 authenticated runs passed.
+- [x] Run type-check, lint, 65 unit, 9 integration, 18 public browser and production build checks. The changed Markdown/TypeScript/MJS files pass targeted Prettier checks; repository-wide Prettier reports 163 files on this Windows checkout because of line-ending differences.
+- [ ] Commit issue-specific changes, push a task branch, and open/update a PR linked to #34.
+
+Validation cycle 1: clean migration replay succeeded. `npm run test:db` passed 61/61; `npx supabase db advisors --local --type security --fail-on error` found no issues. `npm run test:e2e:auth` passed all desktop/mobile authentication, community and social journeys. `npm run check` passed 65 unit tests, 9 integration tests, type-check, lint, build and all 18 public desktop/mobile E2E tests. `npm run db:start` and `npm run db:env` now work on Windows. The generated sports seed was reconciled and `npm run db:seed:check` passes.
