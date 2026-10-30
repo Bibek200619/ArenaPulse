@@ -248,4 +248,4 @@ Security follow-up: `npm audit --omit=dev` reports four production dependency ad
 
 Validation cycle 1: clean migration replay succeeded. `npm run test:db` passed 61/61; `npx supabase db advisors --local --type security --fail-on error` found no issues. `npm run test:e2e:auth` passed all desktop/mobile authentication, community and social journeys. `npm run check` passed 65 unit tests, 9 integration tests, type-check, lint, build and all 18 public desktop/mobile E2E tests. `npm run db:start` and `npm run db:env` now work on Windows. The generated sports seed was reconciled and `npm run db:seed:check` passes.
 
-PR #36: https://github.com/Bibek200619/ArenaPulse/pull/36. Issue #34 will be closed after the PR's GitHub checks confirm the pushed commit.
+PR #36: https://github.com/Bibek200619/ArenaPulse/pull/36. GitHub preview feedback and Vercel deployment checks passed; issue #34 is closed as completed and linked to PR #36.
