@@ -8,13 +8,12 @@ import { matchFiltersSchema } from '@/features/matches/filters';
 
 afterEach(cleanup);
 
-it('offers the requested football leagues when SportScore is active', () => {
+it('always offers the supported football leagues', () => {
   render(
     <MatchFilters
       filters={matchFiltersSchema.parse({ footballLeague: 'la-liga' })}
       sports={catalog.sports}
       competitions={catalog.competitions}
-      liveFootballEnabled
     />,
   );
   const league = screen.getByLabelText('Football league');
@@ -26,21 +25,27 @@ it('offers the requested football leagues when SportScore is active', () => {
   ).toEqual([
     'All football leagues',
     'Champions League',
-    'Premier League',
-    'La Liga',
+    'English Premier League',
+    'Spanish La Liga',
+    'Italian Serie A',
+    'Bundesliga',
+    'French Ligue 1',
+    'Netherlands Eredivisie',
+    'Brazilian Serie A',
+    'English Football League Championship',
+    'Austrian Bundesliga',
   ]);
   expect(screen.queryByLabelText('Competition')).not.toBeInTheDocument();
 });
 
-it('keeps the catalog competition filter when live football is disabled', () => {
+it('keeps the catalog competition filter when no football league is selected', () => {
   render(
     <MatchFilters
       filters={matchFiltersSchema.parse({})}
       sports={catalog.sports}
       competitions={catalog.competitions}
-      liveFootballEnabled={false}
     />,
   );
-  expect(screen.queryByLabelText('Football league')).not.toBeInTheDocument();
+  expect(screen.getByLabelText('Football league')).toBeInTheDocument();
   expect(screen.getByLabelText('Competition')).toBeInTheDocument();
 });

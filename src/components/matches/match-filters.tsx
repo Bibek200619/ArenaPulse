@@ -9,12 +9,10 @@ export function MatchFilters({
   filters,
   sports,
   competitions,
-  liveFootballEnabled,
 }: {
   filters: Filters;
   sports: Sport[];
   competitions: Competition[];
-  liveFootballEnabled: boolean;
 }) {
   return (
     <form action="/matches" className="match-filters">
@@ -43,26 +41,24 @@ export function MatchFilters({
           ))}
         </select>
       </div>
-      {liveFootballEnabled && (
-        <div className="filter-field">
-          <label htmlFor="match-football-league">Football league</label>
-          <select
-            id="match-football-league"
-            name="footballLeague"
-            defaultValue={filters.footballLeague ?? ''}
-          >
-            <option value="">All football leagues</option>
-            {footballLeagues.map((league) => (
-              <option key={league.value} value={league.value}>
-                {league.label}
-              </option>
-            ))}
-          </select>
-          <small>
-            League selection shows fixtures for the selected UTC date.
-          </small>
-        </div>
-      )}
+      <div className="filter-field">
+        <label htmlFor="match-football-league">Football league</label>
+        <select
+          id="match-football-league"
+          name="footballLeague"
+          defaultValue={filters.footballLeague ?? ''}
+        >
+          <option value="">All football leagues</option>
+          {footballLeagues.map((league) => (
+            <option key={league.value} value={league.value}>
+              {league.label}
+            </option>
+          ))}
+        </select>
+        <small>
+          League selection shows fixtures for the selected UTC date.
+        </small>
+      </div>
       {!filters.footballLeague && (
         <div className="filter-field">
           <label htmlFor="match-competition">Competition</label>

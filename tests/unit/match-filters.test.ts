@@ -67,7 +67,7 @@ it.each([
   { view: 'wat' },
   { date: '2026-02-30' },
   { sportId: ['a', 'b'] },
-  { footballLeague: 'serie-a' },
+  { footballLeague: 'mls' },
 ])('rejects malformed UI query %j', (input) => {
   expect(matchFiltersSchema.safeParse(input).success).toBe(false);
 });

@@ -11,10 +11,16 @@ export class SportsService {
   constructor(
     readonly provider: SportsDataProvider,
     private readonly cache = new ProviderCache(),
+    private readonly footballLeagueProvider?: SportsDataProvider,
   ) {}
-  private async read<T>(key: string, ttl: number, load: () => Promise<T>) {
+  private async read<T>(
+    key: string,
+    ttl: number,
+    load: () => Promise<T>,
+    providerId = this.provider.id,
+  ) {
     try {
-      return await this.cache.get(`${this.provider.id}:${key}`, ttl, load);
+      return await this.cache.get(`${providerId}:${key}`, ttl, load);
     } catch (error) {
       if (error instanceof AppError && error.code === 'NOT_FOUND') throw error;
       // Do not log provider error bodies: they may contain credentials or request URLs.
@@ -49,12 +55,16 @@ export class SportsService {
   }
   getFixtures(input: MatchQuery) {
     const query = matchQuerySchema.parse(input);
+    const fixtureProvider = query.footballLeague
+      ? (this.footballLeagueProvider ?? this.provider)
+      : this.provider;
     return this.read(
       `fixtures:${JSON.stringify(query)}`,
-      this.provider.id === 'sportscore-football-v1' || query.state === 'live'
+      fixtureProvider.id === 'sportscore-football-v1' || query.state === 'live'
         ? 30_000
         : 60_000,
-      () => this.provider.getFixtures(query),
+      () => fixtureProvider.getFixtures(query),
+      fixtureProvider.id,
     );
   }
   async getTeam(id: string) {
@@ -88,4 +98,6 @@ export const sportsService = new SportsService(
   environment.SPORTS_DATA_PROVIDER === 'sportscore'
     ? new SportScoreProvider(environment.SPORTSCORE_API_KEY)
     : new DemoSportsProvider(),
+  undefined,
+  new SportScoreProvider(environment.SPORTSCORE_API_KEY),
 );

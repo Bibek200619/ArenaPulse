@@ -465,10 +465,21 @@ Delivery: commit `54ca44c` is pushed on `codex/football-league-filter`. PR #49 t
 
 ## Active micro-plan — make football league filters visible in demo-default deployments (#50, 2026-10-31)
 
-- [ ] Keep the Champions League, Premier League, and La Liga selector visible regardless of the site's default sports provider.
-- [ ] Route explicit football league queries to SportScore while preserving the configured provider's behavior for all other match queries; cache under the source provider ID.
-- [ ] Update focused component, service, and route coverage plus provider documentation.
-- [ ] Run focused unit/integration tests, type-check, lint, targeted formatting, build, and relevant browser checks; record results and corrective plans.
+- [x] Keep the Champions League and all nine football leagues in the user's screenshot visible regardless of the site's default sports provider.
+- [x] Route explicit football league queries to SportScore while preserving the configured provider's behavior for all other match queries; cache under the source provider ID.
+- [x] Update focused component, service, and route coverage plus provider documentation.
+- [x] Run focused unit/integration tests, type-check, lint, targeted formatting, build, and relevant browser checks; record results and corrective plans.
 - [ ] Commit, push, and open an issue-linked PR for #50; request `bibek200619`, assign `roushan-23`, and use existing relevant labels. Leave the issue open until merge.
 
-Finding: PR #49 merged, but the selector is gated on `SPORTS_DATA_PROVIDER=sportscore`, whose default is `demo`. Even with the selector enabled, a selected league is currently sent to the demo provider unless the site-wide provider is changed. The correction must route only explicit league queries to SportScore, preserving demo behavior for unfiltered queries.
+Finding: PR #49 merged, but the selector was gated on `SPORTS_DATA_PROVIDER=sportscore`, whose default is `demo`. Even with the selector enabled, a selected league was sent to the demo provider unless the site-wide provider was changed. The correction routes only explicit league queries to SportScore, preserving demo behavior for unfiltered queries.
+
+The selected list now includes UEFA Champions League and all nine leagues shown in the user's screenshot. Live SportScore fixture checks on 2026-10-31 confirmed valid slug and competition matches for all nine: 8 English Premier League, 4 Spanish La Liga, 3 Italian Serie A, 6 Bundesliga, 1 French Ligue 1, 5 Netherlands Eredivisie, 1 Brazilian Serie A, 11 English Football League Championship, 2 Austrian Bundesliga. Champions League returned zero fixtures for that date.
+
+### Corrective plan — wait for the selected league response in browser checks
+
+- [x] Record first full-suite result: unit (97), integration (11), type-check, lint, and build passed; 19 E2E passed and the desktop live-league flow timed out waiting 5 seconds while the server-rendered filter response was still loading (mobile passed).
+- [x] Wait for the results area to render before asserting SportScore attribution; increase that page-state wait to 15 seconds.
+- [x] Run the live-league browser journey serially on desktop and mobile; both passed. A first standalone attempt lacked process-local `APP_URL`; rerun with the documented local URL succeeded.
+- [x] Rerun the complete browser suite serially and record final gates.
+
+Final validation cycle: 97 unit tests, 11 integration tests, type-check, lint, production build, targeted Prettier on all task files, `git diff --check`, and all 20 desktop/mobile browser journeys passed. The first six-worker browser run had one desktop live-league assertion timeout while the page was still rendering; after waiting for the query result and rerunning serially, all 20 tests passed.
