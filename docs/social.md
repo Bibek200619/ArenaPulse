@@ -30,8 +30,7 @@ Forms validate content/IDs/operations, derive actors from `getUser()`, and retur
 
 Next.js may send a 200 loading shell for asynchronous not-found pages. Verification waits for the final not-found UI and noindex metadata and checks the complete response for private-text leakage, alongside actual database RLS tests.
 
-## Notification integration design (Phase 10)
+## Notifications (Phase 10)
 
-Future successful comment, reply, like and follow inserts will append an outbox event in the same PostgreSQL transaction. Proposed envelope: event_id (UUID), version, event_type, actor_id, recipient_id, target_type, target_id and occurred_at. Use unique event IDs for idempotent delivery and derive recipients from persisted target ownership, never a browser payload. Do not emit an event for rejected/rolled-back writes or duplicate likes/follows. A worker must recheck recipient preferences, blocks and current visibility before delivering; deleting content or making it private must not leak text through queued notifications. This milestone documents the contract only; no outbox or notification is emitted yet.
-
+Successful comments, replies, likes and follows append a deduplicated outbox event in the source write transaction. Recipients and targets come from persisted rows. Opening `/notifications` processes the authenticated recipient queue after rechecking preferences, blocks and current post/community visibility; hidden or stale events are skipped. The inbox stores IDs and event types only, so queued text cannot expose deleted or newly private content. See [notifications.md](notifications.md) for event sources, timezone-aware reminders and the delivery boundary.
 Community context/roles/moderation are Phase 6, match discussions/realtime Phase 7, and notification persistence/delivery Phase 10. Editing posts has database support but no editor UI in this initial social experience.

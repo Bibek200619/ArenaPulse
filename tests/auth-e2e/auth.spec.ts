@@ -53,6 +53,18 @@ test('register → onboard → edit → logout → login → recover', async ({
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
     'Matchday Fan',
   );
+  await page.goto('/dashboard');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'Welcome back, Matchday Fan',
+  );
+  await page.getByRole('link', { name: 'Open notifications' }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'Notifications',
+  );
+  await expect(
+    page.getByRole('heading', { name: 'Preferences', exact: true }),
+  ).toBeVisible();
+  await page.goto('/profile');
   await page.reload();
   await expect(page.getByText(`@${username}`, { exact: false })).toBeVisible();
   await page.goto('/teams');

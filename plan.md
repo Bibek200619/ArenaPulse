@@ -462,3 +462,58 @@ The existing UI's generic competition selector is sourced from the demo catalog.
 Validation: all league filter, provider, component, and route coverage passed. The live SportScore fixture endpoint returned Premier League 8/8 English Premier League records, La Liga 4/4 Spanish La Liga records, and Champions League 0 records for 2026-10-31. The live app showed the selected league and preserved SportScore attribution. League requests use the documented UTC-day fixture endpoint and never fall back to demo records. Repository-wide Prettier check reports 207 untouched baseline files; every changed file passed targeted formatting and git diff --check. A six-worker browser run exposed two transient mobile navigation timeouts; serial rerun passed all 18 journeys, and the additional live-only league test passed desktop/mobile.
 
 Delivery: commit `54ca44c` is pushed on `codex/football-league-filter`. PR #49 targets `development`, links issue #48, requests review from `Bibek200619`, is assigned to `roushan-23`, and has `feature`, `backend`, and `testing` labels. Issue #48 remains open until PR #49 is merged.
+
+## Active GitHub issue #27 — notifications, preferences and personalized dashboard
+
+Micro plan:
+
+- [x] Inspect the existing server actions, database event writes, visibility/block rules, profiles/preferences, dashboard routes, migrations, and test conventions; map each accepted event source and privacy boundary.
+- [x] Design a versioned transactional outbox and notification/preferences schema with owner-only RLS, idempotency, explicit queue/delivery state, and timezone-aware reminder scheduling; add migration and generated types.
+- [x] Connect eligible persisted social, community, match-discussion and fantasy events to the outbox transactionally. Derive actor/recipient/target from database state; suppress duplicate or rolled-back events and honor blocks, visibility, and preferences before dispatch.
+- [x] Implement authenticated notification list/manage actions and a responsive notification center; expose queued versus delivered state accurately and keep external email/push delivery disabled absent configuration.
+- [x] Implement personalized dashboard content using the existing profile, follow, community, match and fantasy privacy rules; add preference/reminder controls only where supported.
+- [x] Add database/RLS and authenticated desktop/mobile browser coverage; update notification, social, community docs and roadmap status.
+- [x] Run migration replay, database/security advisor, unit/integration/type/lint/format/build/browser suites; record results and fix failures with focused follow-up plans.
+- [ ] Commit and push the task branch, open/update a PR using the repository template, request reviewer `bibek200619`, assign the requester, apply relevant labels, and link issue #27. Keep the issue open until the PR is merged.
+
+Scope guard: external email/push dispatch stays disabled without an explicitly configured provider; queued work must never be shown as delivered. Reminder times must be explicit and validated against IANA time zones. No private profile, follow, community, or match-discussion data may be surfaced to unauthorized viewers.
+
+Implementation finding: notifications were a placeholder; the social docs explicitly deferred the transactional outbox. The feature can use secure existing Postgres source rows and RLS. Queue processing is authenticated and lazy at inbox load, so background delivery is not promised; email/push remain disabled. Reminder wall times are validated against IANA zones and stored as UTC instants.
+
+### Validation fix plan 1
+
+- [x] Replace the test's unsupported @/ alias with a relative import and rerun the notification database suite.
+
+Failure evidence: the DB Vitest config does not resolve the Next.js @/ path alias; the suite stopped before setup.
+
+### Validation fix plan 2
+
+- [x] Grant the safe timezone-validation helper to the trusted service_role/postgres roles used for scheduler updates; replay migrations, rerun the notification DB suite and the security advisor.
+
+Failure evidence: privileged reminder materialization failed with permission denied for function valid_notification_timezone when updating a reminder row.
+
+Validation cycle 1: initial notification DB tests passed 3/3. Expanded tests found a DB Vitest alias mismatch, then a timezone helper grant gap for trusted reminder updates. Fix plans 1 and 2 are complete. After migration replay with seed, notifications DB suite passed 5/5; Supabase security advisor reported no issues.
+
+Validation cycle 2: task-isolated Supabase clean reset and seed completed; notification DB suite passed 5/5 and the local Supabase security advisor found no issues. `npm run check` passed: 81 unit tests, 9 integration tests, type-check, lint, production build and 18 public desktop/mobile E2E tests. Authenticated desktop/mobile E2E passed 14/14, including dashboard and notifications access plus the existing identity, community, fantasy, match-discussion and social journeys. Targeted Prettier and `git diff --check` passed. Temporary 564xx local Supabase port overrides were restored before staging. External email/push remain disabled; queue processing is lazy and accurately labeled as queued/delivered/skipped.
+
+### Validation fix plan 3 — finish changed-file formatting
+
+- [x] Format the task plan and generated TypeScript DB types; remove the generated file's extra trailing blank line.
+- [x] Exclude the SQL migration from Prettier (no SQL parser is configured) and verify the migration with `git diff --check` and clean replay already recorded above.
+- [x] Rerun targeted Prettier, diff and type-check before delivery.
+
+Validation cycle 3: targeted Prettier checks passed on every changed Markdown/TypeScript/CSS/test file; the SQL migration was replayed and passed `git diff --check`. The post-format type-check passed. Authenticated E2E 14/14 and the prior complete local `npm run check` remain green.
+
+### Issue #27 publication microplan
+
+- [ ] Confirm the issue-specific implementation and the added authenticated dashboard/notification journey have passed their relevant checks; rerun focused checks if evidence is missing.
+- [ ] Restore only the temporary local Supabase port/project overrides from the task's saved backup; preserve the unrelated screenshot edits.
+- [ ] Commit only issue-specific files, then sync/rebase that task commit onto the latest `origin/development`; resolve any real conflicts and rerun integration and quality checks.
+- [ ] Commit only #27 source, migration, docs, tests, and plan changes; push and open the issue-linked PR with the requested reviewer, assignee, and labels.
+
+#### Authenticated browser environment correction
+
+The first rerun of `npm run test:e2e:auth` could not find the local confirmation/recovery email: `tests/auth-e2e/helpers.ts` defaults Mailpit to port 55434, while this isolated test project deliberately runs Mailpit on 56434. This is a test endpoint mismatch, not a feature failure.
+
+- [ ] Rerun the authenticated browser suite with `ARENAPULSE_MAILPIT_URL=http://127.0.0.1:56434` and `APP_URL=http://127.0.0.1:3000`; keep the shared helper default unchanged.
+      Authenticated browser result: with `ARENAPULSE_MAILPIT_URL=http://127.0.0.1:56434`, all 14 desktop/mobile auth journeys passed, including dashboard and notification preferences. The helper default remains unchanged for standard local Supabase port 55434.

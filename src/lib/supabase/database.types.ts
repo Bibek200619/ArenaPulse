@@ -6,122 +6,9 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
-type ReadTable<Row> = {
-  Row: Row;
-  Insert: Partial<Row>;
-  Update: Partial<Row>;
-  Relationships: [];
-};
-
 export type Database = {
   public: {
     Tables: {
-      fantasy_competitions: ReadTable<{
-        created_at: string;
-        current_rule_version: number;
-        id: string;
-        name: string;
-        source_competition_id: string;
-        sport_id: string;
-        status: string;
-      }>;
-      fantasy_rules: ReadTable<{
-        budget: number;
-        captain_multiplier: number;
-        competition_id: string;
-        created_at: string;
-        position_limits: Json;
-        scoring_rules: Json;
-        squad_size: number;
-        team_cap: number;
-        transfers_per_gameweek: number;
-        version: number;
-        vice_captain_multiplier: number;
-      }>;
-      fantasy_player_prices: ReadTable<{
-        competition_id: string;
-        player_id: string;
-        price: number;
-        rule_version: number;
-        sport_id: string;
-      }>;
-      fantasy_gameweeks: ReadTable<{
-        competition_id: string;
-        deadline_at: string;
-        ends_at: string;
-        id: string;
-        name: string;
-        number: number;
-        rule_version: number;
-        starts_at: string;
-        status: string;
-      }>;
-      fantasy_teams: ReadTable<{
-        competition_id: string;
-        created_at: string;
-        id: string;
-        name: string;
-        updated_at: string;
-        user_id: string;
-      }>;
-      fantasy_team_gameweeks: ReadTable<{
-        captain_player_id: string;
-        competition_id: string;
-        gameweek_id: string;
-        rule_version: number;
-        submitted_at: string;
-        team_id: string;
-        transfers_used: number;
-        vice_captain_player_id: string;
-      }>;
-      fantasy_team_selections: ReadTable<{
-        competition_id: string;
-        gameweek_id: string;
-        player_id: string;
-        price_at_pick: number;
-        rule_version: number;
-        team_id: string;
-      }>;
-      fantasy_leagues: ReadTable<{
-        competition_id: string;
-        created_at: string;
-        id: string;
-        invite_code_hash: string;
-        name: string;
-        owner_id: string;
-      }>;
-      fantasy_league_members: ReadTable<{
-        competition_id: string;
-        joined_at: string;
-        league_id: string;
-        role: string;
-        team_id: string;
-        user_id: string;
-      }>;
-      fantasy_gameweek_score_runs: ReadTable<{
-        calculated_at: string;
-        gameweek_id: string;
-        revision: number;
-        source_event_count: number;
-      }>;
-      fantasy_gameweek_player_scores: ReadTable<{
-        competition_id: string;
-        gameweek_id: string;
-        player_id: string;
-        points: number;
-        revision: number;
-        rule_version: number;
-      }>;
-      fantasy_team_gameweek_scores: ReadTable<{
-        base_points: number;
-        captain_bonus: number;
-        competition_id: string;
-        gameweek_id: string;
-        revision: number;
-        team_id: string;
-        total_points: number;
-        vice_captain_bonus: number;
-      }>;
       comments: {
         Row: {
           author_id: string;
@@ -461,7 +348,36 @@ export type Database = {
           resolved_by?: string | null;
           status?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'community_post_reports_community_id_fkey';
+            columns: ['community_id'];
+            isOneToOne: false;
+            referencedRelation: 'communities';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'community_post_reports_post_id_fkey';
+            columns: ['post_id'];
+            isOneToOne: false;
+            referencedRelation: 'posts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'community_post_reports_reporter_id_fkey';
+            columns: ['reporter_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'community_post_reports_resolved_by_fkey';
+            columns: ['resolved_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       competition_follows: {
         Row: {
@@ -521,6 +437,736 @@ export type Database = {
             columns: ['sport_id'];
             isOneToOne: false;
             referencedRelation: 'sports';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      fantasy_competitions: {
+        Row: {
+          created_at: string;
+          current_rule_version: number;
+          id: string;
+          name: string;
+          source_competition_id: string;
+          sport_id: string;
+          status: string;
+        };
+        Insert: {
+          created_at?: string;
+          current_rule_version?: number;
+          id: string;
+          name: string;
+          source_competition_id: string;
+          sport_id: string;
+          status?: string;
+        };
+        Update: {
+          created_at?: string;
+          current_rule_version?: number;
+          id?: string;
+          name?: string;
+          source_competition_id?: string;
+          sport_id?: string;
+          status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'fantasy_competitions_source_competition_id_sport_id_fkey';
+            columns: ['source_competition_id', 'sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'competitions';
+            referencedColumns: ['id', 'sport_id'];
+          },
+        ];
+      };
+      fantasy_gameweek_player_scores: {
+        Row: {
+          competition_id: string;
+          gameweek_id: string;
+          player_id: string;
+          points: number;
+          revision: number;
+          rule_version: number;
+        };
+        Insert: {
+          competition_id: string;
+          gameweek_id: string;
+          player_id: string;
+          points: number;
+          revision: number;
+          rule_version: number;
+        };
+        Update: {
+          competition_id?: string;
+          gameweek_id?: string;
+          player_id?: string;
+          points?: number;
+          revision?: number;
+          rule_version?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'fantasy_gameweek_player_score_competition_id_rule_version__fkey';
+            columns: ['competition_id', 'rule_version', 'player_id'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_player_prices';
+            referencedColumns: ['competition_id', 'rule_version', 'player_id'];
+          },
+          {
+            foreignKeyName: 'fantasy_gameweek_player_scores_gameweek_id_competition_id_fkey';
+            columns: ['gameweek_id', 'competition_id'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_gameweeks';
+            referencedColumns: ['id', 'competition_id'];
+          },
+        ];
+      };
+      fantasy_gameweek_score_runs: {
+        Row: {
+          calculated_at: string;
+          gameweek_id: string;
+          revision: number;
+          source_event_count: number;
+        };
+        Insert: {
+          calculated_at?: string;
+          gameweek_id: string;
+          revision: number;
+          source_event_count?: number;
+        };
+        Update: {
+          calculated_at?: string;
+          gameweek_id?: string;
+          revision?: number;
+          source_event_count?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'fantasy_gameweek_score_runs_gameweek_id_fkey';
+            columns: ['gameweek_id'];
+            isOneToOne: true;
+            referencedRelation: 'fantasy_gameweeks';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      fantasy_gameweeks: {
+        Row: {
+          competition_id: string;
+          deadline_at: string;
+          ends_at: string;
+          id: string;
+          name: string;
+          number: number;
+          rule_version: number;
+          starts_at: string;
+          status: string;
+        };
+        Insert: {
+          competition_id: string;
+          deadline_at: string;
+          ends_at: string;
+          id: string;
+          name: string;
+          number: number;
+          rule_version: number;
+          starts_at: string;
+          status?: string;
+        };
+        Update: {
+          competition_id?: string;
+          deadline_at?: string;
+          ends_at?: string;
+          id?: string;
+          name?: string;
+          number?: number;
+          rule_version?: number;
+          starts_at?: string;
+          status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'fantasy_gameweeks_competition_id_fkey';
+            columns: ['competition_id'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_competitions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'fantasy_gameweeks_competition_id_rule_version_fkey';
+            columns: ['competition_id', 'rule_version'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_rules';
+            referencedColumns: ['competition_id', 'version'];
+          },
+        ];
+      };
+      fantasy_league_members: {
+        Row: {
+          competition_id: string;
+          joined_at: string;
+          league_id: string;
+          role: string;
+          team_id: string;
+          user_id: string;
+        };
+        Insert: {
+          competition_id: string;
+          joined_at?: string;
+          league_id: string;
+          role?: string;
+          team_id: string;
+          user_id: string;
+        };
+        Update: {
+          competition_id?: string;
+          joined_at?: string;
+          league_id?: string;
+          role?: string;
+          team_id?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'fantasy_league_members_league_id_competition_id_fkey';
+            columns: ['league_id', 'competition_id'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_leagues';
+            referencedColumns: ['id', 'competition_id'];
+          },
+          {
+            foreignKeyName: 'fantasy_league_members_team_id_competition_id_user_id_fkey';
+            columns: ['team_id', 'competition_id', 'user_id'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_teams';
+            referencedColumns: ['id', 'competition_id', 'user_id'];
+          },
+          {
+            foreignKeyName: 'fantasy_league_members_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      fantasy_leagues: {
+        Row: {
+          competition_id: string;
+          created_at: string;
+          id: string;
+          invite_code_hash: string;
+          name: string;
+          owner_id: string;
+        };
+        Insert: {
+          competition_id: string;
+          created_at?: string;
+          id?: string;
+          invite_code_hash: string;
+          name: string;
+          owner_id: string;
+        };
+        Update: {
+          competition_id?: string;
+          created_at?: string;
+          id?: string;
+          invite_code_hash?: string;
+          name?: string;
+          owner_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'fantasy_leagues_competition_id_fkey';
+            columns: ['competition_id'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_competitions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'fantasy_leagues_owner_id_fkey';
+            columns: ['owner_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      fantasy_player_prices: {
+        Row: {
+          competition_id: string;
+          player_id: string;
+          price: number;
+          rule_version: number;
+          sport_id: string;
+        };
+        Insert: {
+          competition_id: string;
+          player_id: string;
+          price: number;
+          rule_version: number;
+          sport_id: string;
+        };
+        Update: {
+          competition_id?: string;
+          player_id?: string;
+          price?: number;
+          rule_version?: number;
+          sport_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'fantasy_player_prices_competition_id_rule_version_fkey';
+            columns: ['competition_id', 'rule_version'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_rules';
+            referencedColumns: ['competition_id', 'version'];
+          },
+          {
+            foreignKeyName: 'fantasy_player_prices_competition_id_sport_id_fkey';
+            columns: ['competition_id', 'sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_competitions';
+            referencedColumns: ['id', 'sport_id'];
+          },
+          {
+            foreignKeyName: 'fantasy_player_prices_player_id_sport_id_fkey';
+            columns: ['player_id', 'sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'players';
+            referencedColumns: ['id', 'sport_id'];
+          },
+        ];
+      };
+      fantasy_rules: {
+        Row: {
+          budget: number;
+          captain_multiplier: number;
+          competition_id: string;
+          created_at: string;
+          position_limits: Json;
+          scoring_rules: Json;
+          squad_size: number;
+          team_cap: number;
+          transfers_per_gameweek: number;
+          version: number;
+          vice_captain_multiplier: number;
+        };
+        Insert: {
+          budget: number;
+          captain_multiplier: number;
+          competition_id: string;
+          created_at?: string;
+          position_limits: Json;
+          scoring_rules?: Json;
+          squad_size: number;
+          team_cap: number;
+          transfers_per_gameweek: number;
+          version: number;
+          vice_captain_multiplier: number;
+        };
+        Update: {
+          budget?: number;
+          captain_multiplier?: number;
+          competition_id?: string;
+          created_at?: string;
+          position_limits?: Json;
+          scoring_rules?: Json;
+          squad_size?: number;
+          team_cap?: number;
+          transfers_per_gameweek?: number;
+          version?: number;
+          vice_captain_multiplier?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'fantasy_rules_competition_id_fkey';
+            columns: ['competition_id'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_competitions';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      fantasy_team_gameweek_scores: {
+        Row: {
+          base_points: number;
+          captain_bonus: number;
+          competition_id: string;
+          gameweek_id: string;
+          revision: number;
+          team_id: string;
+          total_points: number;
+          vice_captain_bonus: number;
+        };
+        Insert: {
+          base_points: number;
+          captain_bonus: number;
+          competition_id: string;
+          gameweek_id: string;
+          revision: number;
+          team_id: string;
+          total_points: number;
+          vice_captain_bonus: number;
+        };
+        Update: {
+          base_points?: number;
+          captain_bonus?: number;
+          competition_id?: string;
+          gameweek_id?: string;
+          revision?: number;
+          team_id?: string;
+          total_points?: number;
+          vice_captain_bonus?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'fantasy_team_gameweek_scores_gameweek_id_competition_id_fkey';
+            columns: ['gameweek_id', 'competition_id'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_gameweeks';
+            referencedColumns: ['id', 'competition_id'];
+          },
+          {
+            foreignKeyName: 'fantasy_team_gameweek_scores_team_id_competition_id_gamewe_fkey';
+            columns: ['team_id', 'competition_id', 'gameweek_id'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_team_gameweeks';
+            referencedColumns: ['team_id', 'competition_id', 'gameweek_id'];
+          },
+        ];
+      };
+      fantasy_team_gameweeks: {
+        Row: {
+          captain_player_id: string;
+          competition_id: string;
+          gameweek_id: string;
+          rule_version: number;
+          submitted_at: string;
+          team_id: string;
+          transfers_used: number;
+          vice_captain_player_id: string;
+        };
+        Insert: {
+          captain_player_id: string;
+          competition_id: string;
+          gameweek_id: string;
+          rule_version: number;
+          submitted_at?: string;
+          team_id: string;
+          transfers_used?: number;
+          vice_captain_player_id: string;
+        };
+        Update: {
+          captain_player_id?: string;
+          competition_id?: string;
+          gameweek_id?: string;
+          rule_version?: number;
+          submitted_at?: string;
+          team_id?: string;
+          transfers_used?: number;
+          vice_captain_player_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'fantasy_team_gameweeks_competition_id_rule_version_fkey';
+            columns: ['competition_id', 'rule_version'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_rules';
+            referencedColumns: ['competition_id', 'version'];
+          },
+          {
+            foreignKeyName: 'fantasy_team_gameweeks_gameweek_id_competition_id_fkey';
+            columns: ['gameweek_id', 'competition_id'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_gameweeks';
+            referencedColumns: ['id', 'competition_id'];
+          },
+          {
+            foreignKeyName: 'fantasy_team_gameweeks_team_id_competition_id_fkey';
+            columns: ['team_id', 'competition_id'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_teams';
+            referencedColumns: ['id', 'competition_id'];
+          },
+        ];
+      };
+      fantasy_team_selections: {
+        Row: {
+          competition_id: string;
+          gameweek_id: string;
+          player_id: string;
+          price_at_pick: number;
+          rule_version: number;
+          team_id: string;
+        };
+        Insert: {
+          competition_id: string;
+          gameweek_id: string;
+          player_id: string;
+          price_at_pick: number;
+          rule_version: number;
+          team_id: string;
+        };
+        Update: {
+          competition_id?: string;
+          gameweek_id?: string;
+          player_id?: string;
+          price_at_pick?: number;
+          rule_version?: number;
+          team_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'fantasy_team_selections_competition_id_rule_version_player_fkey';
+            columns: ['competition_id', 'rule_version', 'player_id'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_player_prices';
+            referencedColumns: ['competition_id', 'rule_version', 'player_id'];
+          },
+          {
+            foreignKeyName: 'fantasy_team_selections_team_id_competition_id_gameweek_id_fkey';
+            columns: ['team_id', 'competition_id', 'gameweek_id'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_team_gameweeks';
+            referencedColumns: ['team_id', 'competition_id', 'gameweek_id'];
+          },
+        ];
+      };
+      fantasy_teams: {
+        Row: {
+          competition_id: string;
+          created_at: string;
+          id: string;
+          name: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          competition_id: string;
+          created_at?: string;
+          id?: string;
+          name?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          competition_id?: string;
+          created_at?: string;
+          id?: string;
+          name?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'fantasy_teams_competition_id_fkey';
+            columns: ['competition_id'];
+            isOneToOne: false;
+            referencedRelation: 'fantasy_competitions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'fantasy_teams_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      match_discussion_messages: {
+        Row: {
+          author_id: string;
+          body: string;
+          created_at: string;
+          id: string;
+          is_removed: boolean;
+          match_id: string;
+          parent_id: string | null;
+          removal_reason: string | null;
+          removed_at: string | null;
+          removed_by: string | null;
+        };
+        Insert: {
+          author_id: string;
+          body: string;
+          created_at?: string;
+          id?: string;
+          is_removed?: boolean;
+          match_id: string;
+          parent_id?: string | null;
+          removal_reason?: string | null;
+          removed_at?: string | null;
+          removed_by?: string | null;
+        };
+        Update: {
+          author_id?: string;
+          body?: string;
+          created_at?: string;
+          id?: string;
+          is_removed?: boolean;
+          match_id?: string;
+          parent_id?: string | null;
+          removal_reason?: string | null;
+          removed_at?: string | null;
+          removed_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'match_discussion_messages_author_id_fkey';
+            columns: ['author_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'match_discussion_messages_parent_id_match_id_fkey';
+            columns: ['parent_id', 'match_id'];
+            isOneToOne: false;
+            referencedRelation: 'match_discussion_messages';
+            referencedColumns: ['id', 'match_id'];
+          },
+          {
+            foreignKeyName: 'match_discussion_messages_removed_by_fkey';
+            columns: ['removed_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      match_discussion_moderation_log: {
+        Row: {
+          action: string;
+          actor_id: string | null;
+          created_at: string;
+          detail: string;
+          id: string;
+          match_id: string;
+          message_id: string | null;
+        };
+        Insert: {
+          action: string;
+          actor_id?: string | null;
+          created_at?: string;
+          detail?: string;
+          id?: string;
+          match_id: string;
+          message_id?: string | null;
+        };
+        Update: {
+          action?: string;
+          actor_id?: string | null;
+          created_at?: string;
+          detail?: string;
+          id?: string;
+          match_id?: string;
+          message_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'match_discussion_moderation_log_actor_id_fkey';
+            columns: ['actor_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      match_discussion_reactions: {
+        Row: {
+          created_at: string;
+          kind: string;
+          match_id: string;
+          message_id: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          kind?: string;
+          match_id: string;
+          message_id: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          kind?: string;
+          match_id?: string;
+          message_id?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'match_discussion_reactions_message_id_match_id_fkey';
+            columns: ['message_id', 'match_id'];
+            isOneToOne: false;
+            referencedRelation: 'match_discussion_messages';
+            referencedColumns: ['id', 'match_id'];
+          },
+          {
+            foreignKeyName: 'match_discussion_reactions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      match_discussion_reports: {
+        Row: {
+          created_at: string;
+          id: string;
+          match_id: string;
+          message_id: string;
+          reason: string;
+          reporter_id: string;
+          resolved_at: string | null;
+          resolved_by: string | null;
+          status: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          match_id: string;
+          message_id: string;
+          reason: string;
+          reporter_id: string;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+          status?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          match_id?: string;
+          message_id?: string;
+          reason?: string;
+          reporter_id?: string;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+          status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'match_discussion_reports_message_id_match_id_fkey';
+            columns: ['message_id', 'match_id'];
+            isOneToOne: false;
+            referencedRelation: 'match_discussion_messages';
+            referencedColumns: ['id', 'match_id'];
+          },
+          {
+            foreignKeyName: 'match_discussion_reports_reporter_id_fkey';
+            columns: ['reporter_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'match_discussion_reports_resolved_by_fkey';
+            columns: ['resolved_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
             referencedColumns: ['id'];
           },
         ];
@@ -705,135 +1351,6 @@ export type Database = {
           },
         ];
       };
-      match_discussion_messages: {
-        Row: {
-          id: string;
-          match_id: string;
-          author_id: string;
-          parent_id: string | null;
-          body: string;
-          created_at: string;
-          is_removed: boolean;
-          removal_reason: string | null;
-          removed_at: string | null;
-          removed_by: string | null;
-        };
-        Insert: {
-          id?: string;
-          match_id: string;
-          author_id?: string;
-          parent_id?: string | null;
-          body: string;
-          created_at?: string;
-          is_removed?: boolean;
-          removal_reason?: string | null;
-          removed_at?: string | null;
-          removed_by?: string | null;
-        };
-        Update: {
-          id?: string;
-          match_id?: string;
-          author_id?: string;
-          parent_id?: string | null;
-          body?: string;
-          created_at?: string;
-          is_removed?: boolean;
-          removal_reason?: string | null;
-          removed_at?: string | null;
-          removed_by?: string | null;
-        };
-        Relationships: [];
-      };
-      match_discussion_reactions: {
-        Row: {
-          match_id: string;
-          message_id: string;
-          user_id: string;
-          kind: string;
-          created_at: string;
-        };
-        Insert: {
-          match_id: string;
-          message_id: string;
-          user_id?: string;
-          kind?: string;
-          created_at?: string;
-        };
-        Update: {
-          match_id?: string;
-          message_id?: string;
-          user_id?: string;
-          kind?: string;
-          created_at?: string;
-        };
-        Relationships: [];
-      };
-      match_discussion_reports: {
-        Row: {
-          id: string;
-          match_id: string;
-          message_id: string;
-          reporter_id: string;
-          reason: string;
-          status: string;
-          created_at: string;
-          resolved_at: string | null;
-          resolved_by: string | null;
-        };
-        Insert: {
-          id?: string;
-          match_id: string;
-          message_id: string;
-          reporter_id?: string;
-          reason: string;
-          status?: string;
-          created_at?: string;
-          resolved_at?: string | null;
-          resolved_by?: string | null;
-        };
-        Update: {
-          id?: string;
-          match_id?: string;
-          message_id?: string;
-          reporter_id?: string;
-          reason?: string;
-          status?: string;
-          created_at?: string;
-          resolved_at?: string | null;
-          resolved_by?: string | null;
-        };
-        Relationships: [];
-      };
-      match_discussion_moderation_log: {
-        Row: {
-          id: string;
-          match_id: string;
-          message_id: string | null;
-          actor_id: string | null;
-          action: string;
-          detail: string;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          match_id: string;
-          message_id?: string | null;
-          actor_id?: string | null;
-          action: string;
-          detail?: string;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          match_id?: string;
-          message_id?: string | null;
-          actor_id?: string | null;
-          action?: string;
-          detail?: string;
-          created_at?: string;
-        };
-        Relationships: [];
-      };
       matches: {
         Row: {
           clock: string | null;
@@ -905,6 +1422,215 @@ export type Database = {
             columns: ['venue_id'];
             isOneToOne: false;
             referencedRelation: 'venues';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      notification_outbox: {
+        Row: {
+          actor_id: string | null;
+          created_at: string;
+          dedupe_key: string;
+          event_type: string;
+          id: string;
+          occurred_at: string;
+          processed_at: string | null;
+          recipient_id: string;
+          related_id: string | null;
+          status: string;
+          target_id: string;
+          target_type: string;
+        };
+        Insert: {
+          actor_id?: string | null;
+          created_at?: string;
+          dedupe_key: string;
+          event_type: string;
+          id?: string;
+          occurred_at?: string;
+          processed_at?: string | null;
+          recipient_id: string;
+          related_id?: string | null;
+          status?: string;
+          target_id: string;
+          target_type: string;
+        };
+        Update: {
+          actor_id?: string | null;
+          created_at?: string;
+          dedupe_key?: string;
+          event_type?: string;
+          id?: string;
+          occurred_at?: string;
+          processed_at?: string | null;
+          recipient_id?: string;
+          related_id?: string | null;
+          status?: string;
+          target_id?: string;
+          target_type?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'notification_outbox_actor_id_fkey';
+            columns: ['actor_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'notification_outbox_recipient_id_fkey';
+            columns: ['recipient_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      notification_preferences: {
+        Row: {
+          community_enabled: boolean;
+          fantasy_enabled: boolean;
+          in_app_enabled: boolean;
+          match_enabled: boolean;
+          social_enabled: boolean;
+          time_zone: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          community_enabled?: boolean;
+          fantasy_enabled?: boolean;
+          in_app_enabled?: boolean;
+          match_enabled?: boolean;
+          social_enabled?: boolean;
+          time_zone?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          community_enabled?: boolean;
+          fantasy_enabled?: boolean;
+          in_app_enabled?: boolean;
+          match_enabled?: boolean;
+          social_enabled?: boolean;
+          time_zone?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'notification_preferences_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      notification_reminders: {
+        Row: {
+          created_at: string;
+          id: string;
+          label: string;
+          local_scheduled_for: string;
+          scheduled_for: string;
+          status: string;
+          target_id: string;
+          target_type: string;
+          time_zone: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          label: string;
+          local_scheduled_for: string;
+          scheduled_for: string;
+          status?: string;
+          target_id: string;
+          target_type: string;
+          time_zone: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          label?: string;
+          local_scheduled_for?: string;
+          scheduled_for?: string;
+          status?: string;
+          target_id?: string;
+          target_type?: string;
+          time_zone?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'notification_reminders_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      notifications: {
+        Row: {
+          actor_id: string | null;
+          created_at: string;
+          event_type: string;
+          id: string;
+          outbox_id: string;
+          read_at: string | null;
+          recipient_id: string;
+          related_id: string | null;
+          target_id: string;
+          target_type: string;
+        };
+        Insert: {
+          actor_id?: string | null;
+          created_at?: string;
+          event_type: string;
+          id?: string;
+          outbox_id: string;
+          read_at?: string | null;
+          recipient_id: string;
+          related_id?: string | null;
+          target_id: string;
+          target_type: string;
+        };
+        Update: {
+          actor_id?: string | null;
+          created_at?: string;
+          event_type?: string;
+          id?: string;
+          outbox_id?: string;
+          read_at?: string | null;
+          recipient_id?: string;
+          related_id?: string | null;
+          target_id?: string;
+          target_type?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'notifications_actor_id_fkey';
+            columns: ['actor_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'notifications_outbox_id_fkey';
+            columns: ['outbox_id'];
+            isOneToOne: true;
+            referencedRelation: 'notification_outbox';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'notifications_recipient_id_fkey';
+            columns: ['recipient_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
             referencedColumns: ['id'];
           },
         ];
@@ -1017,17 +1743,17 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'posts_community_id_fkey';
-            columns: ['community_id'];
-            isOneToOne: false;
-            referencedRelation: 'communities';
-            referencedColumns: ['id'];
-          },
-          {
             foreignKeyName: 'posts_author_id_fkey';
             columns: ['author_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'posts_community_id_fkey';
+            columns: ['community_id'];
+            isOneToOne: false;
+            referencedRelation: 'communities';
             referencedColumns: ['id'];
           },
         ];
@@ -1330,6 +2056,39 @@ export type Database = {
           },
         ];
       };
+      user_blocks: {
+        Row: {
+          blocked_id: string;
+          blocker_id: string;
+          created_at: string;
+        };
+        Insert: {
+          blocked_id: string;
+          blocker_id: string;
+          created_at?: string;
+        };
+        Update: {
+          blocked_id?: string;
+          blocker_id?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'user_blocks_blocked_id_fkey';
+            columns: ['blocked_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'user_blocks_blocker_id_fkey';
+            columns: ['blocker_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       user_follows: {
         Row: {
           created_at: string;
@@ -1363,16 +2122,6 @@ export type Database = {
           },
         ];
       };
-      user_blocks: {
-        Row: { blocker_id: string; blocked_id: string; created_at: string };
-        Insert: { blocker_id: string; blocked_id: string; created_at?: string };
-        Update: {
-          blocker_id?: string;
-          blocked_id?: string;
-          created_at?: string;
-        };
-        Relationships: [];
-      };
       venues: {
         Row: {
           city: string;
@@ -1399,69 +2148,8 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      create_fantasy_league: {
-        Args: {
-          p_competition_id: string;
-          p_invite_code: string;
-          p_name: string;
-        };
-        Returns: string;
-      };
-      join_fantasy_league: {
-        Args: { p_invite_code: string };
-        Returns: string;
-      };
-      recalculate_fantasy_gameweek_scores: {
-        Args: { p_gameweek_id: string };
-        Returns: number;
-      };
-      get_fantasy_league_leaderboard: {
-        Args: { p_league_id: string };
-        Returns: {
-          display_name: string;
-          gameweek_number: number;
-          rank: number;
-          team_name: string;
-          total_points: number;
-        }[];
-      };
-      save_fantasy_squad: {
-        Args: {
-          p_captain_player_id: string;
-          p_competition_id: string;
-          p_gameweek_id: string;
-          p_player_ids: string[];
-          p_rule_version: number;
-          p_vice_captain_player_id: string;
-        };
-        Returns: string;
-      };
-      create_match_discussion_message: {
-        Args: {
-          p_match_id: string;
-          p_body: string;
-          p_parent_id?: string | null;
-        };
-        Returns: string;
-      };
-      set_match_discussion_reaction: {
-        Args: { p_match_id: string; p_message_id: string; p_active: boolean };
-        Returns: boolean;
-      };
-      delete_match_discussion_message: {
-        Args: { p_match_id: string; p_message_id: string };
-        Returns: boolean;
-      };
-      report_match_discussion_message: {
-        Args: { p_match_id: string; p_message_id: string; p_reason: string };
-        Returns: string;
-      };
-      moderate_match_discussion_message: {
-        Args: { p_match_id: string; p_message_id: string };
-        Returns: boolean;
-      };
-      resolve_match_discussion_report: {
-        Args: { p_report_id: string; p_action: string };
+      cancel_notification_reminder: {
+        Args: { p_id: string };
         Returns: boolean;
       };
       community_transition: {
@@ -1487,17 +2175,84 @@ export type Database = {
         };
         Returns: string;
       };
+      create_fantasy_league: {
+        Args: {
+          p_competition_id: string;
+          p_invite_code: string;
+          p_name: string;
+        };
+        Returns: string;
+      };
+      create_match_discussion_message: {
+        Args: { p_body: string; p_match_id: string; p_parent_id?: string };
+        Returns: string;
+      };
+      delete_match_discussion_message: {
+        Args: { p_match_id: string; p_message_id: string };
+        Returns: boolean;
+      };
+      get_fantasy_league_leaderboard: {
+        Args: { p_league_id: string };
+        Returns: {
+          display_name: string;
+          gameweek_number: number;
+          rank: number;
+          team_name: string;
+          total_points: number;
+        }[];
+      };
+      join_fantasy_league: { Args: { p_invite_code: string }; Returns: string };
+      mark_notification_read: { Args: { p_id: string }; Returns: boolean };
       moderate_community_post: {
         Args: { p_action: string; p_post: string };
         Returns: string;
+      };
+      moderate_match_discussion_message: {
+        Args: { p_match_id: string; p_message_id: string };
+        Returns: boolean;
+      };
+      process_my_notification_queue: { Args: never; Returns: number };
+      recalculate_fantasy_gameweek_scores: {
+        Args: { p_gameweek_id: string };
+        Returns: number;
       };
       report_community_post: {
         Args: { p_post: string; p_reason: string };
         Returns: string;
       };
+      report_match_discussion_message: {
+        Args: { p_match_id: string; p_message_id: string; p_reason: string };
+        Returns: string;
+      };
       resolve_community_report: {
         Args: { p_action: string; p_report: string };
         Returns: string;
+      };
+      resolve_match_discussion_report: {
+        Args: { p_action: string; p_report_id: string };
+        Returns: boolean;
+      };
+      save_fantasy_squad: {
+        Args: {
+          p_captain_player_id: string;
+          p_competition_id: string;
+          p_gameweek_id: string;
+          p_player_ids: string[];
+          p_rule_version: number;
+          p_vice_captain_player_id: string;
+        };
+        Returns: string;
+      };
+      save_notification_preferences: {
+        Args: {
+          p_community_enabled: boolean;
+          p_fantasy_enabled: boolean;
+          p_in_app_enabled: boolean;
+          p_match_enabled: boolean;
+          p_social_enabled: boolean;
+          p_time_zone: string;
+        };
+        Returns: undefined;
       };
       save_profile: {
         Args: {
@@ -1509,6 +2264,20 @@ export type Database = {
           p_username: string;
         };
         Returns: undefined;
+      };
+      schedule_notification_reminder: {
+        Args: {
+          p_label: string;
+          p_local_scheduled_for: string;
+          p_target_id: string;
+          p_target_type: string;
+          p_time_zone: string;
+        };
+        Returns: string;
+      };
+      set_match_discussion_reaction: {
+        Args: { p_active: boolean; p_match_id: string; p_message_id: string };
+        Returns: boolean;
       };
       sports_follower_count: {
         Args: { p_id: string; p_kind: string };
