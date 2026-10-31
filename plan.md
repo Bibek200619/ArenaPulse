@@ -416,3 +416,47 @@ Failure evidence: GitHub Quality run #66 stopped at `npm run type-check` with `I
 Validation cycle 4: added `APP_URL=http://127.0.0.1:3000` to the Quality job only. With that value, `npm run check` passed again: 81 unit, 9 integration, type-check, lint, production build, and 18 public E2E tests.
 
 Validation cycle 5: CI follow-up commit 65cddbe passed both Quality and Identity workflows; Vercel deployment succeeded.
+
+## Active micro-plan — preferred live football league filters (#48, 2026-10-31)
+
+- [x] Inspect the match filter schema, UI, provider flow, current SportScore fixture endpoints, and repository conventions.
+- [x] Confirm no existing open issue covers this request; create issue #48 with league, date, and compatibility acceptance criteria.
+- [x] Add a validated football league filter and map Champions League, Premier League, and La Liga to the provider's official competition slugs; All keeps current behavior.
+- [x] Fetch selected-league fixtures for the selected UTC date (or today), preserve date/status/pagination behavior, and keep non-football competition filters unchanged.
+- [x] Add the league selector, maintain selection in URLs/pagination, and document the data behavior.
+- [x] Add focused filter/provider/browser coverage and run type-check, lint, targeted format, build, and relevant end-to-end checks; record results and fix any failures with small corrective plans.
+- [ ] Commit and push the task branch, then open a PR linked to #48; request `bibek200619`, assign `roushan-23`, and apply existing relevant labels. Leave issue #48 open until merge.
+
+### Findings
+
+The existing UI's generic competition selector is sourced from the demo catalog. SportScore's current widget matches endpoint only accepts sport and limit, while its documented `/api/v1/fixtures/` endpoint accepts a competition slug and UTC date. Live API spot checks confirmed the slugs `uefa-champions-league`, `english-premier-league`, and `spanish-la-liga`; the fixture endpoint returns the shared `{matches: [...]}` shape. Empty selected league/date combinations should remain empty rather than falling back to demo records.
+
+### Corrective plan 1 — restore task worktree dependencies
+
+- [x] Identify why Prettier is absent from the task worktree dependency install: dependency installation had been interrupted while OneDrive held locks on `node_modules`.
+- [x] Move only the isolated worktree outside OneDrive and complete `npm ci` successfully (471 packages added).
+- [x] Rerun targeted formatting, focused unit tests and type-check before continuing to the app-route verification.
+
+### Corrective plan 2 — align provider test date and verification environment
+
+- [x] Update the mocked league fixture time to match the requested UTC date; keep the date filter behavior unchanged.
+- [x] Set the documented local `APP_URL` for type-check and later build/E2E commands; do not place credentials in repository files.
+- [x] Rerun the focused filter/provider tests and type-check, then continue with integration/browser verification.
+
+### Corrective plan 3 — preserve league union types
+
+- [x] Make the optional query-filter helper generic so the validated league enum does not widen to arbitrary strings.
+- [x] Rerun focused tests and type-check; continue only when both pass.
+
+### Corrective plan 4 — scope formatting verification to task files
+
+- [x] Confirm repository-wide Prettier failures include 207 untouched baseline files; avoid reformatting unrelated files.
+- [x] Run Prettier check on every task-changed file and `git diff --check`; both passed.
+
+### Corrective plan 5 — avoid transient mobile browser worker contention
+
+- [x] Rerun the complete public browser suite with one Playwright worker; all 18 desktop/mobile journeys passed.
+- [x] Run the live-provider-only league browser journey against the external SportScore fixture endpoint; desktop and mobile both passed.
+- [x] Record final gate status: 89 unit tests, 11 integration tests, type-check, lint, build, 18 public E2E and two live SportScore league E2E checks passed. `npm run format:check` remains red on 207 baseline files; all changed files pass targeted Prettier.
+
+Validation: all league filter, provider, component, and route coverage passed. The live SportScore fixture endpoint returned Premier League 8/8 English Premier League records, La Liga 4/4 Spanish La Liga records, and Champions League 0 records for 2026-10-31. The live app showed the selected league and preserved SportScore attribution. League requests use the documented UTC-day fixture endpoint and never fall back to demo records. Repository-wide Prettier check reports 207 untouched baseline files; every changed file passed targeted formatting and git diff --check. A six-worker browser run exposed two transient mobile navigation timeouts; serial rerun passed all 18 journeys, and the additional live-only league test passed desktop/mobile.

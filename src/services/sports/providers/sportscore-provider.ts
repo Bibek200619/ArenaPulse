@@ -1,12 +1,14 @@
 import 'server-only';
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
+import { footballLeagues } from '@/features/sports/types';
 import catalog from '@/features/sports/demo-catalog';
 import type {
   Match,
   MatchQuery,
   Page,
   SportsResult,
+  FootballLeague,
 } from '@/features/sports/types';
 import { matchQuerySchema } from '@/features/sports/validation';
 import { AppError } from '@/lib/errors';
@@ -146,8 +148,20 @@ function mapMatch(match: SportScoreMatch): Match {
   };
 }
 
+function matchesFootballLeague(
+  competitionName: string | undefined,
+  league: FootballLeague,
+) {
+  const target = footballLeagues.find((item) => item.value === league);
+  return (
+    competitionName?.trim().toLowerCase() === target?.competition.toLowerCase()
+  );
+}
+
 function matchesQuery(match: Match, query: MatchQuery) {
   return (
+    (!query.footballLeague ||
+      matchesFootballLeague(match.competitionName, query.footballLeague)) &&
     (!query.competitionId || match.competitionId === query.competitionId) &&
     (!query.state || match.state === query.state) &&
     (!query.date || match.startsAt.slice(0, 10) === query.date) &&
@@ -192,13 +206,34 @@ export class SportScoreProvider extends DemoSportsProvider {
     super(clock);
   }
 
-  private async fetchMatches() {
+  private async fetchMatches(query: MatchQuery) {
     const headers = new Headers({ accept: 'application/json' });
     if (this.apiKey) headers.set('X-API-Key', this.apiKey);
-    const response = await this.fetcher(
-      'https://sportscore.com/api/widget/matches/?sport=football&limit=50&src=arenapulse',
-      { headers, signal: AbortSignal.timeout(8_000), cache: 'no-store' },
+    const url = new URL(
+      query.footballLeague
+        ? 'https://sportscore.com/api/v1/fixtures/'
+        : 'https://sportscore.com/api/widget/matches/',
     );
+    url.searchParams.set('sport', 'football');
+    if (query.footballLeague) {
+      const league = footballLeagues.find(
+        (item) => item.value === query.footballLeague,
+      )!;
+      url.searchParams.set('competition', league.slug);
+      url.searchParams.set(
+        'date',
+        query.date ?? this.clock().toISOString().slice(0, 10),
+      );
+      url.searchParams.set('limit', '200');
+    } else {
+      url.searchParams.set('limit', '50');
+      url.searchParams.set('src', 'arenapulse');
+    }
+    const response = await this.fetcher(url, {
+      headers,
+      signal: AbortSignal.timeout(8_000),
+      cache: 'no-store',
+    });
     if (!response.ok) throw new Error('SportScore request failed.');
     const parsed = responseSchema.safeParse(await response.json());
     if (!parsed.success) throw new Error('SportScore response was invalid.');
@@ -223,19 +258,26 @@ export class SportScoreProvider extends DemoSportsProvider {
   override async getFixtures(
     input: MatchQuery,
   ): Promise<SportsResult<Page<Match>>> {
-    const query = matchQuerySchema.parse(input);
+    const parsedQuery = matchQuerySchema.parse(input);
+    const query = parsedQuery.footballLeague
+      ? {
+          ...parsedQuery,
+          sportId: FOOTBALL_ID,
+          competitionId: undefined,
+        }
+      : parsedQuery;
     if (
       query.teamId ||
       query.playerId ||
       (query.sportId && query.sportId !== FOOTBALL_ID) ||
-      query.competitionId === FOOTBALL_COMPETITION_ID
+      (query.competitionId === FOOTBALL_COMPETITION_ID && !query.footballLeague)
     )
       return super.getFixtures(query);
 
     // A remote outage must not take down the fictional non-football catalog.
     let live: Awaited<ReturnType<SportScoreProvider['fetchMatches']>>;
     try {
-      live = await this.fetchMatches();
+      live = await this.fetchMatches(query);
     } catch (error) {
       if (query.sportId === FOOTBALL_ID || query.competitionId) throw error;
       const demo = await super.getFixtures({ ...query, offset: 0, limit: 50 });
@@ -260,7 +302,7 @@ export class SportScoreProvider extends DemoSportsProvider {
       .filter((match) => matchesQuery(match, query))
       .sort(compareMatches);
 
-    if (query.sportId === FOOTBALL_ID) {
+    if (query.sportId === FOOTBALL_ID || query.footballLeague) {
       return {
         data: page(realFootball, query),
         provenance: live.provenance,

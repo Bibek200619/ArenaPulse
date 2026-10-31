@@ -6,6 +6,37 @@ export type MatchState =
   | 'postponed'
   | 'cancelled'
   | 'abandoned';
+export const footballLeagueKeys = [
+  'champions-league',
+  'premier-league',
+  'la-liga',
+] as const;
+export const footballLeagues = [
+  {
+    value: 'champions-league',
+    label: 'Champions League',
+    competition: 'UEFA Champions League',
+    slug: 'uefa-champions-league',
+  },
+  {
+    value: 'premier-league',
+    label: 'Premier League',
+    competition: 'English Premier League',
+    slug: 'english-premier-league',
+  },
+  {
+    value: 'la-liga',
+    label: 'La Liga',
+    competition: 'Spanish La Liga',
+    slug: 'spanish-la-liga',
+  },
+] as const satisfies readonly {
+  value: (typeof footballLeagueKeys)[number];
+  label: string;
+  competition: string;
+  slug: string;
+}[];
+export type FootballLeague = (typeof footballLeagueKeys)[number];
 export type Sport = { id: string; slug: string; name: string };
 export type Competition = {
   id: string;
@@ -106,6 +137,7 @@ export type Page<T> = {
 export type MatchQuery = {
   sportId?: string;
   competitionId?: string;
+  footballLeague?: FootballLeague;
   state?: MatchState;
   date?: string;
   startsAfter?: string;

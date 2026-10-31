@@ -40,12 +40,34 @@ it('preserves filters across pagination and normalizes empty form fields', () =>
   );
   expect(filters.sportId).toBeUndefined();
 });
+it('normalizes league selections to football and clears the catalog competition', () => {
+  const filters = matchFiltersSchema.parse({
+    footballLeague: 'premier-league',
+    sportId: '890b07ac-6e1d-501d-82b2-800b6f2e8439',
+    competitionId: '6b859309-c119-5773-8244-b62037f640e4',
+    date: '2026-10-31',
+  });
+  expect(filters).toMatchObject({
+    footballLeague: 'premier-league',
+    sportId: '4d1c1748-a630-5b7e-9080-9c0cc99f60fa',
+    date: '2026-10-31',
+  });
+  expect(filters.competitionId).toBeUndefined();
+  expect(toMatchQuery(filters, now)).toMatchObject({
+    footballLeague: 'premier-league',
+    sportId: '4d1c1748-a630-5b7e-9080-9c0cc99f60fa',
+    date: '2026-10-31',
+  });
+  expect(matchesHref(filters, 2)).toContain('footballLeague=premier-league');
+  expect(matchesHref(filters, 2)).toContain('page=2');
+});
 it.each([
   { page: 0 },
   { page: 1001 },
   { view: 'wat' },
   { date: '2026-02-30' },
   { sportId: ['a', 'b'] },
+  { footballLeague: 'serie-a' },
 ])('rejects malformed UI query %j', (input) => {
   expect(matchFiltersSchema.safeParse(input).success).toBe(false);
 });
