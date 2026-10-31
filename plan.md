@@ -546,3 +546,8 @@ The isolated auth E2E rerun reached `/onboarding` but lost the new session and r
 
 - [ ] Stop and restart only the 564xx `ArenaPulseIssue27` stack without `--no-backup` so its database volumes persist; keep the shared 554xx project running. The standard `npm run test:db` guard intentionally rejects a non-55431 stack, so do not bypass it.
 - [ ] Rerun authenticated desktop/mobile E2E using the isolated stack environment; capture status/key without printing, then restore the standard Supabase config in `finally`.
+
+### Validation fix plan 6 — format issue files after rebase
+
+- [x] Run Prettier only on the #27 source, docs, generated types, and tests flagged by targeted formatting; inspect the resulting diff for formatting-only changes. Prettier writes were formatting-only; Git reports no source diff.
+- [x] Rerun targeted Prettier, type-check, lint, and `git diff --check` before publishing. All passed after formatting the plan; type-check and lint passed again after formatting the task files.
