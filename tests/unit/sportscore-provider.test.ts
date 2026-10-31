@@ -102,6 +102,70 @@ describe('SportScoreProvider', () => {
     expect(result.data.items[0].state).toBe('live');
   });
 
+  it.each([
+    ['champions-league', 'UEFA Champions League', 'uefa-champions-league'],
+    ['premier-league', 'English Premier League', 'english-premier-league'],
+    ['la-liga', 'Spanish La Liga', 'spanish-la-liga'],
+  ] as const)(
+    'fetches only the selected %s fixtures for the UTC date',
+    async (footballLeague, competition, slug) => {
+      const request = fetchResponse({
+        matches: [
+          {
+            ...payload.matches[0],
+            competition,
+            time: '2026-10-31T12:30:00Z',
+          },
+          { ...payload.matches[1], competition: 'Unrelated Competition' },
+        ],
+      });
+      const provider = new SportScoreProvider(
+        undefined,
+        request,
+        () => new Date('2026-10-31T04:00:00Z'),
+      );
+      const result = await provider.getFixtures({
+        sportId: catalog.sports.find((sport) => sport.slug === 'cricket')!.id,
+        competitionId: catalog.competitions[1].id,
+        footballLeague,
+        date: '2026-10-31',
+        offset: 0,
+        limit: 10,
+      });
+      const [url] = request.mock.calls[0];
+      const requestUrl = new URL(String(url));
+      expect(requestUrl.pathname).toBe('/api/v1/fixtures/');
+      expect(requestUrl.searchParams.get('competition')).toBe(slug);
+      expect(requestUrl.searchParams.get('date')).toBe('2026-10-31');
+      expect(requestUrl.searchParams.get('limit')).toBe('200');
+      expect(result.provenance).toMatchObject({
+        source: 'sportscore-football-v1',
+        isDemo: false,
+      });
+      expect(result.data.items).toHaveLength(1);
+      expect(result.data.items[0].competitionName).toBe(competition);
+      expect(result.data.items[0].sportId).toBe(footballId);
+    },
+  );
+
+  it('uses today in UTC and does not replace an empty league response with demo data', async () => {
+    const request = fetchResponse({ matches: [] });
+    const provider = new SportScoreProvider(
+      undefined,
+      request,
+      () => new Date('2026-10-31T04:00:00Z'),
+    );
+    const result = await provider.getFixtures({
+      footballLeague: 'champions-league',
+      offset: 0,
+      limit: 10,
+    });
+    const [url] = request.mock.calls[0];
+    expect(new URL(String(url)).searchParams.get('date')).toBe('2026-10-31');
+    expect(result.provenance.isDemo).toBe(false);
+    expect(result.data).toMatchObject({ items: [], total: 0 });
+  });
+
   it('uses demo fixtures for other sports without making a network request', async () => {
     const request = fetchResponse();
     const provider = new SportScoreProvider(undefined, request);

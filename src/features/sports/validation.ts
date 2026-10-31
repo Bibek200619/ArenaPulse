@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { footballLeagueKeys } from './types';
 export const states = [
   'scheduled',
   'live',
@@ -12,6 +13,7 @@ export const matchQuerySchema = z
   .object({
     sportId: z.uuid().optional(),
     competitionId: z.uuid().optional(),
+    footballLeague: z.enum(footballLeagueKeys).optional(),
     state: z.enum(states).optional(),
     date: z.iso.date().optional(),
     startsAfter: z.iso.datetime().optional(),

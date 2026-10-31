@@ -62,6 +62,7 @@ export class DemoSportsProvider implements SportsDataProvider {
     const filtered = data.matches
       .filter(
         (match) =>
+          !query.footballLeague &&
           (!query.teamId ||
             match.participants.some(
               (participant) =>

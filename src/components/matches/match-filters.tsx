@@ -1,14 +1,20 @@
 import Link from 'next/link';
-import type { Sport, Competition } from '@/features/sports/types';
+import {
+  footballLeagues,
+  type Sport,
+  type Competition,
+} from '@/features/sports/types';
 import type { MatchFilters as Filters } from '@/features/matches/filters';
 export function MatchFilters({
   filters,
   sports,
   competitions,
+  liveFootballEnabled,
 }: {
   filters: Filters;
   sports: Sport[];
   competitions: Competition[];
+  liveFootballEnabled: boolean;
 }) {
   return (
     <form action="/matches" className="match-filters">
@@ -37,21 +43,43 @@ export function MatchFilters({
           ))}
         </select>
       </div>
-      <div className="filter-field">
-        <label htmlFor="match-competition">Competition</label>
-        <select
-          id="match-competition"
-          name="competitionId"
-          defaultValue={filters.competitionId ?? ''}
-        >
-          <option value="">All competitions</option>
-          {competitions.map((competition) => (
-            <option key={competition.id} value={competition.id}>
-              {competition.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      {liveFootballEnabled && (
+        <div className="filter-field">
+          <label htmlFor="match-football-league">Football league</label>
+          <select
+            id="match-football-league"
+            name="footballLeague"
+            defaultValue={filters.footballLeague ?? ''}
+          >
+            <option value="">All football leagues</option>
+            {footballLeagues.map((league) => (
+              <option key={league.value} value={league.value}>
+                {league.label}
+              </option>
+            ))}
+          </select>
+          <small>
+            League selection shows fixtures for the selected UTC date.
+          </small>
+        </div>
+      )}
+      {!filters.footballLeague && (
+        <div className="filter-field">
+          <label htmlFor="match-competition">Competition</label>
+          <select
+            id="match-competition"
+            name="competitionId"
+            defaultValue={filters.competitionId ?? ''}
+          >
+            <option value="">All competitions</option>
+            {competitions.map((competition) => (
+              <option key={competition.id} value={competition.id}>
+                {competition.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       <div className="filter-field">
         <label htmlFor="match-date">Date (UTC)</label>
         <input

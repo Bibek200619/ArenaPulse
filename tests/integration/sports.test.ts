@@ -25,6 +25,7 @@ it.each([
   'date=today',
   'sportId=bad',
   'state=unknown',
+  'footballLeague=serie-a',
   'secret=value',
 ])('rejects invalid API query %s', async (query) => {
   const response = await getMatches(
@@ -33,6 +34,19 @@ it.each([
   expect(response.status).toBe(400);
   expect(await response.json()).toMatchObject({
     error: { code: 'VALIDATION_ERROR' },
+  });
+});
+
+it('accepts a supported league filter without mixing in fictional football fixtures', async () => {
+  const response = await getMatches(
+    new Request(
+      'http://localhost/api/matches?footballLeague=premier-league&date=2026-10-31&limit=10',
+    ),
+  );
+  expect(response.status).toBe(200);
+  expect(await response.json()).toMatchObject({
+    data: { items: [], total: 0 },
+    provenance: { isDemo: true },
   });
 });
 

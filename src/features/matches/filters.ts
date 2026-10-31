@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type { MatchQuery } from '@/features/sports/types';
-const optionalFilter = (schema: z.ZodType<string>) =>
+import catalog from '@/features/sports/demo-catalog';
+const optionalFilter = <T extends z.ZodType<string>>(schema: T) =>
   z.preprocess(
     (value) => (value === '' ? undefined : value),
     schema.optional(),
@@ -12,10 +13,20 @@ export const matchFiltersSchema = z
       .default('all'),
     sportId: optionalFilter(z.uuid()),
     competitionId: optionalFilter(z.uuid()),
+    footballLeague: optionalFilter(
+      z.enum(['champions-league', 'premier-league', 'la-liga']),
+    ),
     date: optionalFilter(z.iso.date()),
     page: z.coerce.number().int().min(1).max(1000).default(1),
   })
-  .strict();
+  .strict()
+  .transform((filters) => {
+    if (!filters.footballLeague) return filters;
+    const footballId = catalog.sports.find(
+      (sport) => sport.slug === 'football',
+    )!.id;
+    return { ...filters, sportId: footballId, competitionId: undefined };
+  });
 export type MatchFilters = z.infer<typeof matchFiltersSchema>;
 export const PAGE_SIZE = 8;
 export function toMatchQuery(filters: MatchFilters, now: Date): MatchQuery {
@@ -23,6 +34,7 @@ export function toMatchQuery(filters: MatchFilters, now: Date): MatchQuery {
   return {
     sportId,
     competitionId,
+    footballLeague: filters.footballLeague,
     date: view === 'today' ? now.toISOString().slice(0, 10) : filters.date,
     state:
       view === 'live'
