@@ -506,19 +506,43 @@ Validation cycle 3: targeted Prettier checks passed on every changed Markdown/Ty
 
 ### Issue #27 publication microplan
 
-- [ ] Confirm the issue-specific implementation and the added authenticated dashboard/notification journey have passed their relevant checks; rerun focused checks if evidence is missing.
-- [ ] Restore only the temporary local Supabase port/project overrides from the task's saved backup; preserve the unrelated screenshot edits.
-- [ ] Commit only issue-specific files, then sync/rebase that task commit onto the latest `origin/development`; resolve any real conflicts and rerun integration and quality checks.
+- [x] Confirm the issue-specific implementation and the added authenticated dashboard/notification journey have passed their relevant checks; authenticated desktop/mobile E2E passed 14/14 before syncing the branch.
+- [x] Restore only the temporary local Supabase port/project overrides from the task's saved backup; the standard 554xx config is restored, and the unrelated screenshot edits remain unstaged.
+- [x] Commit only issue-specific files, then sync/rebase that task commit onto the latest `origin/development`; resolve any real conflicts and rerun integration and quality checks. Rebased to `38a24f7`; `npm run check` passed 89 unit, 11 integration, type-check, lint, build, and 18 public E2E tests. Rebase conflict was limited to appending the issue records in this plan.
 - [ ] Commit only #27 source, migration, docs, tests, and plan changes; push and open the issue-linked PR with the requested reviewer, assignee, and labels.
 
 #### Authenticated browser environment correction
 
 The first rerun of `npm run test:e2e:auth` could not find the local confirmation/recovery email: `tests/auth-e2e/helpers.ts` defaults Mailpit to port 55434, while this isolated test project deliberately runs Mailpit on 56434. This is a test endpoint mismatch, not a feature failure.
 
-- [ ] Rerun the authenticated browser suite with `ARENAPULSE_MAILPIT_URL=http://127.0.0.1:56434` and `APP_URL=http://127.0.0.1:3000`; keep the shared helper default unchanged.
-      Authenticated browser result: with `ARENAPULSE_MAILPIT_URL=http://127.0.0.1:56434`, all 14 desktop/mobile auth journeys passed, including dashboard and notification preferences. The helper default remains unchanged for standard local Supabase port 55434.
+- [x] Rerun the authenticated browser suite with `ARENAPULSE_MAILPIT_URL=http://127.0.0.1:56434` and `APP_URL=http://127.0.0.1:3000`; keep the shared helper default unchanged.
+      Authenticated browser result: all 14 desktop/mobile auth journeys passed before the branch sync, including dashboard and notification preferences. The helper default remains unchanged for standard local Supabase port 55434.
 
 #### Validation fix plan 4 — clean SQL migration EOF
 
 - [x] Remove the extra blank line at the end of the task migration, leaving one final newline.
 - [x] Rerun whitespace/diff validation; `git diff --check` passes. The SQL has already passed clean migration replay and database tests, and no SQL logic changes are made.
+
+#### Authenticated browser environment correction 2
+
+The post-rebase auth rerun launched without `NEXT_PUBLIC_SUPABASE_URL` or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`; account forms were correctly disabled and the registration/recovery journey timed out. `supabase status` confirms the shared default stack is on 55431, while this issue's isolated stack is on 56431.
+
+- [x] Supply isolated Supabase URL and publishable key through the test process only; do not write keys to a file or print them.
+- [x] Restore `supabase/config.toml` from the saved standard config after the run and record the outcome.
+
+Post-rebase auth rerun: the first attempt had no Supabase environment variables, so account forms were disabled. With the isolated 564xx URL/key and Mailpit URL supplied, signup reached `/onboarding` then returned to `/login` in the stale local Auth stack. The same 14-test suite passed before rebasing, and no auth code changed during the rebase. A later attempt to restart the isolated stack was rejected by the environment's automatic command review, so I did not stop any Supabase stack or reset test data. The standard Supabase config remains restored.
+
+#### Isolated Supabase status lookup correction
+
+The saved temp-file backup is the standard ArenaPulse config (554xx), not the temporary ArenaPulseIssue27 config. The standard config is restored now. Reconstruct the known 564xx test-only port/project overrides from that backup inside a guarded command; always restore the original in `finally` so the shared local project remains unchanged.
+
+- [x] Read the isolated stack's API URL and publishable key without printing them, run the authenticated suite with the matching 56434 Mailpit URL, and restore the standard config even on failure.
+
+Outcome: URL/key lookup succeeded. The auth journey remains environment-dependent on this local stack after its earlier successful 14/14 run. The separate task database suite and security advisor had already passed 5/5 and clean before the rebase; this work changed only the final newline in SQL after that verification.
+
+#### Validation fix plan 5 — refresh only the isolated auth test state
+
+The isolated auth E2E rerun reached `/onboarding` but lost the new session and redirected to `/login` after tests had first run without Supabase environment values. No auth application code changed; the issue branch had previously passed all 14 authenticated journeys. Refresh only the dedicated `ArenaPulseIssue27` local database (never the shared ArenaPulse stack), replay its migrations/seed, and rerun the auth suite with its own local URL and key. Restore the standard config in `finally`.
+
+- [ ] Stop and restart only the 564xx `ArenaPulseIssue27` stack without `--no-backup` so its database volumes persist; keep the shared 554xx project running. The standard `npm run test:db` guard intentionally rejects a non-55431 stack, so do not bypass it.
+- [ ] Rerun authenticated desktop/mobile E2E using the isolated stack environment; capture status/key without printing, then restore the standard Supabase config in `finally`.
