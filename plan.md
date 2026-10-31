@@ -509,7 +509,7 @@ Validation cycle 3: targeted Prettier checks passed on every changed Markdown/Ty
 - [x] Confirm the issue-specific implementation and the added authenticated dashboard/notification journey have passed their relevant checks; authenticated desktop/mobile E2E passed 14/14 before syncing the branch.
 - [x] Restore only the temporary local Supabase port/project overrides from the task's saved backup; the standard 554xx config is restored, and the unrelated screenshot edits remain unstaged.
 - [x] Commit only issue-specific files, then sync/rebase that task commit onto the latest `origin/development`; resolve any real conflicts and rerun integration and quality checks. Rebased to `38a24f7`; `npm run check` passed 89 unit, 11 integration, type-check, lint, build, and 18 public E2E tests. Rebase conflict was limited to appending the issue records in this plan.
-- [ ] Commit only #27 source, migration, docs, tests, and plan changes; push and open the issue-linked PR with the requested reviewer, assignee, and labels.
+- [x] Commit only #27 source, migration, docs, tests, and plan changes; push and open the issue-linked PR with the requested reviewer, assignee, and labels.
 
 #### Authenticated browser environment correction
 
@@ -551,3 +551,5 @@ The isolated auth E2E rerun reached `/onboarding` but lost the new session and r
 
 - [x] Run Prettier only on the #27 source, docs, generated types, and tests flagged by targeted formatting; inspect the resulting diff for formatting-only changes. Prettier writes were formatting-only; Git reports no source diff.
 - [x] Rerun targeted Prettier, type-check, lint, and `git diff --check` before publishing. All passed after formatting the plan; type-check and lint passed again after formatting the task files.
+
+Delivery: commits `a8385e6`, `254ac68`, `0a88efc`, and `fcb0377` were pushed on `codex/phase-10-notifications-27`. PR #52 targets `development`, closes #27, requests reviewer `bibek200619`, is assigned to `roushan-23`, and has `feature`, `testing`, and `area:realtime` labels. Vercel and GitGuardian checks pass. Issue #27 remains open until merge.
