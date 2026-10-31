@@ -3,6 +3,7 @@ import { Activity, ArrowUpRight, Menu } from 'lucide-react';
 
 export const navigation = [
   ['Home', '/'],
+  ['Dashboard', '/dashboard'],
   ['Matches', '/matches'],
   ['Competitions', '/competitions'],
   ['Teams', '/teams'],

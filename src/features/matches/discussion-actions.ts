@@ -31,7 +31,7 @@ export async function changeMatchDiscussion(form: FormData) {
       const { error } = await client.rpc('create_match_discussion_message', {
         p_match_id: input.matchId,
         p_body: input.body ?? '',
-        p_parent_id: input.parentId ?? null,
+        p_parent_id: input.parentId ?? undefined,
       });
       if (error) throw error;
     } else if (input.operation === 'react' && input.messageId) {

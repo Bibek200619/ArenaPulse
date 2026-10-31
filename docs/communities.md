@@ -42,7 +42,7 @@ Private-profile members may choose to publish to a community. Members can read t
 
 Users may block and unblock another profile from its profile page. Blocks hide posts and interactions in both directions and prevent comments/reactions between the blocked users. A user can still access the profile to unblock it. Block records are private to the blocker.
 
-Match discussions/realtime remain Phase 7; notification delivery remains Phase 10.
+Match discussions/realtime remain Phase 7; community notifications are part of Phase 10.
 
 ## Application routes
 

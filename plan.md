@@ -485,3 +485,94 @@ The selected list now includes UEFA Champions League and all nine leagues shown 
 Final validation cycle: 97 unit tests, 11 integration tests, type-check, lint, production build, targeted Prettier on all task files, `git diff --check`, and all 20 desktop/mobile browser journeys passed. The first six-worker browser run had one desktop live-league assertion timeout while the page was still rendering; after waiting for the query result and rerunning serially, all 20 tests passed.
 
 - [x] Commit `cdd5165`, push `codex/league-filter-visible-50`, and open PR #51 against `development`; PR #51 closes #50, requests review from `bibek200619`, is assigned to `roushan-23`, and carries `bug`, `backend`, and `testing` labels.
+
+## Active GitHub issue #27 — notifications, preferences and personalized dashboard
+
+Micro plan:
+
+- [x] Inspect the existing server actions, database event writes, visibility/block rules, profiles/preferences, dashboard routes, migrations, and test conventions; map each accepted event source and privacy boundary.
+- [x] Design a versioned transactional outbox and notification/preferences schema with owner-only RLS, idempotency, explicit queue/delivery state, and timezone-aware reminder scheduling; add migration and generated types.
+- [x] Connect eligible persisted social, community, match-discussion and fantasy events to the outbox transactionally. Derive actor/recipient/target from database state; suppress duplicate or rolled-back events and honor blocks, visibility, and preferences before dispatch.
+- [x] Implement authenticated notification list/manage actions and a responsive notification center; expose queued versus delivered state accurately and keep external email/push delivery disabled absent configuration.
+- [x] Implement personalized dashboard content using the existing profile, follow, community, match and fantasy privacy rules; add preference/reminder controls only where supported.
+- [x] Add database/RLS and authenticated desktop/mobile browser coverage; update notification, social, community docs and roadmap status.
+- [x] Run migration replay, database/security advisor, unit/integration/type/lint/format/build/browser suites; record results and fix failures with focused follow-up plans.
+- [ ] Commit and push the task branch, open/update a PR using the repository template, request reviewer `bibek200619`, assign the requester, apply relevant labels, and link issue #27. Keep the issue open until the PR is merged.
+
+Scope guard: external email/push dispatch stays disabled without an explicitly configured provider; queued work must never be shown as delivered. Reminder times must be explicit and validated against IANA time zones. No private profile, follow, community, or match-discussion data may be surfaced to unauthorized viewers.
+
+Implementation finding: notifications were a placeholder; the social docs explicitly deferred the transactional outbox. The feature can use secure existing Postgres source rows and RLS. Queue processing is authenticated and lazy at inbox load, so background delivery is not promised; email/push remain disabled. Reminder wall times are validated against IANA zones and stored as UTC instants.
+
+### Validation fix plan 1
+
+- [x] Replace the test's unsupported @/ alias with a relative import and rerun the notification database suite.
+
+Failure evidence: the DB Vitest config does not resolve the Next.js @/ path alias; the suite stopped before setup.
+
+### Validation fix plan 2
+
+- [x] Grant the safe timezone-validation helper to the trusted service_role/postgres roles used for scheduler updates; replay migrations, rerun the notification DB suite and the security advisor.
+
+Failure evidence: privileged reminder materialization failed with permission denied for function valid_notification_timezone when updating a reminder row.
+
+Validation cycle 1: initial notification DB tests passed 3/3. Expanded tests found a DB Vitest alias mismatch, then a timezone helper grant gap for trusted reminder updates. Fix plans 1 and 2 are complete. After migration replay with seed, notifications DB suite passed 5/5; Supabase security advisor reported no issues.
+
+Validation cycle 2: task-isolated Supabase clean reset and seed completed; notification DB suite passed 5/5 and the local Supabase security advisor found no issues. `npm run check` passed: 81 unit tests, 9 integration tests, type-check, lint, production build and 18 public desktop/mobile E2E tests. Authenticated desktop/mobile E2E passed 14/14, including dashboard and notifications access plus the existing identity, community, fantasy, match-discussion and social journeys. Targeted Prettier and `git diff --check` passed. Temporary 564xx local Supabase port overrides were restored before staging. External email/push remain disabled; queue processing is lazy and accurately labeled as queued/delivered/skipped.
+
+### Validation fix plan 3 — finish changed-file formatting
+
+- [x] Format the task plan and generated TypeScript DB types; remove the generated file's extra trailing blank line.
+- [x] Exclude the SQL migration from Prettier (no SQL parser is configured) and verify the migration with `git diff --check` and clean replay already recorded above.
+- [x] Rerun targeted Prettier, diff and type-check before delivery.
+
+Validation cycle 3: targeted Prettier checks passed on every changed Markdown/TypeScript/CSS/test file; the SQL migration was replayed and passed `git diff --check`. The post-format type-check passed. Authenticated E2E 14/14 and the prior complete local `npm run check` remain green.
+
+### Issue #27 publication microplan
+
+- [x] Confirm the issue-specific implementation and the added authenticated dashboard/notification journey have passed their relevant checks; authenticated desktop/mobile E2E passed 14/14 before syncing the branch.
+- [x] Restore only the temporary local Supabase port/project overrides from the task's saved backup; the standard 554xx config is restored, and the unrelated screenshot edits remain unstaged.
+- [x] Commit only issue-specific files, then sync/rebase that task commit onto the latest `origin/development`; resolve any real conflicts and rerun integration and quality checks. Rebased to `38a24f7`; `npm run check` passed 89 unit, 11 integration, type-check, lint, build, and 18 public E2E tests. Rebase conflict was limited to appending the issue records in this plan.
+- [x] Commit only #27 source, migration, docs, tests, and plan changes; push and open the issue-linked PR with the requested reviewer, assignee, and labels.
+
+#### Authenticated browser environment correction
+
+The first rerun of `npm run test:e2e:auth` could not find the local confirmation/recovery email: `tests/auth-e2e/helpers.ts` defaults Mailpit to port 55434, while this isolated test project deliberately runs Mailpit on 56434. This is a test endpoint mismatch, not a feature failure.
+
+- [x] Rerun the authenticated browser suite with `ARENAPULSE_MAILPIT_URL=http://127.0.0.1:56434` and `APP_URL=http://127.0.0.1:3000`; keep the shared helper default unchanged.
+      Authenticated browser result: all 14 desktop/mobile auth journeys passed before the branch sync, including dashboard and notification preferences. The helper default remains unchanged for standard local Supabase port 55434.
+
+#### Validation fix plan 4 — clean SQL migration EOF
+
+- [x] Remove the extra blank line at the end of the task migration, leaving one final newline.
+- [x] Rerun whitespace/diff validation; `git diff --check` passes. The SQL has already passed clean migration replay and database tests, and no SQL logic changes are made.
+
+#### Authenticated browser environment correction 2
+
+The post-rebase auth rerun launched without `NEXT_PUBLIC_SUPABASE_URL` or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`; account forms were correctly disabled and the registration/recovery journey timed out. `supabase status` confirms the shared default stack is on 55431, while this issue's isolated stack is on 56431.
+
+- [x] Supply isolated Supabase URL and publishable key through the test process only; do not write keys to a file or print them.
+- [x] Restore `supabase/config.toml` from the saved standard config after the run and record the outcome.
+
+Post-rebase auth rerun: the first attempt had no Supabase environment variables, so account forms were disabled. With the isolated 564xx URL/key and Mailpit URL supplied, signup reached `/onboarding` then returned to `/login` in the stale local Auth stack. The same 14-test suite passed before rebasing, and no auth code changed during the rebase. A later attempt to restart the isolated stack was rejected by the environment's automatic command review, so I did not stop any Supabase stack or reset test data. The standard Supabase config remains restored.
+
+#### Isolated Supabase status lookup correction
+
+The saved temp-file backup is the standard ArenaPulse config (554xx), not the temporary ArenaPulseIssue27 config. The standard config is restored now. Reconstruct the known 564xx test-only port/project overrides from that backup inside a guarded command; always restore the original in `finally` so the shared local project remains unchanged.
+
+- [x] Read the isolated stack's API URL and publishable key without printing them, run the authenticated suite with the matching 56434 Mailpit URL, and restore the standard config even on failure.
+
+Outcome: URL/key lookup succeeded. The auth journey remains environment-dependent on this local stack after its earlier successful 14/14 run. The separate task database suite and security advisor had already passed 5/5 and clean before the rebase; this work changed only the final newline in SQL after that verification.
+
+#### Validation fix plan 5 — refresh only the isolated auth test state
+
+The isolated auth E2E rerun reached `/onboarding` but lost the new session and redirected to `/login` after tests had first run without Supabase environment values. No auth application code changed; the issue branch had previously passed all 14 authenticated journeys. Refresh only the dedicated `ArenaPulseIssue27` local database (never the shared ArenaPulse stack), replay its migrations/seed, and rerun the auth suite with its own local URL and key. Restore the standard config in `finally`.
+
+- [ ] Stop and restart only the 564xx `ArenaPulseIssue27` stack without `--no-backup` so its database volumes persist; keep the shared 554xx project running. The standard `npm run test:db` guard intentionally rejects a non-55431 stack, so do not bypass it.
+- [ ] Rerun authenticated desktop/mobile E2E using the isolated stack environment; capture status/key without printing, then restore the standard Supabase config in `finally`.
+
+### Validation fix plan 6 — format issue files after rebase
+
+- [x] Run Prettier only on the #27 source, docs, generated types, and tests flagged by targeted formatting; inspect the resulting diff for formatting-only changes. Prettier writes were formatting-only; Git reports no source diff.
+- [x] Rerun targeted Prettier, type-check, lint, and `git diff --check` before publishing. All passed after formatting the plan; type-check and lint passed again after formatting the task files.
+
+Delivery: commits `a8385e6`, `254ac68`, `0a88efc`, and `fcb0377` were pushed on `codex/phase-10-notifications-27`. PR #52 targets `development`, closes #27, requests reviewer `bibek200619`, is assigned to `roushan-23`, and has `feature`, `testing`, and `area:realtime` labels. Vercel and GitGuardian checks pass. Issue #27 remains open until merge.
