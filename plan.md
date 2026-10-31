@@ -517,3 +517,8 @@ The first rerun of `npm run test:e2e:auth` could not find the local confirmation
 
 - [ ] Rerun the authenticated browser suite with `ARENAPULSE_MAILPIT_URL=http://127.0.0.1:56434` and `APP_URL=http://127.0.0.1:3000`; keep the shared helper default unchanged.
       Authenticated browser result: with `ARENAPULSE_MAILPIT_URL=http://127.0.0.1:56434`, all 14 desktop/mobile auth journeys passed, including dashboard and notification preferences. The helper default remains unchanged for standard local Supabase port 55434.
+
+#### Validation fix plan 4 — clean SQL migration EOF
+
+- [x] Remove the extra blank line at the end of the task migration, leaving one final newline.
+- [x] Rerun whitespace/diff validation; `git diff --check` passes. The SQL has already passed clean migration replay and database tests, and no SQL logic changes are made.

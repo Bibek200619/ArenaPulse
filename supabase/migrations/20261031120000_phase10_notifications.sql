@@ -385,4 +385,3 @@ grant execute on function public.save_notification_preferences(boolean,boolean,b
   public.schedule_notification_reminder(text,text,uuid,timestamp without time zone,text),
   public.cancel_notification_reminder(uuid),public.process_my_notification_queue(),public.mark_notification_read(uuid)
   to authenticated;
-
