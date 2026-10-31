@@ -57,9 +57,6 @@ export default async function MatchesPage({
         filters={filters}
         sports={catalog.data.sports}
         competitions={catalog.data.competitions}
-        liveFootballEnabled={
-          sportsService.provider.id === 'sportscore-football-v1'
-        }
       />
       <p className="results-count">
         {fixtures.data.total} matches · Page {filters.page} · Times in UTC
