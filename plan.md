@@ -469,7 +469,7 @@ Delivery: commit `54ca44c` is pushed on `codex/football-league-filter`. PR #49 t
 - [x] Route explicit football league queries to SportScore while preserving the configured provider's behavior for all other match queries; cache under the source provider ID.
 - [x] Update focused component, service, and route coverage plus provider documentation.
 - [x] Run focused unit/integration tests, type-check, lint, targeted formatting, build, and relevant browser checks; record results and corrective plans.
-- [ ] Commit, push, and open an issue-linked PR for #50; request `bibek200619`, assign `roushan-23`, and use existing relevant labels. Leave the issue open until merge.
+- [x] Commit, push, and open an issue-linked PR for #50; request `bibek200619`, assign `roushan-23`, and use existing relevant labels. Leave the issue open until merge.
 
 Finding: PR #49 merged, but the selector was gated on `SPORTS_DATA_PROVIDER=sportscore`, whose default is `demo`. Even with the selector enabled, a selected league was sent to the demo provider unless the site-wide provider was changed. The correction routes only explicit league queries to SportScore, preserving demo behavior for unfiltered queries.
 
@@ -483,3 +483,5 @@ The selected list now includes UEFA Champions League and all nine leagues shown 
 - [x] Rerun the complete browser suite serially and record final gates.
 
 Final validation cycle: 97 unit tests, 11 integration tests, type-check, lint, production build, targeted Prettier on all task files, `git diff --check`, and all 20 desktop/mobile browser journeys passed. The first six-worker browser run had one desktop live-league assertion timeout while the page was still rendering; after waiting for the query result and rerunning serially, all 20 tests passed.
+
+- [x] Commit `cdd5165`, push `codex/league-filter-visible-50`, and open PR #51 against `development`; PR #51 closes #50, requests review from `bibek200619`, is assigned to `roushan-23`, and carries `bug`, `backend`, and `testing` labels.
