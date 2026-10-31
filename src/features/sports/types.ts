@@ -10,6 +10,13 @@ export const footballLeagueKeys = [
   'champions-league',
   'premier-league',
   'la-liga',
+  'serie-a',
+  'bundesliga',
+  'ligue-1',
+  'eredivisie',
+  'brazilian-serie-a',
+  'championship',
+  'austrian-bundesliga',
 ] as const;
 export const footballLeagues = [
   {
@@ -20,15 +27,57 @@ export const footballLeagues = [
   },
   {
     value: 'premier-league',
-    label: 'Premier League',
+    label: 'English Premier League',
     competition: 'English Premier League',
     slug: 'english-premier-league',
   },
   {
     value: 'la-liga',
-    label: 'La Liga',
+    label: 'Spanish La Liga',
     competition: 'Spanish La Liga',
     slug: 'spanish-la-liga',
+  },
+  {
+    value: 'serie-a',
+    label: 'Italian Serie A',
+    competition: 'Italian Serie A',
+    slug: 'italian-serie-a',
+  },
+  {
+    value: 'bundesliga',
+    label: 'Bundesliga',
+    competition: 'Bundesliga',
+    slug: 'bundesliga',
+  },
+  {
+    value: 'ligue-1',
+    label: 'French Ligue 1',
+    competition: 'French Ligue 1',
+    slug: 'french-ligue-1',
+  },
+  {
+    value: 'eredivisie',
+    label: 'Netherlands Eredivisie',
+    competition: 'Netherlands Eredivisie',
+    slug: 'netherlands-eredivisie',
+  },
+  {
+    value: 'brazilian-serie-a',
+    label: 'Brazilian Serie A',
+    competition: 'Brazilian Serie A',
+    slug: 'brazilian-serie-a',
+  },
+  {
+    value: 'championship',
+    label: 'English Football League Championship',
+    competition: 'English Football League Championship',
+    slug: 'english-football-league-championship',
+  },
+  {
+    value: 'austrian-bundesliga',
+    label: 'Austrian Bundesliga',
+    competition: 'Austrian Bundesliga',
+    slug: 'austrian-bundesliga',
   },
 ] as const satisfies readonly {
   value: (typeof footballLeagueKeys)[number];

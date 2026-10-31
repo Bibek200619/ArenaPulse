@@ -3,25 +3,28 @@ import { expect, test } from '@playwright/test';
 test('filters live SportScore fixtures to a preferred football league', async ({
   page,
 }) => {
-  test.skip(
-    process.env.SPORTS_DATA_PROVIDER !== 'sportscore',
-    'Requires the configured SportScore provider.',
-  );
-
   await page.goto('/matches');
   const league = page.getByLabel('Football league', { exact: true });
   await expect(league).toBeVisible();
   await expect(league.locator('option')).toHaveText([
     'All football leagues',
     'Champions League',
-    'Premier League',
-    'La Liga',
+    'English Premier League',
+    'Spanish La Liga',
+    'Italian Serie A',
+    'Bundesliga',
+    'French Ligue 1',
+    'Netherlands Eredivisie',
+    'Brazilian Serie A',
+    'English Football League Championship',
+    'Austrian Bundesliga',
   ]);
 
   await league.selectOption('premier-league');
   await page.getByRole('button', { name: 'Apply filters' }).click();
 
   await expect(page).toHaveURL(/footballLeague=premier-league/);
+  await expect(page.locator('.results-count')).toBeVisible({ timeout: 15000 });
   await expect(
     page.getByRole('link', { name: 'Powered by SportScore' }),
   ).toBeVisible();

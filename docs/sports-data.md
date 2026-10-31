@@ -1,6 +1,6 @@
 # Sports data
 
-The server-facing `SportsDataProvider` contract isolates domain entities from transport and vendor naming. `DemoSportsProvider` supplies the fictional catalog and cricket, basketball and tennis fixtures. When `SPORTS_DATA_PROVIDER=sportscore`, `SportScoreProvider` supplies football scores and recent fixtures from SportScore while the rest of the app continues using the demo catalog. UI and route handlers use `SportsService`; the vendor API key is read only by the server adapter.
+The server-facing `SportsDataProvider` contract isolates domain entities from transport and vendor naming. `DemoSportsProvider` supplies the fictional catalog and cricket, basketball and tennis fixtures. `SportScoreProvider` supplies football scores and recent fixtures from SportScore when `SPORTS_DATA_PROVIDER=sportscore`. The preferred football league filters always appear for UEFA Champions League, English Premier League, Spanish La Liga, Italian Serie A, Bundesliga, French Ligue 1, Netherlands Eredivisie, Brazilian Serie A, English Football League Championship, and Austrian Bundesliga. Selecting a league requests that date's real SportScore fixtures even when the site's all-sports default remains the demo provider. UI and route handlers use `SportsService`; the vendor API key is read only by the server adapter.
 
 ## Demo provenance
 

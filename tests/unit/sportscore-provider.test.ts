@@ -106,6 +106,17 @@ describe('SportScoreProvider', () => {
     ['champions-league', 'UEFA Champions League', 'uefa-champions-league'],
     ['premier-league', 'English Premier League', 'english-premier-league'],
     ['la-liga', 'Spanish La Liga', 'spanish-la-liga'],
+    ['serie-a', 'Italian Serie A', 'italian-serie-a'],
+    ['bundesliga', 'Bundesliga', 'bundesliga'],
+    ['ligue-1', 'French Ligue 1', 'french-ligue-1'],
+    ['eredivisie', 'Netherlands Eredivisie', 'netherlands-eredivisie'],
+    ['brazilian-serie-a', 'Brazilian Serie A', 'brazilian-serie-a'],
+    [
+      'championship',
+      'English Football League Championship',
+      'english-football-league-championship',
+    ],
+    ['austrian-bundesliga', 'Austrian Bundesliga', 'austrian-bundesliga'],
   ] as const)(
     'fetches only the selected %s fixtures for the UTC date',
     async (footballLeague, competition, slug) => {
