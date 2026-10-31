@@ -462,3 +462,13 @@ The existing UI's generic competition selector is sourced from the demo catalog.
 Validation: all league filter, provider, component, and route coverage passed. The live SportScore fixture endpoint returned Premier League 8/8 English Premier League records, La Liga 4/4 Spanish La Liga records, and Champions League 0 records for 2026-10-31. The live app showed the selected league and preserved SportScore attribution. League requests use the documented UTC-day fixture endpoint and never fall back to demo records. Repository-wide Prettier check reports 207 untouched baseline files; every changed file passed targeted formatting and git diff --check. A six-worker browser run exposed two transient mobile navigation timeouts; serial rerun passed all 18 journeys, and the additional live-only league test passed desktop/mobile.
 
 Delivery: commit `54ca44c` is pushed on `codex/football-league-filter`. PR #49 targets `development`, links issue #48, requests review from `Bibek200619`, is assigned to `roushan-23`, and has `feature`, `backend`, and `testing` labels. Issue #48 remains open until PR #49 is merged.
+
+## Active micro-plan — make football league filters visible in demo-default deployments (#50, 2026-10-31)
+
+- [ ] Keep the Champions League, Premier League, and La Liga selector visible regardless of the site's default sports provider.
+- [ ] Route explicit football league queries to SportScore while preserving the configured provider's behavior for all other match queries; cache under the source provider ID.
+- [ ] Update focused component, service, and route coverage plus provider documentation.
+- [ ] Run focused unit/integration tests, type-check, lint, targeted formatting, build, and relevant browser checks; record results and corrective plans.
+- [ ] Commit, push, and open an issue-linked PR for #50; request `bibek200619`, assign `roushan-23`, and use existing relevant labels. Leave the issue open until merge.
+
+Finding: PR #49 merged, but the selector is gated on `SPORTS_DATA_PROVIDER=sportscore`, whose default is `demo`. Even with the selector enabled, a selected league is currently sent to the demo provider unless the site-wide provider is changed. The correction must route only explicit league queries to SportScore, preserving demo behavior for unfiltered queries.
